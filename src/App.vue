@@ -1,30 +1,28 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link>
-    |
-  </div>
   <router-view />
 </template>
 
-<style lang="less">
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
+<script>
+  import { defineComponent, watch } from 'vue';
+  import { useStore } from 'vuex';
+  import Constans from 'utils/Constants';
 
-  #nav {
-    padding: 30px;
+  export default defineComponent({
+    setup() {
+      const { dispatch, getters } = useStore();
 
-    a {
-      font-weight: bold;
-      color: #2c3e50;
+      // Switch Theme
+      watch(
+        () => getters.darkTheme,
+        () => document.querySelector('body').classList.toggle('dark', getters.darkTheme),
+      );
 
-      &.router-link-exact-active {
-        color: #42b983;
+      try {
+        const appConfig = JSON.parse(localStorage.getItem(Constans.APP_CONFIG_KEY));
+        dispatch('setAppConfig', appConfig);
+      } catch (e) {
+        console.error('No Localstorage');
       }
-    }
-  }
-</style>
+    },
+  });
+</script>

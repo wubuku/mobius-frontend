@@ -1,4 +1,43 @@
 {
-  "message": "hello i18n !!",
-  "hello": "shiit"
+  "menus": {
+    "index": "Index",
+    "market": "Market",
+    "governance": "Governance",
+    "docs": "Docs",
+    "community": "Community"
+  },
+  "index": [
+    {
+      "title": "测测你能借多少钱",
+      "content": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
+    },
+    {
+      "title": "安全是我们的第一要素",
+      "content": "WePiggy 的智能合约代码全部开源，并经过严格测试和慢雾科技的专业审计。资产存储在区块链网络中，透明可追溯，开发团队无法挪用资金。"
+    },
+    {
+      "title": "科学治理 从第一天开始",
+      "content": "WePiggy 的核心开发团队对协议治理有着更为积极，更负责任的考量——从项目挖矿开始，就与社区一同建设独特的 DAO 价值观和科学的治理框架。"
+    }
+  ],
+  "btn": {
+    "app": "App",
+    "starmask-wallet": "StarMask Wallet",
+    "faq": "FAQ"
+  },
+  "footer": {
+    "about": "About",
+    "team": "Team",
+    "career": "Career",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "concact": "Concact",
+    "resource": "Resource",
+    "faq": "FAQ",
+    "stc-homepage": "STC Homepage",
+    "oracles": "Oracles",
+    "product": "Product",
+    "starmask-wallet": "StarMask Wallet",
+    "swap": "Swap"
+  }
 }

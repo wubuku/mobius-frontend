@@ -1,0 +1,20 @@
+body {
+  --themeBgColor: #fff;
+  --themeColor: #51afc6;
+  --bannerColor: #f7f9fa;
+
+  &.dark {
+    --themeBgColor: #333;
+    --themeColor: #51afc6;
+  }
+}
+
+.btn {
+  cursor: pointer;
+  user-select: none;
+  &:active {
+    position: relative;
+    left: 2px;
+    top: 2px;
+  }
+}
