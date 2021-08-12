@@ -1,5 +1,5 @@
 <template>
-  <p>{{ t('hello') }}</p>
+  <p>{{ $t('hello') }}</p>
   {{ msg }}
   <div class="locale-changer">
     {{ i18n.locale }}
@@ -15,7 +15,6 @@
 
 <script>
   import { defineComponent, getCurrentInstance, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
   // import Constans from 'utils/Constants';
 
   export default defineComponent({
@@ -24,7 +23,6 @@
       msg: String,
     },
     setup() {
-      const { t } = useI18n();
       const { $i18n } = getCurrentInstance().appContext.config.globalProperties;
       const moduleJsonData = ref({});
 
@@ -196,7 +194,7 @@
       //   });
       // }, 1e3);
 
-      return { t, i18n: $i18n, languageChange, option, moduleJsonData };
+      return { i18n: $i18n, languageChange, option, moduleJsonData };
     },
   });
 </script>

@@ -2,8 +2,8 @@
   <div class="m-footer">
     <div class="m-footer-container">
       <div class="i18n">
-        <div class="lan-item">English</div>
-        <div class="lan-item">中文</div>
+        <div class="lan-item" @click="switchLanguage('en')">English</div>
+        <div class="lan-item" @click="switchLanguage('zh')">中文</div>
       </div>
 
       <div class="offical-icon">
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, getCurrentInstance } from 'vue';
   import { useI18n } from 'vue-i18n';
   import FooterLinks from 'config/FooterLinks';
 
@@ -38,10 +38,17 @@
     props: {},
     setup() {
       const { t } = useI18n();
+      const { $i18n } = getCurrentInstance().appContext.config.globalProperties;
+
+      const switchLanguage = (locale) => {
+        $i18n.locale = locale;
+        window.localStorage.setItem('locale', $i18n.locale);
+      };
 
       return {
+        i18n: $i18n,
         footerLinks: FooterLinks(t),
-        t,
+        switchLanguage,
       };
     },
   });

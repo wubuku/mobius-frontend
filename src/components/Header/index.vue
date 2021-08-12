@@ -1,6 +1,6 @@
 <template>
   <div class="m-header">
-    <div class="m-header-container">
+    <div class="center-container m-header-container">
       <img src="../../assets/images/logo.png" class="m-logo" alt="" />
       <!-- <theme-switch></theme-switch> -->
       <a-menu
@@ -11,13 +11,16 @@
         @click="menuClick"
       >
         <a-menu-item key="Home">
-          {{ t('menus.index') }}
+          {{ $t('menus.index') }}
         </a-menu-item>
         <a-menu-item key="Market">
-          {{ t('menus.market') }}
+          {{ $t('menus.market') }}
         </a-menu-item>
-        <a-sub-menu>
-          <template #title>{{ t('menus.governance') }}</template>
+        <a-menu-item key="Governance">
+          {{ $t('menus.governance') }}
+        </a-menu-item>
+        <a-sub-menu key="Docs">
+          <template #title>{{ $t('menus.docs') }}</template>
           <a-menu-item-group title="Item 1">
             <a-menu-item key="setting:1">Option 1</a-menu-item>
             <a-menu-item key="setting:2">Option 2</a-menu-item>
@@ -27,17 +30,12 @@
             <a-menu-item key="setting:4">Option 4</a-menu-item>
           </a-menu-item-group>
         </a-sub-menu>
-        <a-menu-item key="Docs">
-          <!-- <a href="https://antdv.com" target="_blank" rel="noopener noreferrer"> -->
-          {{ t('menus.docs') }}
-          <!-- </a> -->
-        </a-menu-item>
         <a-menu-item key="Community">
-          {{ t('menus.community') }}
+          {{ $t('menus.community') }}
         </a-menu-item>
       </a-menu>
       <div class="btn app-btn">
-        {{ t('btn.app') }}
+        {{ $t('btn.app') }}
       </div>
       <!-- <m-account class="m-account"></m-account> -->
     </div>
@@ -97,15 +95,13 @@
 
     .m-header-container {
       height: 100%;
-      max-width: 1100px;
-      width: 100%;
       display: flex;
       align-items: center;
       padding: 0 10px;
 
       .m-logo {
         height: 27px;
-        margin-right: 125px;
+        margin-right: 65px;
       }
 
       .m-menu {
@@ -128,6 +124,6 @@
     line-height: 21px;
     color: #498a9a;
     padding: 13px 30px 13px 60px;
-    background: url('../../assets/images/icon/borrow.png') 30px center / 20px no-repeat #e2faff;
+    background: url('../../assets/images/icon/app.png') 30px center / 20px no-repeat #e2faff;
   }
 </style>

@@ -23,9 +23,23 @@
   "btn": {
     "app": "开始借贷",
     "starmask-wallet": "StarMask钱包",
-    "faq": "常见问题"
+    "faq": "常见问题",
+    "more": "了解更多",
+    "whitepaper": "白 皮 书",
+    "resource": "资 源",
+    "forum": "访问论坛",
+    "borrow": "了解借贷"
   },
-
+  "community": {
+    "joinLeftText": "加入",
+    "joinRightText": "社区",
+    "intro": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
+  },
+  "governance": {
+    "my": "我的信息",
+    "suffrage": "投票权",
+    "vote": "开始投票"
+  },
   "marketTable": {
     "head": ["资产", "存款市场", "存款APY", "借款市场", "借款APY", "剩余可借($)", "操作"]
   },

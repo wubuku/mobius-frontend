@@ -13,7 +13,17 @@ const routes = [
       {
         path: 'market',
         name: 'Market',
-        component: () => import(/* webpackChunkName: "home" */ 'views/Market.vue'),
+        component: () => import(/* webpackChunkName: "market" */ 'views/Market.vue'),
+      },
+      {
+        path: 'governance',
+        name: 'Governance',
+        component: () => import(/* webpackChunkName: "governance" */ 'views/Governance.vue'),
+      },
+      {
+        path: 'community',
+        name: 'Community',
+        component: () => import(/* webpackChunkName: "community" */ 'views/Community.vue'),
       },
     ],
   },

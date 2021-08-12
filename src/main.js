@@ -25,8 +25,9 @@ const app = createApp(App);
 // ant-design-vue
 import 'ant-design-vue/dist/antd.css';
 import 'assets/style/ant-theme';
-import { Menu, message, Table } from 'ant-design-vue';
-app.use(Menu).use(Table);
+import { Menu, message, Table, Tag, Button } from 'ant-design-vue';
+app.use(Menu).use(Table).use(Tag).use(Button);
+
 app.config.globalProperties.$message = message;
 
 app

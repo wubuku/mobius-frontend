@@ -2,6 +2,7 @@ body {
   font-family: PingFangSC;
 }
 
+//  ================ Menu =================
 .ant-menu-horizontal {
   border: none;
 }
@@ -29,54 +30,78 @@ body {
   }
 }
 
+//  ================ Table ================
 .ant-table-tbody > tr > td {
   border-bottom: none;
   transition: background 0.3s;
 }
 
-.ant-table-thead {
-  width: 100%;
-  display: flex;
+// .ant-table-thead {
+//   width: 100%;
+//   display: flex;
 
-  & > tr {
-    flex: 1;
-    display: flex;
-    & > th {
-      background-color: transparent;
-      border-bottom: 0;
-      flex: 1;
-    }
-  }
+//   & > tr {
+//     flex: 1;
+//     display: flex;
+//     & > th {
+//       background-color: transparent;
+//       border-bottom: 0;
+//       flex: 1;
+//     }
+//   }
+// }
+
+.common-row {
+  margin: 20px 0;
 }
 
-.ant-table-thead
-  > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
-  > td,
-.ant-table-tbody
-  > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
-  > td,
-.ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
-.ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
-  background-color: transparent;
-}
+// .ant-table-thead
+//   > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+//   > td,
+// .ant-table-tbody
+//   > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+//   > td,
+// .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
+// .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+//   background-color: transparent;
+// }
 
-.ant-table-thead > tr > th,
-.ant-table-tbody > tr > td {
-  padding: 20px;
-}
+// .ant-table-thead > tr > th,
+// .ant-table-tbody > tr > td {
+//   padding: 20px;
+// }
 
-.ant-table-row {
-  background: #f7f9fa;
-  box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.05);
-  border-radius: 22.5px;
-  margin: 16px 0;
-  min-height: 90px;
-  display: flex;
-  align-items: center;
+// .ant-table-row {
+//   background: #f7f9fa;
+//   box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.05);
+//   border-radius: 22.5px;
+//   margin: 16px 0;
+//   min-height: 90px;
+//   align-items: center;
+//   font-size: 16px;
+//   color: black;
+// }
+
+//  ================ Button =================
+.ant-btn {
+  background: #51afc6;
+  border-radius: 17.5px;
+  color: white;
   font-size: 16px;
-  color: black;
+  width: 90.16px;
+  height: 35px;
+  box-shadow: none;
+  border: none;
+  margin-right: 10px;
 
-  & > td {
-    flex: 1;
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: #51afc6;
+    color: white;
   }
 }

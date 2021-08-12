@@ -18,32 +18,15 @@
     </div>
 
     <div class="token-table">
-      <a-table :columns="columns" :data-source="data" :pagination="false">
-        <template #name="{ text }">
-          <a>{{ text }}</a>
-        </template>
-        <template #customTitle>
-          <span>Name</span>
-        </template>
-        <template #tags="{ text: tags }">
-          <span>
-            <a-tag
-              v-for="tag in tags"
-              :key="tag"
-              :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
-            >
-              {{ tag.toUpperCase() }}
-            </a-tag>
-          </span>
-        </template>
-        <template #action="{ record }">
-          <span>
-            <a>Invite 一 {{ record.name }}</a>
-            <a-divider type="vertical" />
-            <a>Delete</a>
-            <a-divider type="vertical" />
-            <a class="ant-dropdown-link">More actions</a>
-          </span>
+      <a-table
+        :columns="columns"
+        :data-source="data"
+        :pagination="false"
+        :rowClassName="() => 'common-row'"
+      >
+        <template #opt="{ record }">
+          <a-button @click="borrow(record)">存款</a-button>
+          <a-button class="borrow" @click="borrow(record)">借款</a-button>
         </template>
       </a-table>
     </div>
@@ -52,46 +35,9 @@
 
 <script>
   import { defineComponent } from 'vue';
-  const columns = [
-    {
-      dataIndex: 'name',
-      key: 'name',
-      align: 'center',
-      slots: {
-        title: 'customTitle',
-        customRender: 'name',
-      },
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-      align: 'center',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      align: 'center',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      slots: {
-        customRender: 'tags',
-      },
-      align: 'center',
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      align: 'center',
-      slots: {
-        customRender: 'action',
-      },
-    },
-  ];
+  import { useI18n } from 'vue-i18n';
+  import { MarketColumns } from 'config/TablesColumnConfig';
+
   const data = [
     {
       key: '1',
@@ -115,12 +61,21 @@
       tags: ['cool', 'teacher'],
     },
   ];
+
   export default defineComponent({
     props: {},
     setup() {
+      const { t } = useI18n();
+
+      const borrow = (record) => {
+        console.log(record);
+      };
+
       return {
         data,
-        columns,
+        columns: MarketColumns(t),
+
+        borrow,
       };
     },
   });
