@@ -84,25 +84,6 @@
         }
       }
 
-      .offical-icon {
-        margin-right: 160px;
-        .icon {
-          cursor: pointer;
-          width: 25px;
-          height: 25px;
-          background: url('../../assets/images/icon/tele.png') 0 0 / cover no-repeat;
-          margin-bottom: 20px;
-
-          &.twitter {
-            background-image: url('../../assets/images/icon/twitter.png');
-          }
-
-          &.github {
-            background-image: url('../../assets/images/icon/github.png');
-          }
-        }
-      }
-
       .link-box {
         flex: 1;
         display: flex;

@@ -90,6 +90,16 @@ body {
     left: 2px;
     top: 2px;
   }
+
+  &.primary {
+    font-size: 16px;
+    line-height: 19px;
+    background: #51afc6;
+    border-radius: 17.5px;
+    color: #ffffff;
+    text-align: center;
+    padding: 8px 35px;
+  }
 }
 
 .big-btn {
@@ -135,5 +145,36 @@ body {
     border-radius: 80px;
     font-weight: 900;
     color: white;
+  }
+}
+
+.offical-icon {
+  margin-right: 160px;
+  .icon {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    background: url('../../assets/images/icon/tele.png') 0 0 / cover no-repeat;
+    margin-bottom: 20px;
+
+    &.twitter {
+      background-image: url('../../assets/images/icon/twitter.png');
+    }
+
+    &.github {
+      background-image: url('../../assets/images/icon/github.png');
+    }
+
+    &.gray {
+      background-image: url('../../assets/images/icon/tele-gray.png');
+
+      &.twitter {
+        background-image: url('../../assets/images/icon/twitter-gray.png');
+      }
+
+      &.github {
+        background-image: url('../../assets/images/icon/github-gray.png');
+      }
+    }
   }
 }

@@ -3,7 +3,7 @@
  **/
 export const MarketColumns = (t) => [
   {
-    title: t('marketTable.head[0]'),
+    title: t('official.marketTable.head[0]'),
     dataIndex: 'name',
     defaultSortOrder: 'descend',
     sorter: true,
@@ -13,7 +13,7 @@ export const MarketColumns = (t) => [
     },
   },
   {
-    title: t('marketTable.head[1]'),
+    title: t('official.marketTable.head[1]'),
     dataIndex: 'name',
     defaultSortOrder: 'descend',
     sorter: true,
@@ -23,7 +23,7 @@ export const MarketColumns = (t) => [
     },
   },
   {
-    title: t('marketTable.head[2]'),
+    title: t('official.marketTable.head[2]'),
     dataIndex: 'name',
     defaultSortOrder: 'descend',
     sorter: true,
@@ -33,7 +33,7 @@ export const MarketColumns = (t) => [
     },
   },
   {
-    title: t('marketTable.head[3]'),
+    title: t('official.marketTable.head[3]'),
     dataIndex: 'name',
     defaultSortOrder: 'descend',
     sorter: true,
@@ -43,7 +43,7 @@ export const MarketColumns = (t) => [
     },
   },
   {
-    title: t('marketTable.head[4]'),
+    title: t('official.marketTable.head[4]'),
     dataIndex: 'name',
     defaultSortOrder: 'descend',
     sorter: true,
@@ -53,7 +53,7 @@ export const MarketColumns = (t) => [
     },
   },
   {
-    title: t('marketTable.head[5]'),
+    title: t('official.marketTable.head[5]'),
     dataIndex: 'name',
     defaultSortOrder: 'descend',
     sorter: true,
@@ -63,7 +63,7 @@ export const MarketColumns = (t) => [
     },
   },
   {
-    title: t('marketTable.head[6]'),
+    title: t('official.marketTable.head[6]'),
     dataIndex: 'opt',
     align: 'center',
     slots: {

@@ -11,16 +11,16 @@
         @click="menuClick"
       >
         <a-menu-item key="Home">
-          {{ $t('menus.index') }}
+          {{ $t('official.menus.index') }}
         </a-menu-item>
         <a-menu-item key="Market">
-          {{ $t('menus.market') }}
+          {{ $t('official.menus.market') }}
         </a-menu-item>
         <a-menu-item key="Governance">
-          {{ $t('menus.governance') }}
+          {{ $t('official.menus.governance') }}
         </a-menu-item>
         <a-sub-menu key="Docs">
-          <template #title>{{ $t('menus.docs') }}</template>
+          <template #title>{{ $t('official.menus.docs') }}</template>
           <a-menu-item-group title="Item 1">
             <a-menu-item key="setting:1">Option 1</a-menu-item>
             <a-menu-item key="setting:2">Option 2</a-menu-item>
@@ -31,11 +31,11 @@
           </a-menu-item-group>
         </a-sub-menu>
         <a-menu-item key="Community">
-          {{ $t('menus.community') }}
+          {{ $t('official.menus.community') }}
         </a-menu-item>
       </a-menu>
-      <div class="btn app-btn">
-        {{ $t('btn.app') }}
+      <div class="btn app-btn" @click="goBorrow">
+        {{ $t('official.btn.app') }}
       </div>
       <!-- <m-account class="m-account"></m-account> -->
     </div>
@@ -77,11 +77,19 @@
         });
       };
 
+      const goBorrow = () => {
+        router.push({
+          name: 'BorrowHome',
+        });
+      };
+
       return {
         APP_NAME,
         current,
         t,
+
         menuClick,
+        goBorrow,
       };
     },
   });

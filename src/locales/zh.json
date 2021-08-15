@@ -1,61 +1,89 @@
 {
-  "menus": {
-    "index": "首页",
-    "market": "市场",
-    "governance": "治理",
-    "docs": "开发者",
-    "community": "社区"
-  },
-  "index": [
-    {
-      "title": "测测你能借多少钱",
-      "content": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
+  "official": {
+    "menus": {
+      "index": "首页",
+      "market": "市场",
+      "governance": "治理",
+      "docs": "开发者",
+      "community": "社区"
     },
-    {
-      "title": "安全是我们的第一要素",
-      "content": "WePiggy 的智能合约代码全部开源，并经过严格测试和慢雾科技的专业审计。资产存储在区块链网络中，透明可追溯，开发团队无法挪用资金。"
+    "index": [
+      {
+        "title": "测测你能借多少钱",
+        "content": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
+      },
+      {
+        "title": "安全是我们的第一要素",
+        "content": "WePiggy 的智能合约代码全部开源，并经过严格测试和慢雾科技的专业审计。资产存储在区块链网络中，透明可追溯，开发团队无法挪用资金。"
+      },
+      {
+        "title": "科学治理 从第一天开始",
+        "content": "WePiggy 的核心开发团队对协议治理有着更为积极，更负责任的考量——从项目挖矿开始，就与社区一同建设独特的 DAO 价值观和科学的治理框架。"
+      }
+    ],
+    "btn": {
+      "app": "开始借贷",
+      "starmask-wallet": "StarMask钱包",
+      "faq": "常见问题",
+      "more": "了解更多",
+      "whitepaper": "白 皮 书",
+      "resource": "资 源",
+      "forum": "访问论坛",
+      "borrow": "了解借贷"
     },
-    {
-      "title": "科学治理 从第一天开始",
-      "content": "WePiggy 的核心开发团队对协议治理有着更为积极，更负责任的考量——从项目挖矿开始，就与社区一同建设独特的 DAO 价值观和科学的治理框架。"
+    "community": {
+      "joinLeftText": "加入",
+      "joinRightText": "社区",
+      "intro": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
+    },
+    "governance": {
+      "my": "我的信息",
+      "suffrage": "投票权",
+      "vote": "开始投票"
+    },
+    "marketTable": {
+      "head": ["资产", "存款市场", "存款APY", "借款市场", "借款APY", "剩余可借($)", "操作"]
+    },
+    "footer": {
+      "about": "关于",
+      "team": "团队",
+      "career": "招贤纳士",
+      "privacy": "隐私政策",
+      "terms": "使用条款",
+      "concact": "联系我们",
+      "resource": "资源",
+      "faq": "FAQ",
+      "stc-homepage": "STC主页",
+      "oracles": "语言机",
+      "product": "相关产品",
+      "starmask-wallet": "StarMask钱包",
+      "swap": "兑换"
     }
-  ],
-  "btn": {
-    "app": "开始借贷",
-    "starmask-wallet": "StarMask钱包",
-    "faq": "常见问题",
-    "more": "了解更多",
-    "whitepaper": "白 皮 书",
-    "resource": "资 源",
-    "forum": "访问论坛",
-    "borrow": "了解借贷"
   },
-  "community": {
-    "joinLeftText": "加入",
-    "joinRightText": "社区",
-    "intro": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
-  },
-  "governance": {
-    "my": "我的信息",
-    "suffrage": "投票权",
-    "vote": "开始投票"
-  },
-  "marketTable": {
-    "head": ["资产", "存款市场", "存款APY", "借款市场", "借款APY", "剩余可借($)", "操作"]
-  },
-  "footer": {
-    "about": "关于",
-    "team": "团队",
-    "career": "招贤纳士",
-    "privacy": "隐私政策",
-    "terms": "使用条款",
-    "concact": "联系我们",
-    "resource": "资源",
-    "faq": "FAQ",
-    "stc-homepage": "STC主页",
-    "oracles": "语言机",
-    "product": "相关产品",
-    "starmask-wallet": "StarMask钱包",
-    "swap": "兑换"
+  "borrow": {
+    "menus": {
+      "home": "借贷主页",
+      "resource": "我的资产",
+      "deposit": "存款/取款",
+      "loan": "借贷/还贷",
+      "history": "历史记录",
+      "governance": "治理",
+      "faq": "常见问题"
+    },
+    "home": {
+      "tips": "暂不可借贷，请存入资产后借款；",
+      "depositTitle": "当前可借",
+      "main": {
+        "nowBorrow": "现在可借",
+        "borrowNow": "马上借贷",
+        "averageMortgageRate": "平均抵押率",
+        "borrowAPY": "借贷APY",
+        "mortgareValue": "抵押品价值"
+      }
+    },
+    "btn": {
+      "connect": "链接钱包",
+      "depositnow": "马上存款!"
+    }
   }
 }

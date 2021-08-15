@@ -1,55 +1,55 @@
 export default (t) => [
   {
-    title: t('footer.about'),
+    title: t('official.footer.about'),
     links: [
       {
-        name: t('footer.team'),
+        name: t('official.footer.team'),
         link: '',
       },
       {
-        name: t('footer.career'),
+        name: t('official.footer.career'),
         link: '',
       },
       {
-        name: t('footer.privacy'),
+        name: t('official.footer.privacy'),
         link: '',
       },
       {
-        name: t('footer.terms'),
+        name: t('official.footer.terms'),
         link: '',
       },
       {
-        name: t('footer.concact'),
+        name: t('official.footer.concact'),
         link: '',
       },
     ],
   },
   {
-    title: t('footer.resource'),
+    title: t('official.footer.resource'),
     links: [
       {
-        name: t('footer.faq'),
+        name: t('official.footer.faq'),
         link: '',
       },
       {
-        name: t('footer.stc-homepage'),
+        name: t('official.footer.stc-homepage'),
         link: '',
       },
       {
-        name: t('footer.oracles'),
+        name: t('official.footer.oracles'),
         link: '',
       },
     ],
   },
   {
-    title: t('footer.product'),
+    title: t('official.footer.product'),
     links: [
       {
-        name: t('footer.starmask-wallet'),
+        name: t('official.footer.starmask-wallet'),
         link: '',
       },
       {
-        name: t('footer.swap'),
+        name: t('official.footer.swap'),
         link: '',
       },
     ],

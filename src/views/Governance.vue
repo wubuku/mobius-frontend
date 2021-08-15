@@ -4,12 +4,12 @@
       <div class="center-container">
         <img src="../assets/images/governance/banner.png" class="banner" />
         <div class="info">
-          <h3>{{ $t('governance.my') }}</h3>
+          <h3>{{ $t('official.governance.my') }}</h3>
           <p class="number">100</p>
-          <div class="btn suffrage">{{ $t('governance.suffrage') }}</div>
+          <div class="btn suffrage">{{ $t('official.governance.suffrage') }}</div>
         </div>
         <div class="btn big-btn vote">
-          {{ $t('governance.vote') }}
+          {{ $t('official.governance.vote') }}
         </div>
       </div>
     </div>

@@ -28,14 +28,53 @@ const routes = [
     ],
   },
   {
+    path: '/borrow',
+    component: () => import(/* webpackChunkName: "borrow" */ 'layout/Borrow.vue'),
+    children: [
+      {
+        path: '',
+        name: 'BorrowHome',
+        component: () => import(/* webpackChunkName: "borrow-home" */ 'views/Borrow/Home.vue'),
+      },
+      {
+        path: 'resource',
+        name: 'BorrowResource',
+        component: () =>
+          import(/* webpackChunkName: "borrow-resource" */ 'views/Borrow/Resource.vue'),
+      },
+      {
+        path: 'deposit',
+        name: 'BorrowDeposit',
+        component: () =>
+          import(/* webpackChunkName: "borrow-deposit" */ 'views/Borrow/Deposit.vue'),
+      },
+      {
+        path: 'loan',
+        name: 'BorrowLoan',
+        component: () => import(/* webpackChunkName: "borrow-loan" */ 'views/Borrow/Loan.vue'),
+      },
+      {
+        path: 'history',
+        name: 'BorrowHistory',
+        component: () =>
+          import(/* webpackChunkName: "borrow-history" */ 'views/Borrow/History.vue'),
+      },
+    ],
+  },
+  {
     path: '/:catchAll(.*)',
     redirect: { name: 'Home' },
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory('/'),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  console.log(to);
+  next();
 });
 
 export default router;

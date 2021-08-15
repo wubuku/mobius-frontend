@@ -10,10 +10,14 @@
       :class="{ reverse: index % 2 }"
     >
       <div class="left">
-        <div class="title" v-for="title in $t(`index[${index}].title`).split(' ')" :key="title">
+        <div
+          class="title"
+          v-for="title in $t(`official.index[${index}].title`).split(' ')"
+          :key="title"
+        >
           {{ title }}
         </div>
-        <div class="content">{{ $t(`index[${index}].content`) }}</div>
+        <div class="content">{{ $t(`official.index[${index}].content`) }}</div>
       </div>
       <div class="right">
         <img :src="banner" alt="" />
@@ -23,12 +27,12 @@
       <div class="center-container">
         <div class="left">
           <div class="btn big-btn wallet">
-            {{ $t('btn.starmask-wallet') }}
+            {{ $t('official.btn.starmask-wallet') }}
           </div>
         </div>
         <div class="right">
           <div class="btn big-btn faq">
-            {{ $t('btn.faq') }}
+            {{ $t('official.btn.faq') }}
           </div>
         </div>
       </div>

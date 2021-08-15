@@ -3,13 +3,13 @@
     <div class="top">
       <div class="left">
         <div class="title">
-          {{ $t('community.joinLeftText') }}
+          {{ $t('official.community.joinLeftText') }}
           <img src="../assets/images/community/mobius-text.png" class="logo" />
-          {{ $t('community.joinRightText') }}
+          {{ $t('official.community.joinRightText') }}
         </div>
-        <div class="content">{{ $t('community.intro') }}</div>
+        <div class="content">{{ $t('official.community.intro') }}</div>
         <div class="btn big-btn more">
-          {{ $t('btn.more') }}
+          {{ $t('official.btn.more') }}
         </div>
       </div>
       <img src="../assets/images/community/banner.png" class="right-banner" />
@@ -18,7 +18,7 @@
       <div class="center-container">
         <div class="left" v-for="btn in btnsList" :key="btn">
           <div class="btn big-btn" :class="[btn]">
-            {{ $t(`btn.${btn}`) }}
+            {{ $t(`official.btn.${btn}`) }}
           </div>
         </div>
       </div>
