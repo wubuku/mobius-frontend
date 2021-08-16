@@ -15,6 +15,7 @@
         <router-view></router-view>
       </div>
       <div class="borrow-footer">
+        <a-switch class="theme-switch" v-model:checked="theme" />
         <router-link :to="{ name: 'Home' }">
           <img class="logo" src="../assets/images/borrow/logo-gray.png" />
         </router-link>
@@ -34,7 +35,7 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import BorrowMenus from 'comp/Borrow/Menus.vue';
   import BorrowFooterLinks from 'config/BorrowFooterLinks';
   import { useI18n } from 'vue-i18n';
@@ -46,9 +47,11 @@
     },
     setup() {
       const { t } = useI18n();
+      const theme = ref('');
 
       return {
         links: BorrowFooterLinks(t),
+        theme,
       };
     },
   });
@@ -66,7 +69,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 35px 0 0;
+      padding: 35px 15px 0;
 
       .logo {
         width: 149px;
@@ -90,12 +93,22 @@
 
       .container {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .borrow-footer {
         display: flex;
         width: 100%;
         padding: 50px 0;
+        position: relative;
+
+        .theme-switch {
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
 
         .logo {
           width: 190px;

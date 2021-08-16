@@ -25,8 +25,41 @@ const app = createApp(App);
 // ant-design-vue
 import 'ant-design-vue/dist/antd.css';
 import 'assets/style/ant-theme';
-import { Menu, message, Table, Tag, Button } from 'ant-design-vue';
-app.use(Menu).use(Table).use(Tag).use(Button);
+import {
+  Menu,
+  message,
+  Table,
+  Tag,
+  Button,
+  Progress,
+  Tabs,
+  Select,
+  Form,
+  Input,
+  InputSearch,
+  Switch,
+  Card,
+  Divider,
+  Descriptions,
+  Slider,
+} from 'ant-design-vue';
+
+app
+  .use(Menu)
+  .use(Table)
+  .use(Tag)
+  .use(Button)
+  .use(Progress)
+  .use(Tabs)
+  .use(Select)
+  .use(Form)
+  .use(Input)
+  .use(InputSearch)
+  .use(Switch)
+  .use(Card)
+  .use(Divider)
+  .use(Descriptions)
+  .use(Slider);
 
 app.config.globalProperties.$message = message;
 

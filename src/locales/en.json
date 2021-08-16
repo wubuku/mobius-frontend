@@ -25,11 +25,11 @@
       "app": "App",
       "starmask-wallet": "StarMask Wallet",
       "faq": "FAQ",
-      "more": "More",
+      "more": "Learn More",
       "whitepaper": "White Paper",
       "resource": "Resource",
       "forum": "Forum",
-      "borrow": "Borrow"
+      "borrow": "Learn about Borrow"
     },
     "community": {
       "joinLeftText": "Join",
@@ -37,8 +37,8 @@
       "intro": "WePiggy 已部署在以太坊、OKEx 交易链、币安智能链、Polygon、火币生态链，近期将陆续 Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷Arbitrum、Optimism 等知名公链和二层网络，并实现跨链资产的兑换与借贷。"
     },
     "governance": {
-      "my": "Infomation",
-      "suffrage": "Suffrage",
+      "my": "Your information",
+      "suffrage": "Your Voting Power",
       "vote": "Vote"
     },
     "marketTable": {
@@ -58,28 +58,40 @@
       "product": "Product",
       "starmask-wallet": "StarMask Wallet",
       "swap": "Swap"
+    },
+    "index[0]": {
+      "title": "Your Borrow Amount"
+    },
+    "index[1]": {
+      "title": "Safety Stuff"
+    },
+    "index[2]": {
+      "title": "Governance Stuff"
     }
   },
   "borrow": {
     "menus": {
       "home": "Home",
-      "resource": "Resource",
+      "resource": "My Assets",
       "deposit": "Deposit/Withdraw",
-      "loan": "loan",
+      "loan": "Borrow/Repay",
       "history": "History",
       "governance": "Governance",
       "faq": "FAQ"
     },
     "home": {
       "tips": "暂不可借贷，请存入资产后借款；",
-      "depositTitle": "当前可借",
+      "depositTitle": "You can borrow",
       "main": {
-        "nowBorrow": "现在可借",
-        "borrowNow": "马上借贷",
-        "averageMortgageRate": "平均抵押率",
-        "borrowAPY": "借贷APY",
-        "mortgareValue": "抵押品价值"
+        "nowBorrow": "Borrow amount",
+        "borrowNow": "Borrow Now",
+        "averageMortgageRate": "Average CCR",
+        "borrowAPY": "Borrow APY",
+        "mortgareValue": "Collateral Value"
       }
+    },
+    "assets": {
+      "Available Rewards": "Available Rewards"
     },
     "btn": {
       "connect": "Connect",

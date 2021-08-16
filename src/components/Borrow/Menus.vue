@@ -95,13 +95,6 @@
       margin-bottom: 5px;
       cursor: pointer;
 
-      &:hover,
-      &.actived {
-        background-color: #fff;
-        border-radius: 22.5px;
-        color: #51afc6;
-      }
-
       @icons: home, resource, deposit, loan, history, governance, faq;
       each(@icons, {
           &.@{value} {
@@ -113,9 +106,23 @@
               margin-right: 10px;
               background: url('../../assets/images/borrow/icon/@{value}.png') 0 0 / contain no-repeat;
             }
+
+            &:hover,
+            &.actived {
+              &:before {
+                 background: url('../../assets/images/borrow/icon/@{value}-active.png') 0 0 / contain no-repeat;
+              }
+            }
           }
         }
       );
+
+      &:hover,
+      &.actived {
+        background-color: #fff;
+        border-radius: 22.5px;
+        color: #51afc6;
+      }
     }
   }
 </style>

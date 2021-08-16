@@ -31,6 +31,10 @@
       "forum": "访问论坛",
       "borrow": "了解借贷"
     },
+    "markt": {
+      "depositMarketSize": "存款市场规模",
+      "borrowMarketSize": "借款市场规模"
+    },
     "community": {
       "joinLeftText": "加入",
       "joinRightText": "社区",
@@ -42,7 +46,11 @@
       "vote": "开始投票"
     },
     "marketTable": {
+      "title": "市场",
       "head": ["资产", "存款市场", "存款APY", "借款市场", "借款APY", "剩余可借($)", "操作"]
+    },
+    "proposalsTable": {
+      "title": "治理提案"
     },
     "footer": {
       "about": "关于",
