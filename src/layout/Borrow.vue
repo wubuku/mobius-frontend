@@ -9,7 +9,7 @@
     <div class="borrow-content">
       <div class="borrow-header">
         <div class="gas-box">15 WEI</div>
-        <div class="btn primary connect-wallet">{{ $t('borrow.btn.connect') }}</div>
+        <connect-btn></connect-btn>
       </div>
       <div class="container">
         <router-view></router-view>
@@ -35,19 +35,30 @@
 </template>
 
 <script>
-  import { defineComponent, ref } from 'vue';
-  import BorrowMenus from 'comp/Borrow/Menus.vue';
-  import BorrowFooterLinks from 'config/BorrowFooterLinks';
+  import { defineComponent, onBeforeMount, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
+
+  import BorrowFooterLinks from 'config/BorrowFooterLinks';
+  import useUser from '@/uses/useUser';
+
+  import BorrowMenus from 'comp/Borrow/Menus.vue';
+  import ConnectBtn from 'comp/Borrow/ConnectBtn';
+
+  import useToken from '../uses/useToken';
 
   export default defineComponent({
     props: {},
     components: {
       BorrowMenus,
+      ConnectBtn,
     },
     setup() {
       const { t } = useI18n();
       const theme = ref('');
+      const { accountHash } = useUser();
+      const { tokenList, getTokenList } = useToken();
+
+      getTokenList();
 
       return {
         links: BorrowFooterLinks(t),
@@ -95,7 +106,6 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
       }
 
       .borrow-footer {

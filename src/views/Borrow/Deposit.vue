@@ -117,11 +117,11 @@
     display: flex;
     gap: 30px;
 
-    ::v-deep .ant-tabs-bar {
+    :depp(.ant-tabs-bar) {
       margin: 0;
     }
 
-    ::v-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar {
+    :depp(.ant-tabs.ant-tabs-card .ant-tabs-card-bar) {
       .ant-tabs-nav-container {
         font-size: 26px;
         line-height: 30px;
@@ -268,7 +268,7 @@
     }
   }
 
-  ::v-deep .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  :depp(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
     border: 0;
     outline: none;
   }

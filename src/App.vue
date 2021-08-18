@@ -19,7 +19,7 @@
 
       try {
         const appConfig = JSON.parse(localStorage.getItem(Constans.APP_CONFIG_KEY));
-        dispatch('setAppConfig', appConfig);
+        dispatch('$setAppConfig', appConfig);
       } catch (e) {
         console.error('No Localstorage');
       }

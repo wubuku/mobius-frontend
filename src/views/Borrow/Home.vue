@@ -30,7 +30,17 @@
         </div>
       </div>
 
-      table
+      <div class="table-title">
+        <span>所有资产</span>
+      </div>
+      <a-table :dataSource="tokenList" :columns="TokenColumn" :pagination="false">
+        <template #action="{ record }">
+          <div class="action-btn-box">
+            <a-button class="btn">{{ record.name }}</a-button>
+            <a-button danger class="btn">{{ record.name }}</a-button>
+          </div>
+        </template>
+      </a-table>
     </div>
 
     <div class="empty" v-if="false">
@@ -43,8 +53,11 @@
 
 <script>
   import { defineComponent, ref } from 'vue';
-  import LabelNumber from 'comp/Borrow/LabelNumber';
   import { useI18n } from 'vue-i18n';
+
+  import LabelNumber from 'comp/Borrow/LabelNumber';
+  import useToken from '../../uses/useToken';
+  import useTable from '../../uses/useTable';
 
   export default defineComponent({
     props: {},
@@ -53,6 +66,9 @@
     },
     setup() {
       const { t } = useI18n();
+      const { tokenList } = useToken();
+      const { TokenColumn } = useTable();
+      console.log(tokenList);
 
       const option = ref({
         tooltip: {
@@ -87,6 +103,8 @@
 
       return {
         option,
+        tokenList,
+        TokenColumn,
       };
     },
   });

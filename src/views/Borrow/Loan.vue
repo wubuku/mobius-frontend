@@ -128,11 +128,11 @@
       z-index: 1;
     }
 
-    ::v-deep .ant-tabs-bar {
+    :deep(.ant-tabs-bar) {
       margin: 0;
     }
 
-    ::v-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar {
+    :deep(.ant-tabs.ant-tabs-card .ant-tabs-card-bar) {
       .ant-tabs-nav-container {
         font-size: 26px;
         line-height: 30px;
@@ -302,26 +302,26 @@
     }
   }
 
-  ::v-deep .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
     border: 0;
     outline: none;
   }
 
-  ::v-deep.ant-slider:hover .ant-slider-track {
+  :deep(.ant-slider:hover .ant-slider-track) {
     background-color: transparent;
   }
 
-  ::v-deep .ant-slider-track {
+  :deep(.ant-slider-track) {
     background-color: transparent;
   }
 
-  ::v-deep .ant-slider-rail {
+  :deep(.ant-slider-rail) {
     height: 6px;
     background: linear-gradient(277.83deg, #ff2257 7.12%, #f09a4f 47.41%, #4ffe80 93.06%);
     border-radius: 6px;
   }
 
-  ::v-deep .ant-slider-handle {
+  :deep(.ant-slider-handle) {
     margin-top: -4px;
     background: #ffffff;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);

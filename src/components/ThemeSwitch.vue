@@ -20,7 +20,7 @@
 
       const { dispatch, getters } = useStore();
       const setDarkTheme = () => {
-        dispatch('setDarkTheme', !getters.darkTheme);
+        dispatch('$setDarkTheme', !getters.darkTheme);
       };
 
       return {
