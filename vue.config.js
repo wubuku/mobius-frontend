@@ -67,6 +67,8 @@ module.exports = {
       .alias.set('@', resolve('src'))
       .set('views', resolve('src/views'))
       .set('mixins', resolve('src/mixins'))
+      .set('service', resolve('src/service'))
+      .set('uses', resolve('src/uses'))
       .set('layout', resolve('src/layout'))
       .set('utils', resolve('src/utils'))
       .set('comp', resolve('src/components'))

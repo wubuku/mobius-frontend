@@ -35,16 +35,21 @@
 </template>
 
 <script>
-  import { defineComponent, onBeforeMount, ref, watch } from 'vue';
+  import { defineComponent, onBeforeMount, onMounted, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { useStore } from 'vuex';
 
   import BorrowFooterLinks from 'config/BorrowFooterLinks';
-  import useUser from '@/uses/useUser';
+  import useUser from 'uses/useUser';
 
   import BorrowMenus from 'comp/Borrow/Menus.vue';
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
 
-  import useToken from '../uses/useToken';
+  import useToken from 'uses/useToken';
+  // import { getAllUnfinishedTxns, doneTxn } from 'utils';
+  import { GetPersonalAssets } from 'service/InitService';
+
+  import { toTokenString } from 'utils';
 
   export default defineComponent({
     props: {},
@@ -55,10 +60,36 @@
     setup() {
       const { t } = useI18n();
       const theme = ref('');
-      const { accountHash } = useUser();
+      const { accountHash, setPersonalAssets } = useUser();
       const { tokenList, getTokenList } = useToken();
+      const store = useStore();
+      const emptyData = ref(false);
 
-      getTokenList();
+      watch(accountHash, () => {
+        getPersonalAssets();
+      });
+
+      // hook
+      onMounted(() => {
+        getTokenList();
+        getPersonalAssets();
+      });
+
+      // method
+      const getPersonalAssets = () => {
+        if (!accountHash.value) return;
+
+        GetPersonalAssets(accountHash.value)
+          .then((res) => {
+            console.log(res);
+            emptyData.value = !res;
+            // 前面是固定格式
+            setPersonalAssets(res.json.items.vec[0][0] || []);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
 
       return {
         links: BorrowFooterLinks(t),

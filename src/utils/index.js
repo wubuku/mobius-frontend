@@ -21,9 +21,21 @@ export const hexToStr = (str) => {
 };
 
 /**
+ * Input number only
+ */
+export const numberInput = (value) => {
+  return value
+    .replace(/[^\d.]/g, '')
+    .replace(/(^0)(\d+)/, '$2')
+    .replace(/^(\.*)(\d+)(\.?)(\d{0,9}).*$/g, '$2$3$4');
+};
+
+/**
  * Token Struct to string
  */
 export const toTokenString = ({ addr = '', module_name = '', name = '' }) => {
   if (!addr || !module_name || !name) return '';
   return `${addr}::${hexToStr(module_name)}::${hexToStr(name)}`;
 };
+
+export * from './Txn';

@@ -21,7 +21,7 @@
   import StarMaskOnboarding from '@starcoin/starmask-onboarding';
   import { shortCutOfAccountHash } from 'utils';
   import { useStore } from 'vuex';
-  import useUser from '@/uses/useUser';
+  import useUser from 'uses/useUser';
   import { useI18n } from 'vue-i18n';
 
   export default defineComponent({

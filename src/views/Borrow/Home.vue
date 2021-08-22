@@ -18,7 +18,9 @@
           <div class="chart-box">
             <v-chart :option="option"></v-chart>
           </div>
-          <div class="btn primary">{{ $t('borrow.home.main.borrowNow') }}</div>
+          <div class="btn primary" @click="goDeposit">
+            {{ $t('borrow.home.main.borrowNow') }}
+          </div>
         </div>
         <div class="right">
           <label-number :label="$t('borrow.home.main.borrowAPY')" value="9.6%"></label-number>
@@ -33,7 +35,12 @@
       <div class="table-title">
         <span>所有资产</span>
       </div>
-      <a-table :dataSource="tokenList" :columns="TokenColumn" :pagination="false">
+      <a-table
+        :dataSource="tokenList"
+        :columns="TokenColumn"
+        :pagination="false"
+        :rowKey="(record) => record.dataIndex"
+      >
         <template #action="{ record }">
           <div class="action-btn-box">
             <a-button class="btn">{{ record.name }}</a-button>
@@ -42,22 +49,20 @@
         </template>
       </a-table>
     </div>
-
-    <div class="empty" v-if="false">
-      <img src="../../assets/images/borrow/no-resource.png" />
-      <p>{{ $t('borrow.home.tips') }}</p>
-      <div class="btn primary">{{ $t('borrow.btn.depositnow') }}</div>
-    </div>
   </div>
 </template>
 
 <script>
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, onMounted, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import LabelNumber from 'comp/Borrow/LabelNumber';
-  import useToken from '../../uses/useToken';
-  import useTable from '../../uses/useTable';
+
+  import useToken from 'uses/useToken';
+  import useTable from 'uses/useTable';
+  import useUser from 'uses/useUser';
+  import { GetPersonalAssets, GetPersonalVoucher, GetTokenAssetId } from 'service/InitService';
+  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     props: {},
@@ -66,9 +71,10 @@
     },
     setup() {
       const { t } = useI18n();
+      const { router } = useRouter();
       const { tokenList } = useToken();
       const { TokenColumn } = useTable();
-      console.log(tokenList);
+      const { accountHash, setPersonalAssets } = useUser();
 
       const option = ref({
         tooltip: {
@@ -101,10 +107,16 @@
         ],
       });
 
+      const goDeposit = () => {
+        router.push({ name: 'BorrowDeposit' });
+      };
+
       return {
         option,
         tokenList,
         TokenColumn,
+
+        goDeposit,
       };
     },
   });
@@ -152,24 +164,6 @@
           height: 265px;
           margin-top: -40px;
         }
-      }
-    }
-
-    .empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin-top: 200px;
-      color: #51afc6;
-
-      img {
-        width: 256px;
-        margin-bottom: 70px;
-      }
-
-      p {
-        margin-bottom: 30px;
       }
     }
   }

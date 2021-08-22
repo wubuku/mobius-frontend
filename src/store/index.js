@@ -1,10 +1,55 @@
 import { createStore } from 'vuex';
-import Promise from 'bluebird';
 
+import Data from './data';
 import Constans from 'utils/Constants';
 
 import { hexToStr, toTokenString } from 'utils';
-import { GetTokenList, TokenStandardPosition } from '../service/InitService';
+import { GetTokenList, TokenStandardPosition } from 'service/InitService';
+
+let tokenUpdating = false;
+const TOKEN_UPDATE_DURATION = 3e3;
+const UpdateTokenList = (commit) => {
+  if (tokenUpdating) {
+    return;
+  }
+  // Get Token List First
+  GetTokenList()
+    .then((res) => {
+      const tokens = res?.json?.payload?.support_token_codes || [];
+
+      if (tokens.length > 0) {
+        // Get Detail of each Token
+        Promise.all(
+          tokens.map((token) => {
+            return TokenStandardPosition(toTokenString(token));
+          }),
+        )
+          .then((tokenDetails) => {
+            // Merge Detail and Token Basic Name
+            commit(
+              'SET_TOKEN_LIST',
+              tokenDetails.map((detail, index) => {
+                return {
+                  address: toTokenString(tokens[index]),
+                  name: hexToStr(tokens[index].name),
+                  ...detail,
+                };
+              }),
+            );
+          })
+          .finally(() => {
+            // FIXME: need to stop
+            // setTimeout(() => {
+            //   tokenUpdating = false;
+            //   UpdateTokenList(commit);
+            // }, TOKEN_UPDATE_DURATION);
+          });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
 
 export default createStore({
   state: {
@@ -59,37 +104,10 @@ export default createStore({
       }
     },
     $getTokenList({ commit }) {
-      // Get Token List First
-      GetTokenList()
-        .then((res) => {
-          const tokens = res?.json?.payload?.support_token_codes || [];
-
-          if (tokens.length > 0) {
-            // Get Detail of each Token
-            Promise.all(
-              tokens.map((token) => {
-                return TokenStandardPosition(toTokenString(token));
-              }),
-            ).then((tokenDetails) => {
-              // Merge Detail and Token Basic Name
-              commit(
-                'SET_TOKEN_LIST',
-                tokenDetails.map((detail, index) => {
-                  const { json = {} } = detail;
-                  return {
-                    address: toTokenString(tokens[index]),
-                    name: hexToStr(tokens[index].name),
-                    ...json,
-                  };
-                }),
-              );
-            });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+      UpdateTokenList(commit);
     },
   },
-  modules: {},
+  modules: {
+    data: Data,
+  },
 });

@@ -2,24 +2,31 @@
   <div class="b-deposit">
     <a-card class="left">
       <a-tabs type="card" class="tab-box" v-model:activeKey="mode">
-        <a-tab-pane key="1" tab="拨款"></a-tab-pane>
-        <a-tab-pane key="2" tab="取款"></a-tab-pane>
+        <a-tab-pane key="deposit" tab="存款"></a-tab-pane>
+        <a-tab-pane key="withdraw" tab="取款"></a-tab-pane>
       </a-tabs>
       <div class="card-container">
         <div class="token">
           <a-select
             class="token-select"
-            v-model:value="token"
-            placeholder="select one country"
-            option-label-prop="label"
-            :options="options"
+            placeholder="Select Token"
+            @change="
+              (tokenName) =>
+                (selectedToken = tokenList.find((token) => token.name == tokenName) || [])
+            "
+            :key="defaultSelectValue"
+            :defaultValue="defaultSelectValue"
+            :defaultActiveFirstOption="true"
+            :filterOption="true"
           >
-            <template #option="{ value: val, label, icon }">
-              <span role="img" :aria-label="val">{{ icon }}</span>
-              &nbsp;&nbsp;{{ label }}
-            </template>
+            <a-select-option v-for="token in tokenList" :value="token.name" :key="token.name">
+              {{ token.name }}
+            </a-select-option>
           </a-select>
-          <div class="apr">存款APR: 2.5%</div>
+          <div class="apr" v-if="selectedToken.token_risk_params">
+            存款APY:
+            {{ selectedToken.token_risk_params.deposit_apy.mantissa / selectedToken.precision }}
+          </div>
         </div>
         <div class="token no-underline">
           <span class="hint">价格: $2600.92</span>
@@ -27,13 +34,36 @@
         </div>
 
         <div class="input-box">
-          <a-input class="amount" placeholder="请输入存款数量" v-model="amount"></a-input>
-          <a-button class="btn input-box-btn">全部</a-button>
+          <a-input
+            class="amount"
+            placeholder="请输入存款数量"
+            v-model:value="amount"
+            @input="() => (amount = numberInput(amount))"
+            :bordered="false"
+            :disabled="!selectedToken.address"
+          ></a-input>
+          <a-button class="btn input-box-btn" @click="setAllAmount">全部</a-button>
         </div>
 
-        <p>当前账户余额: 0 ETH</p>
+        <p v-if="mode == 'deposit' && currentResource.name">
+          当前账户余额: {{ currentResource.amount }} {{ currentResource.name }}
+        </p>
 
-        <a-button class="btn submit-btn" :disabled="true">提交</a-button>
+        <p v-if="currentWithdraw.token_name && mode == 'withdraw'">
+          当前可取:
+          <!-- 这里是要计算出来的 -->
+          {{
+            toHumanReadable({
+              tokenName: currentWithdraw.token_name,
+              amount: currentWithdraw.token_amount,
+            })
+          }}
+          {{ currentWithdraw.token_name }}
+        </p>
+        <!-- {{ collateralList }} -->
+        <a-button class="btn submit-btn" :disabled="!canSubmit" @click="submit">
+          {{ submitBtnText }}
+        </a-button>
       </div>
     </a-card>
 
@@ -44,18 +74,20 @@
       </div>
       <a-divider :dashed="true" />
       <div class="item flex">
-        <div class="label">存款数量(STC)</div>
-        <a-input value="0" />
+        <div class="label">存款数量({{ selectedToken.name }})</div>
+        <span class="amount-span">{{ amount }}</span>
       </div>
       <a-divider :dashed="true" />
       <div class="item flex">
         <div class="label">可借金额</div>
-        <a-input value="0" />
+        <span class="amount-span">0</span>
       </div>
       <a-divider :dashed="true" />
       <div class="item flex">
         <div class="label">市场剩余可取</div>
-        <span>0</span>
+        <span v-if="selectedToken.tokens">
+          {{ selectedToken.tokens.value / selectedToken.precision }}
+        </span>
       </div>
       <div class="item flex">
         <div class="label">最大抵押率</div>
@@ -63,50 +95,162 @@
       </div>
       <div class="item flex">
         <div class="label">是否抵押</div>
-        <a-switch checked-children="是" un-checked-children="否" v-model:checked="diya" />
+        <a-switch checked-children="是" un-checked-children="否" />
       </div>
     </a-card>
   </div>
 </template>
 
 <script>
-  import { defineComponent, ref } from 'vue';
+  import { computed, defineComponent, getCurrentInstance, onMounted, ref, watch } from 'vue';
+  import { useStore } from 'vuex';
+
+  import { DepositContract, WithdrawContract } from 'service/BorrowService';
+  import { GetPersonalVoucher, GetPersonalResource } from 'service/InitService';
+  import { addTxn } from 'utils/Txn';
+  import { numberInput } from 'utils';
+
+  import useToken from 'uses/useToken';
+  import useUser from 'uses/useUser';
+  import { useRoute, useRouter } from 'vue-router';
 
   export default defineComponent({
     props: {},
     setup() {
-      const mode = ref('1');
-      const token = ref('');
-      const amount = ref(0);
+      const { $message } = getCurrentInstance().appContext.config.globalProperties;
+      const { tokenList, firstTokenName, toHumanReadable } = useToken();
+      const { accountHash, myResource, currentResource, collateralList, assetId } = useUser();
+      const route = useRoute();
+      const router = useRouter();
 
-      const options = ref([
-        {
-          value: 'china',
-          label: 'China (中国)',
-          icon: '🇨🇳',
-        },
-        {
-          value: 'usa',
-          label: 'USA (美国)',
-          icon: '🇺🇸',
-        },
-        {
-          value: 'japan',
-          label: 'Japan (日本)',
-          icon: '🇯🇵',
-        },
-        {
-          value: 'korea',
-          label: 'Korea (韩国)',
-          icon: '🇨🇰',
-        },
-      ]);
+      // data
+      const LS_QUERY_KEY = 'depositQuery';
+      const selectedToken = ref({});
+      const mode = ref('deposit');
+      const amount = ref('');
+      const defaultSelectValue = ref('');
+
+      // computed
+      const canSubmit = computed(
+        () => !!selectedToken.value.name && amount.value > 0 && !inputLargerThanAmount.value,
+      );
+      const inputLargerThanAmount = computed(() => {
+        return mode.value == 'deposit'
+          ? amount.value > currentResource.value.amount
+          : amount.value >
+              toHumanReadable({
+                tokenName: currentWithdraw.value.token_name,
+                amount: currentWithdraw.value.token_amount,
+              });
+      });
+      const submitBtnText = computed(() => (canSubmit.value ? '提交' : '余额不足'));
+      const currentWithdraw = computed(() => {
+        return (
+          collateralList.value.find((item) => item.token_name == selectedToken.value.name) || {}
+        );
+      });
+
+      // watch
+      watch(selectedToken, () => {
+        if (!selectedToken.value.name) return;
+
+        if (mode.value == 'deposit') {
+          myResource({
+            account: accountHash.value,
+            address: selectedToken.value.address,
+          });
+        }
+      });
+
+      watch(tokenList, () => {
+        if (selectedToken.value.name) return;
+        selectedToken.value = tokenList.value[0];
+      });
+
+      watch(mode, () => {
+        const queryStr = window.localStorage.getItem(LS_QUERY_KEY);
+        let tab = '';
+        let tokenName = selectedToken.value.name;
+
+        if (queryStr) {
+          const query = JSON.parse(queryStr);
+          tab = query.tab;
+          tokenName = query.tokenName;
+        }
+
+        window.localStorage.setItem(
+          LS_QUERY_KEY,
+          JSON.stringify({
+            tab: mode.value,
+            tokenName,
+          }),
+        );
+
+        amount.value = '';
+      });
+
+      // hook
+      onMounted(() => {
+        let { tab, tokenName } = route.query;
+        if (tab && tokenName) {
+          window.localStorage.setItem(LS_QUERY_KEY, JSON.stringify(route.query));
+          router.replace({ name: 'BorrowDeposit', query: {} });
+        } else if (window.localStorage.getItem(LS_QUERY_KEY)) {
+          const query = JSON.parse(window.localStorage.getItem(LS_QUERY_KEY));
+          tab = query.tab;
+          tokenName = query.tokenName;
+        }
+
+        mode.value = tab || 'deposit';
+        selectedToken.value =
+          tokenList.value.find((item) => item.name === tokenName) || tokenList.value[0] || {};
+
+        defaultSelectValue.value = tokenName || firstTokenName.value;
+      });
+
+      // method
+      const submit = () => {
+        if (mode.value == 'deposit') {
+          // 如果assetId没有的话, 就要用 init_assets
+          DepositContract({
+            token: selectedToken.value,
+            nftId: assetId.value,
+            amount: amount.value,
+          });
+        } else if (mode.value == 'withdraw') {
+          //FIXME: 如果一样的话,要给0
+          WithdrawContract({
+            token: selectedToken.value,
+            nftId: assetId.value,
+            amount: amount.value,
+          });
+        }
+      };
+
+      const setAllAmount = () => {
+        if (currentResource.value.name) {
+          amount.value = currentResource.value.amount;
+        }
+      };
 
       return {
         mode,
-        token,
-        options,
+        selectedToken,
+        tokenList,
+        firstTokenName,
         amount,
+        canSubmit,
+        currentResource,
+        inputLargerThanAmount,
+        submitBtnText,
+        defaultSelectValue,
+        collateralList,
+        currentWithdraw,
+
+        submit,
+        setAllAmount,
+        numberInput,
+        toHumanReadable,
       };
     },
   });
@@ -116,12 +260,13 @@
   .b-deposit {
     display: flex;
     gap: 30px;
+    margin-top: 50px;
 
-    :depp(.ant-tabs-bar) {
+    :deep(.ant-tabs-bar) {
       margin: 0;
     }
 
-    :depp(.ant-tabs.ant-tabs-card .ant-tabs-card-bar) {
+    :deep(.ant-tabs.ant-tabs-card .ant-tabs-card-bar) {
       .ant-tabs-nav-container {
         font-size: 26px;
         line-height: 30px;
@@ -143,7 +288,7 @@
     }
 
     .card-container {
-      height: 380px;
+      height: 460px;
       border: 1px solid #f0f0f0;
       border-top: none;
       padding: 0 35px;
@@ -194,6 +339,11 @@
         font-size: 18px;
       }
 
+      .amount {
+        padding-right: 120px;
+        padding-left: 20px;
+      }
+
       .input-box {
         position: relative;
         margin-bottom: 35px;
@@ -229,9 +379,12 @@
   .left {
     box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.1);
     border-radius: 26px;
+    min-width: 560px;
+    width: 560px;
   }
 
   .right {
+    min-width: 300px;
     width: 300px;
     min-height: 500px;
     background: #ffffff;
@@ -258,17 +411,21 @@
         }
       }
 
-      .ant-input {
+      .amount-span {
         border: none;
         text-align: right;
         font-size: 18px;
-        line-height: 60px;
+        height: 60px;
         width: 70%;
+        word-break: break-all;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
       }
     }
   }
 
-  :depp(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
+  :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
     border: 0;
     outline: none;
   }

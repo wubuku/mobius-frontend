@@ -1,5 +1,11 @@
 <template>
-  <div class="b-resource">
+  <div class="empty" v-if="hasNoAsset">
+    <img src="../../assets/images/borrow/no-resource.png" />
+    <p>{{ $t('borrow.home.tips') }}</p>
+    <div class="btn primary">{{ $t('borrow.btn.depositnow') }}</div>
+  </div>
+
+  <div class="b-resource" v-else>
     <!-- top -->
     <div class="top">
       <div class="reward">
@@ -35,14 +41,82 @@
       </template>
     </a-progress>
 
-    <p>Table</p>
-    <p>Table</p>
+    <div class="table-panel">
+      <h2 class="table-head">存款信息</h2>
+      <a-table
+        :dataSource="collateralList"
+        :columns="CollateralColumn"
+        :pagination="false"
+        row-key="token_name"
+      >
+        <template #amount="{ record }">
+          <span>
+            {{
+              toHumanReadable({
+                tokenName: record.token_name,
+                amount: record.token_amount,
+              })
+            }}
+          </span>
+        </template>
+        <template #action="{ record }">
+          <div class="action-btn-box">
+            <a-button
+              class="btn"
+              @click="deposit({ tab: 'deposit', tokenName: record.token_name })"
+            >
+              存款
+            </a-button>
+            <a-button
+              class="btn"
+              @click="deposit({ tab: 'withdraw', tokenName: record.token_name })"
+            >
+              取款
+            </a-button>
+          </div>
+        </template>
+      </a-table>
+    </div>
+    <p>取款和还款 如果是全部的话, 要传0</p>
+    <div class="table-panel">
+      <h2 class="table-head">贷款信息</h2>
+      <a-table
+        :dataSource="debtList"
+        :columns="DebtColumn"
+        :pagination="false"
+        row-key="token_name"
+      >
+        <template #amount="{ record }">
+          <span>
+            {{
+              toHumanReadable({
+                tokenName: record.token_name,
+                amount: record.token_amount,
+              })
+            }}
+          </span>
+        </template>
+        <template #action="{}">
+          <div class="action-btn-box">
+            <a-button class="btn">借款</a-button>
+            <a-button class="btn">还款</a-button>
+          </div>
+        </template>
+      </a-table>
+    </div>
   </div>
 </template>
 
 <script>
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, watch, onMounted } from 'vue';
+
   import AssetNumber from 'comp/Borrow/AssetNumber';
+
+  import { GetTokenAssetId } from 'service/InitService';
+  import useUser from 'uses/useUser';
+  import useTable from 'uses/useTable';
+  import useToken from 'uses/useToken';
+  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     props: {},
@@ -52,6 +126,11 @@
     setup() {
       const reward = 11.1;
       const unit = 'USDT';
+
+      const { accountHash, collateralList, debtList, hasNoAsset } = useUser();
+      const { CollateralColumn, DebtColumn } = useTable();
+      const { toHumanReadable } = useToken();
+      const router = useRouter();
 
       const option = ref({
         tooltip: {
@@ -84,10 +163,34 @@
         ],
       });
 
+      watch(accountHash, () => {
+        GetTokenAssetId(accountHash.value).then((res) => {
+          console.log(res);
+        });
+      });
+
+      // method
+      const deposit = (query) => {
+        router.push({
+          name: 'BorrowDeposit',
+          query,
+        });
+      };
+
       return {
         reward,
         unit,
         option,
+        CollateralColumn,
+        DebtColumn,
+
+        collateralList,
+        debtList,
+        hasNoAsset,
+
+        toHumanReadable,
+
+        deposit,
       };
     },
   });
@@ -148,6 +251,24 @@
         width: 265px;
         height: 265px;
       }
+    }
+  }
+
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 200px;
+    color: #51afc6;
+
+    img {
+      width: 256px;
+      margin-bottom: 70px;
+    }
+
+    p {
+      margin-bottom: 30px;
     }
   }
 </style>

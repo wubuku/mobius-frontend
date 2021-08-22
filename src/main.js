@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import 'es6-promise';
 import JsonViewer from 'vue3-json-viewer';
 
 import SvgPlugin from 'utils/Svg';

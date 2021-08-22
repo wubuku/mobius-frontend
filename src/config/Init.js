@@ -12,6 +12,7 @@ import {
   Select,
   Form,
   Input,
+  InputNumber,
   Switch,
   Card,
   Divider,
@@ -31,6 +32,7 @@ export const antInit = (app) => {
     .use(Select)
     .use(Form)
     .use(Input)
+    .use(InputNumber)
     .use(Switch)
     .use(Card)
     .use(Divider)

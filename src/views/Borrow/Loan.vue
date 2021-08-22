@@ -10,17 +10,16 @@
         <div class="token">
           <a-select
             class="token-select"
-            v-model:value="token"
-            placeholder="select one country"
-            option-label-prop="label"
-            :options="options"
+            placeholder="Select Token"
+            @change="(token) => (selectedToken = tokenList[token] || [])"
+            :defaultActiveFirstOption="true"
+            :filterOption="true"
           >
-            <template #option="{ value: val, label, icon }">
-              <span role="img" :aria-label="val">{{ icon }}</span>
-              &nbsp;&nbsp;{{ label }}
-            </template>
+            <a-select-option v-for="(token, index) in tokenList" :value="index" :key="token.name">
+              {{ token.name }}
+            </a-select-option>
           </a-select>
-          <div class="apr">存款APR: 2.5%</div>
+          <div class="apr">存款APY: 2.5%</div>
         </div>
         <div class="token no-underline">
           <span class="hint">价格: $2600.92</span>
@@ -71,42 +70,24 @@
 
 <script>
   import { defineComponent, ref } from 'vue';
+  import useToken from 'uses/useToken';
 
   export default defineComponent({
     props: {},
     setup() {
+      const { tokenList } = useToken();
+      const selectedToken = ref({});
+
       const mode = ref('1');
       const token = ref('');
       const amount = ref(0);
       const risk = ref(0);
 
-      const options = ref([
-        {
-          value: 'china',
-          label: 'China (中国)',
-          icon: '🇨🇳',
-        },
-        {
-          value: 'usa',
-          label: 'USA (美国)',
-          icon: '🇺🇸',
-        },
-        {
-          value: 'japan',
-          label: 'Japan (日本)',
-          icon: '🇯🇵',
-        },
-        {
-          value: 'korea',
-          label: 'Korea (韩国)',
-          icon: '🇨🇰',
-        },
-      ]);
-
       return {
         mode,
         token,
-        options,
+        tokenList,
+        selectedToken,
         amount,
         risk,
       };
@@ -125,6 +106,7 @@
       position: absolute;
       right: 30px;
       top: 30px;
+      width: 136px;
       z-index: 1;
     }
 
@@ -154,7 +136,7 @@
     }
 
     .card-container {
-      height: 380px;
+      height: 460px;
       border: 1px solid #f0f0f0;
       border-top: none;
       padding: 0 35px;
