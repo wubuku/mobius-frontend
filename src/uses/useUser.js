@@ -8,13 +8,17 @@ export default () => {
 
   // 获取当前用户的个人资源
   const myResource = ({ account = '', address = '' }) => {
+    if (!account) return;
+
     GetPersonalResource(account).then((tokens) => {
-      const name = address.split('::')[2];
-      currentResource.value = tokens.filter((token) => token['name'] === name)[0] || {
-        amount: 0,
-        name,
-        tokenName: address,
-      };
+      if (Array.isArray(tokens)) {
+        const name = address.split('::')[2];
+        currentResource.value = tokens.filter((token) => token['name'] === name)[0] || {
+          amount: 0,
+          name,
+          tokenName: address,
+        };
+      }
     });
   };
 

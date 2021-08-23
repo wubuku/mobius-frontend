@@ -1,10 +1,8 @@
 import { CurrencyAmount, Star } from '@starcoin/starswap-sdk-core';
-import { JsonProvider } from '@wormhole-stc/txn-wrapper';
+// FIXME: transaction subscribe
+import { JsonProvider, WebsocketProvider } from '@wormhole-stc/txn-wrapper';
+import { SOURCE_ADDRESS, TEST_NETWORK } from 'config';
 import BigNumber from 'bignumber.js';
-
-const SOURCE_ADDRESS = '0x9553fa700207336dd51ef8b0e4f5a2e7';
-// const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
-const TEST_NETWORK = '';
 
 // Global Data
 /**
@@ -49,6 +47,13 @@ export const TokenStandardPosition = (token) => {
       ...base,
     };
   });
+};
+
+/**
+ * Get Transaction Status
+ */
+export const GetTransactionStatus = (txHash) => {
+  return JsonProvider(TEST_NETWORK).getTransaction(txHash);
 };
 
 /**

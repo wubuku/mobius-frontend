@@ -41,7 +41,6 @@
     h3 {
       font-size: 16px;
       line-height: 19px;
-      color: rgba(0, 0, 0, 0.85);
       margin-bottom: 12px;
     }
 
@@ -54,7 +53,6 @@
       align-items: center;
       font-size: 18px;
       line-height: 21px;
-      color: rgba(0, 0, 0, 0.85);
 
       .value {
         text-align: center;

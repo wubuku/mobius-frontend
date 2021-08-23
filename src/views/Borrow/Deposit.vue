@@ -14,13 +14,17 @@
               (tokenName) =>
                 (selectedToken = tokenList.find((token) => token.name == tokenName) || [])
             "
+            option-label-prop="value"
             :key="defaultSelectValue"
             :defaultValue="defaultSelectValue"
             :defaultActiveFirstOption="true"
             :filterOption="true"
           >
             <a-select-option v-for="token in tokenList" :value="token.name" :key="token.name">
-              {{ token.name }}
+              <span style="display: flex; height: 40px; align-items: center">
+                {{ token.name }}
+                <span style="margin-left: auto">ARY: 10%</span>
+              </span>
             </a-select-option>
           </a-select>
           <div class="apr" v-if="selectedToken.token_risk_params">
@@ -49,19 +53,27 @@
           当前账户余额: {{ currentResource.amount }} {{ currentResource.name }}
         </p>
 
-        <p v-if="currentWithdraw.token_name && mode == 'withdraw'">
-          当前可取:
-          <!-- 这里是要计算出来的 -->
-          {{
-            toHumanReadable({
-              tokenName: currentWithdraw.token_name,
-              amount: currentWithdraw.token_amount,
-            })
-          }}
-          {{ currentWithdraw.token_name }}
-        </p>
-        <!-- {{ collateralList }} -->
-        <a-button class="btn submit-btn" :disabled="!canSubmit" @click="submit">
+        <template v-if="mode == 'withdraw'">
+          <p v-if="currentWithdraw.token_name">
+            当前可取:
+            <!-- 这里是要计算出来的 -->
+            {{
+              toHumanReadable({
+                tokenName: currentWithdraw.token_name,
+                amount: currentWithdraw.token_amount,
+              })
+            }}
+            {{ currentWithdraw.token_name }}
+          </p>
+          <p v-else>当前无可取</p>
+        </template>
+
+        <a-button
+          class="btn submit-btn"
+          :disabled="!canSubmit"
+          @click="submit"
+          :loading="btnLoading"
+        >
           {{ submitBtnText }}
         </a-button>
       </div>
@@ -84,7 +96,7 @@
       </div>
       <a-divider :dashed="true" />
       <div class="item flex">
-        <div class="label">市场剩余可取</div>
+        <div class="label">市场剩余可借</div>
         <span v-if="selectedToken.tokens">
           {{ selectedToken.tokens.value / selectedToken.precision }}
         </span>
@@ -93,35 +105,43 @@
         <div class="label">最大抵押率</div>
         <span>0</span>
       </div>
-      <div class="item flex">
+      <!-- <div class="item flex">
         <div class="label">是否抵押</div>
         <a-switch checked-children="是" un-checked-children="否" />
-      </div>
+      </div> -->
     </a-card>
   </div>
 </template>
 
 <script>
-  import { computed, defineComponent, getCurrentInstance, onMounted, ref, watch } from 'vue';
-  import { useStore } from 'vuex';
+  import {
+    computed,
+    defineComponent,
+    getCurrentInstance,
+    inject,
+    onMounted,
+    ref,
+    watch,
+  } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
-  import { DepositContract, WithdrawContract } from 'service/BorrowService';
-  import { GetPersonalVoucher, GetPersonalResource } from 'service/InitService';
+  import { DepositContract, WithdrawContract, InitAssetContract } from 'service/BorrowService';
+  import { GetTransactionStatus } from 'service/InitService';
   import { addTxn } from 'utils/Txn';
   import { numberInput } from 'utils';
 
   import useToken from 'uses/useToken';
   import useUser from 'uses/useUser';
-  import { useRoute, useRouter } from 'vue-router';
 
   export default defineComponent({
     props: {},
     setup() {
-      const { $message } = getCurrentInstance().appContext.config.globalProperties;
+      const $message = inject('$message');
       const { tokenList, firstTokenName, toHumanReadable } = useToken();
       const { accountHash, myResource, currentResource, collateralList, assetId } = useUser();
       const route = useRoute();
       const router = useRouter();
+      const emitter = inject('emitter');
 
       // data
       const LS_QUERY_KEY = 'depositQuery';
@@ -129,6 +149,7 @@
       const mode = ref('deposit');
       const amount = ref('');
       const defaultSelectValue = ref('');
+      const btnLoading = ref(false);
 
       // computed
       const canSubmit = computed(
@@ -143,7 +164,14 @@
                 amount: currentWithdraw.value.token_amount,
               });
       });
-      const submitBtnText = computed(() => (canSubmit.value ? '提交' : '余额不足'));
+      const submitBtnText = computed(() => {
+        if (amount.value == '' && amount.value == 0) {
+          return '提交';
+        } else if (amount.value > 0 && inputLargerThanAmount.value) {
+          return '余额不足';
+        }
+        return '提交';
+      });
       const currentWithdraw = computed(() => {
         return (
           collateralList.value.find((item) => item.token_name == selectedToken.value.name) || {}
@@ -152,7 +180,7 @@
 
       // watch
       watch(selectedToken, () => {
-        if (!selectedToken.value.name) return;
+        if (!selectedToken.value.name || !accountHash.value) return;
 
         if (mode.value == 'deposit') {
           myResource({
@@ -160,6 +188,14 @@
             address: selectedToken.value.address,
           });
         }
+
+        window.localStorage.setItem(
+          LS_QUERY_KEY,
+          JSON.stringify({
+            tab: mode.value,
+            tokenName: selectedToken.value.name,
+          }),
+        );
       });
 
       watch(tokenList, () => {
@@ -191,6 +227,7 @@
 
       // hook
       onMounted(() => {
+        // 参数识别
         let { tab, tokenName } = route.query;
         if (tab && tokenName) {
           window.localStorage.setItem(LS_QUERY_KEY, JSON.stringify(route.query));
@@ -208,22 +245,58 @@
         defaultSelectValue.value = tokenName || firstTokenName.value;
       });
 
+      const formInit = () => {
+        amount.value = '';
+      };
+
       // method
       const submit = () => {
+        btnLoading.value = true;
         if (mode.value == 'deposit') {
           // 如果assetId没有的话, 就要用 init_assets
-          DepositContract({
-            token: selectedToken.value,
-            nftId: assetId.value,
-            amount: amount.value,
-          });
+          if (!assetId.value) {
+            InitAssetContract({
+              token: selectedToken.value,
+              amount: amount.value,
+            })
+              .then((res) => {
+                addTxn(res);
+                formInit();
+                emitter.emit('getPersonalAsset');
+              })
+              .finally(() => {
+                btnLoading.value = false;
+              });
+          } else {
+            DepositContract({
+              token: selectedToken.value,
+              nftId: assetId.value,
+              amount: amount.value,
+            })
+              .then((res) => {
+                formInit();
+                addTxn(res);
+                emitter.emit('getPersonalAsset');
+              })
+              .finally(() => {
+                btnLoading.value = false;
+              });
+          }
         } else if (mode.value == 'withdraw') {
           //FIXME: 如果一样的话,要给0
           WithdrawContract({
             token: selectedToken.value,
             nftId: assetId.value,
             amount: amount.value,
-          });
+          })
+            .then((res) => {
+              formInit();
+              addTxn(res);
+              emitter.emit('getPersonalAsset');
+            })
+            .finally(() => {
+              btnLoading.value = false;
+            });
         }
       };
 
@@ -246,6 +319,7 @@
         defaultSelectValue,
         collateralList,
         currentWithdraw,
+        btnLoading,
 
         submit,
         setAllAmount,
@@ -295,7 +369,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      margin-top: 50px;
 
       .token {
         display: flex;

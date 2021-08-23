@@ -2,7 +2,9 @@
   <div class="empty" v-if="hasNoAsset">
     <img src="../../assets/images/borrow/no-resource.png" />
     <p>{{ $t('borrow.home.tips') }}</p>
-    <div class="btn primary">{{ $t('borrow.btn.depositnow') }}</div>
+    <div class="btn primary" @click="deposit({ tab: 'deposit', tokenName: 'STC' })">
+      {{ $t('borrow.btn.depositnow') }}
+    </div>
   </div>
 
   <div class="b-resource" v-else>

@@ -35,19 +35,20 @@
 </template>
 
 <script>
-  import { defineComponent, onBeforeMount, onMounted, ref, watch } from 'vue';
+  import { defineComponent, inject, onBeforeMount, onMounted, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useStore } from 'vuex';
 
   import BorrowFooterLinks from 'config/BorrowFooterLinks';
   import useUser from 'uses/useUser';
+  import useTransaction from 'uses/useTransaction';
 
   import BorrowMenus from 'comp/Borrow/Menus.vue';
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
 
   import useToken from 'uses/useToken';
-  // import { getAllUnfinishedTxns, doneTxn } from 'utils';
-  import { GetPersonalAssets } from 'service/InitService';
+  // import { getAllUncheckedTxns, doneTxn } from 'utils';
+  import { GetPersonalAssets, GetTransactionStatus } from 'service/InitService';
 
   import { toTokenString } from 'utils';
 
@@ -59,18 +60,38 @@
     },
     setup() {
       const { t } = useI18n();
-      const theme = ref('');
+      const theme = ref(false);
+      const emitter = inject('emitter');
       const { accountHash, setPersonalAssets } = useUser();
       const { tokenList, getTokenList } = useToken();
+      const { startTransactionCheck } = useTransaction();
       const store = useStore();
       const emptyData = ref(false);
+
+      startTransactionCheck();
+
+      window.starcoin.on('tx:confirmed', () => {
+        console.log(...arguments);
+      });
 
       watch(accountHash, () => {
         getPersonalAssets();
       });
 
+      watch(theme, () => {
+        if (theme.value) {
+          window.localStorage.setItem('theme', 'dark');
+          document.querySelector('.borrow-layout').classList.add('dark');
+        } else {
+          window.localStorage.removeItem('theme');
+          document.querySelector('.borrow-layout').classList.remove('dark');
+        }
+      });
+
       // hook
       onMounted(() => {
+        theme.value = window.localStorage.getItem('theme') === 'dark';
+
         getTokenList();
         getPersonalAssets();
       });
@@ -81,15 +102,19 @@
 
         GetPersonalAssets(accountHash.value)
           .then((res) => {
-            console.log(res);
-            emptyData.value = !res;
-            // 前面是固定格式
-            setPersonalAssets(res.json.items.vec[0][0] || []);
+            if (!res) {
+              emptyData.value = !res;
+            } else {
+              // 前面是固定格式
+              setPersonalAssets(res.json.items.vec[0][0] || []);
+            }
           })
           .catch((err) => {
             console.log(err);
           });
       };
+
+      emitter.on('getPersonalAsset', () => getPersonalAssets());
 
       return {
         links: BorrowFooterLinks(t),
@@ -103,6 +128,7 @@
   .borrow-layout {
     min-height: 100vh;
     display: flex;
+    transition: background-color 0.5s, color 0.5s;
 
     .borrow-sider {
       width: 230px;
@@ -209,5 +235,32 @@
   }
 
   .connect-wallet {
+  }
+</style>
+
+<style lang="less">
+  .borrow-layout {
+    &.dark {
+      background-color: #0b1026;
+      color: #fff;
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: #fff;
+      }
+
+      .table-title {
+        color: #fff;
+      }
+
+      .label-number .num {
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: inset 0px 0px 6px rgba(255, 255, 255, 0.08);
+      }
+    }
   }
 </style>

@@ -21,6 +21,15 @@ export const hexToStr = (str) => {
 };
 
 /**
+ * number to unit string like '100K or 1M'
+ */
+export const numberWithUnit = (num) => {
+  var unit = ['', 'K', 'M', 'B'];
+  var digit = Math.floor(Math.log(num) / Math.log(1000));
+  return (num / Math.pow(1000, Math.floor(digit))).toFixed(3) + ' ' + unit[digit];
+};
+
+/**
  * Input number only
  */
 export const numberInput = (value) => {

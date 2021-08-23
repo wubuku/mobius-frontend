@@ -82,6 +82,26 @@ body {
 //   color: black;
 // }
 
+// ================ Select =================
+.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
+.ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.ant-select-single.ant-select-open .ant-select-selection-item {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  box-shadow: none;
+}
+
+.ant-select-selection-search-input::placeholder {
+  font-size: 16px;
+}
+
 //  ================ Button =================
 .ant-btn {
   background: #51afc6;
@@ -103,5 +123,30 @@ body {
   &:active {
     background: #51afc6;
     color: white;
+  }
+}
+
+//  ================ Modal =================
+
+.ant-modal {
+  padding: 0 0 24px;
+
+  .ant-modal-content {
+    border-radius: 15px;
+
+    .ant-modal-header {
+      background-color: #51afc6;
+      .ant-modal-title {
+        color: white;
+      }
+    }
+
+    .ant-modal-close {
+      color: white;
+    }
+  }
+
+  .ant-modal-header {
+    border-radius: 15px 15px 0 0;
   }
 }

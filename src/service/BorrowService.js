@@ -1,12 +1,20 @@
 import TxnWrapper, { JsonProvider } from '@wormhole-stc/txn-wrapper';
+import { SOURCE_ADDRESS } from 'config';
 
-const SOURCE_ADDRESS = '0x9553fa700207336dd51ef8b0e4f5a2e7';
-const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
+/**
+ * Init Asset when there is no asset
+ */
+export const InitAssetContract = ({ token, amount }) => {
+  return TxnWrapper({
+    functionId: `${SOURCE_ADDRESS}::MarketScript::init_assets`,
+    typeTag: [token.address],
+    params: [token.toChainAmount(amount)],
+  });
+};
 
 /**
  * Deposit
  */
-
 export const DepositContract = ({ token, nftId, amount }) => {
   return TxnWrapper({
     functionId: `${SOURCE_ADDRESS}::MarketScript::deposit`,
@@ -19,7 +27,6 @@ export const DepositContract = ({ token, nftId, amount }) => {
  * Withdraw
  */
 export const WithdrawContract = ({ token, nftId, amount }) => {
-  console.log(token, nftId, amount);
   return TxnWrapper({
     functionId: `${SOURCE_ADDRESS}::MarketScript::withdraw`,
     typeTag: [token.address],

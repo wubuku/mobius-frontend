@@ -4,7 +4,6 @@ export default () => {
       {
         title: '资产',
         dataIndex: 'name',
-        sorter: true,
       },
       {
         title: '存款市场',
@@ -30,9 +29,12 @@ export default () => {
       },
       {
         title: '剩余可借',
-        dataIndex: 'name2',
+        dataIndex: 'liquidity',
         width: '110px',
         sorter: true,
+        slots: {
+          customRender: 'liquidity',
+        },
       },
       {
         title: '操作',

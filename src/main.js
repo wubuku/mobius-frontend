@@ -23,4 +23,8 @@ import { antInit } from 'config/Init';
 // Init Ant Design
 antInit(app);
 
+// EventBus
+import mitt from 'mitt';
+app.provide('emitter', mitt());
+
 app.use(SvgPlugin).use(ChartPlugin).use(JsonViewer).use(i18n).use(store).use(router).mount('#app');

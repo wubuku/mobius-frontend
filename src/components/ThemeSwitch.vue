@@ -41,7 +41,7 @@
 
     svg {
       cursor: pointer;
-      ::v-deep(path) {
+      :deep(path) {
         fill: var(--color);
       }
     }

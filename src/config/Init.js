@@ -39,5 +39,7 @@ export const antInit = (app) => {
     .use(Descriptions)
     .use(Slider)
     .use(Modal);
-  app.config.globalProperties.$message = message;
+
+  app.provide('$modal', Modal);
+  app.provide('$message', message);
 };

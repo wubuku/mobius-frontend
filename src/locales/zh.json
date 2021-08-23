@@ -91,7 +91,9 @@
     },
     "btn": {
       "connect": "链接钱包",
-      "depositnow": "马上存款!"
+      "depositnow": "马上存款!",
+      "deposit": "存款",
+      "borrow": "借款"
     }
   }
 }

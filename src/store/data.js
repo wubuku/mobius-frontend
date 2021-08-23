@@ -8,8 +8,6 @@ export default {
   },
   mutations: {
     UPDATE_ASSETS_DATA(state, payload) {
-      console.log(payload);
-
       const list = payload.body.assets;
       state.assetId = payload.id;
 

@@ -95,7 +95,9 @@
     },
     "btn": {
       "connect": "Connect",
-      "depositnow": "Deposit Now!"
+      "depositnow": "Deposit Now!",
+      "deposit": "Deposit",
+      "borrow": "Borrow"
     }
   }
 }

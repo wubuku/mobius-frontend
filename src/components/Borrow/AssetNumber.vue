@@ -51,7 +51,6 @@
       height: 80px;
       font-size: 36px;
       line-height: 42px;
-      color: rgba(0, 0, 0, 0.85);
       background: #f7f9fa;
       box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.05);
       border-radius: 17.5px;

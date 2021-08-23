@@ -18,7 +18,7 @@
           <div class="chart-box">
             <v-chart :option="option"></v-chart>
           </div>
-          <div class="btn primary" @click="goDeposit">
+          <div class="btn primary borrow-btn" @click="goDeposit">
             {{ $t('borrow.home.main.borrowNow') }}
           </div>
         </div>
@@ -32,22 +32,48 @@
         </div>
       </div>
 
-      <div class="table-title">
-        <span>所有资产</span>
+      <div class="table-panel">
+        <div class="table-title">
+          <span>所有资产</span>
+        </div>
+        <!-- <pre>{{ tokenList }}</pre> -->
+        <a-table
+          :dataSource="tokenList"
+          :columns="TokenColumn"
+          :pagination="false"
+          :rowKey="(record) => record.dataIndex"
+        >
+          <template #liquidity="{ record }">
+            {{
+              numberWithUnit(
+                toHumanReadable({
+                  tokenName: record.name,
+                  amount: record.tokens.value,
+                }),
+              )
+            }}
+          </template>
+          <template #action="{ record }">
+            <div class="action-btn-box">
+              <a-button
+                class="btn"
+                @click="
+                  jump({ name: 'BorrowDeposit', query: { tab: 'deposit', tokenName: record.name } })
+                "
+              >
+                {{ $t('borrow.btn.deposit') }}
+              </a-button>
+              <a-button
+                danger
+                class="btn"
+                @click="jump({ name: 'BorrowLoan', query: { tab: '', tokenName: record.name } })"
+              >
+                {{ $t('borrow.btn.borrow') }}
+              </a-button>
+            </div>
+          </template>
+        </a-table>
       </div>
-      <a-table
-        :dataSource="tokenList"
-        :columns="TokenColumn"
-        :pagination="false"
-        :rowKey="(record) => record.dataIndex"
-      >
-        <template #action="{ record }">
-          <div class="action-btn-box">
-            <a-button class="btn">{{ record.name }}</a-button>
-            <a-button danger class="btn">{{ record.name }}</a-button>
-          </div>
-        </template>
-      </a-table>
     </div>
   </div>
 </template>
@@ -61,7 +87,9 @@
   import useToken from 'uses/useToken';
   import useTable from 'uses/useTable';
   import useUser from 'uses/useUser';
+
   import { GetPersonalAssets, GetPersonalVoucher, GetTokenAssetId } from 'service/InitService';
+  import { numberWithUnit } from 'utils';
   import { useRouter } from 'vue-router';
 
   export default defineComponent({
@@ -71,8 +99,8 @@
     },
     setup() {
       const { t } = useI18n();
-      const { router } = useRouter();
-      const { tokenList } = useToken();
+      const router = useRouter();
+      const { tokenList, toHumanReadable } = useToken();
       const { TokenColumn } = useTable();
       const { accountHash, setPersonalAssets } = useUser();
 
@@ -111,12 +139,22 @@
         router.push({ name: 'BorrowDeposit' });
       };
 
+      const jump = ({ name = '', query = {} }) => {
+        router.push({ name, query });
+      };
+
+      const modelShow = ref(true);
+
       return {
         option,
         tokenList,
         TokenColumn,
+        modelShow,
 
         goDeposit,
+        jump,
+        toHumanReadable,
+        numberWithUnit,
       };
     },
   });
@@ -163,6 +201,10 @@
           width: 265px;
           height: 265px;
           margin-top: -40px;
+        }
+
+        .borrow-btn {
+          background: #e5659b;
         }
       }
     }

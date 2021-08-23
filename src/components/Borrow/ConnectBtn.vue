@@ -13,6 +13,7 @@
     computed,
     defineComponent,
     getCurrentInstance,
+    inject,
     onBeforeMount,
     onBeforeUnmount,
     ref,
@@ -29,8 +30,8 @@
     setup() {
       const store = useStore();
       const { accountHash } = useUser();
-      const { $message } = getCurrentInstance().appContext.config.globalProperties;
       const { t } = useI18n();
+      const $message = inject('$message');
 
       const CONNECT_TEXT = t('borrow.btn.connect');
       const LS_KEY_NAME = 'connectorId';
