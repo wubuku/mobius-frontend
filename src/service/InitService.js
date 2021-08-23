@@ -1,7 +1,6 @@
 import { CurrencyAmount, Star } from '@starcoin/starswap-sdk-core';
-// FIXME: transaction subscribe
-import { JsonProvider, WebsocketProvider } from '@wormhole-stc/txn-wrapper';
-import { SOURCE_ADDRESS, TEST_NETWORK } from 'config';
+import { JsonProvider } from '@wormhole-stc/txn-wrapper';
+import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount } from 'config';
 import BigNumber from 'bignumber.js';
 
 // Global Data
@@ -35,8 +34,8 @@ export const TokenStandardPosition = (token) => {
   return Promise.all([overview, precision]).then(([overview, precision]) => {
     const base = {
       precision: precision[0],
-      toChainAmount: (amount) => new BigNumber(amount).multipliedBy(precision[0]).toString(),
-      toHumanAmount: (amount) => new BigNumber(amount).dividedBy(precision[0]).toString(),
+      toChainAmount: (amount) => ToChainAmount(amount, precision[0]),
+      toHumanAmount: (amount) => ToHumanAmount(amount, precision[0]),
     };
 
     if (!overview) return base;

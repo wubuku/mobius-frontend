@@ -63,16 +63,10 @@
         </template>
         <template #action="{ record }">
           <div class="action-btn-box">
-            <a-button
-              class="btn"
-              @click="deposit({ tab: 'deposit', tokenName: record.token_name })"
-            >
+            <a-button class="btn" @click="deposit({ tab: 'deposit', tokenName: record.address })">
               存款
             </a-button>
-            <a-button
-              class="btn"
-              @click="deposit({ tab: 'withdraw', tokenName: record.token_name })"
-            >
+            <a-button class="btn" @click="deposit({ tab: 'withdraw', tokenName: record.address })">
               取款
             </a-button>
           </div>
@@ -92,7 +86,7 @@
           <span>
             {{
               toHumanReadable({
-                tokenName: record.token_name,
+                tokenName: record.address,
                 amount: record.token_amount,
               })
             }}

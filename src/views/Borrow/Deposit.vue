@@ -54,12 +54,12 @@
         </p>
 
         <template v-if="mode == 'withdraw'">
-          <p v-if="currentWithdraw.token_name">
+          <p v-if="currentWithdraw.address">
             当前可取:
             <!-- 这里是要计算出来的 -->
             {{
               toHumanReadable({
-                tokenName: currentWithdraw.token_name,
+                tokenName: currentWithdraw.address,
                 amount: currentWithdraw.token_amount,
               })
             }}
@@ -98,7 +98,7 @@
       <div class="item flex">
         <div class="label">市场剩余可借</div>
         <span v-if="selectedToken.tokens">
-          {{ selectedToken.tokens.value / selectedToken.precision }}
+          {{ ToHumanAmount(selectedToken.tokens.value, selectedToken.precision) }}
         </span>
       </div>
       <div class="item flex">
@@ -129,6 +129,7 @@
   import { GetTransactionStatus } from 'service/InitService';
   import { addTxn } from 'utils/Txn';
   import { numberInput } from 'utils';
+  import { ToHumanAmount } from 'config';
 
   import useToken from 'uses/useToken';
   import useUser from 'uses/useUser';
@@ -193,20 +194,20 @@
           LS_QUERY_KEY,
           JSON.stringify({
             tab: mode.value,
-            tokenName: selectedToken.value.name,
+            tokenName: selectedToken.value.address,
           }),
         );
       });
 
       watch(tokenList, () => {
-        if (selectedToken.value.name) return;
+        if (selectedToken.value.address) return;
         selectedToken.value = tokenList.value[0];
       });
 
       watch(mode, () => {
         const queryStr = window.localStorage.getItem(LS_QUERY_KEY);
         let tab = '';
-        let tokenName = selectedToken.value.name;
+        let tokenName = selectedToken.value.address;
 
         if (queryStr) {
           const query = JSON.parse(queryStr);
@@ -240,7 +241,8 @@
 
         mode.value = tab || 'deposit';
         selectedToken.value =
-          tokenList.value.find((item) => item.name === tokenName) || tokenList.value[0] || {};
+          tokenList.value.find((item) => item.address === tokenName) || tokenList.value[0] || {};
+        console.log(tokenName, tokenList);
 
         defaultSelectValue.value = tokenName || firstTokenName.value;
       });
@@ -325,6 +327,7 @@
         setAllAmount,
         numberInput,
         toHumanReadable,
+        ToHumanAmount,
       };
     },
   });

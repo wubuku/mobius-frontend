@@ -58,7 +58,10 @@
               <a-button
                 class="btn"
                 @click="
-                  jump({ name: 'BorrowDeposit', query: { tab: 'deposit', tokenName: record.name } })
+                  jump({
+                    name: 'BorrowDeposit',
+                    query: { tab: 'deposit', tokenName: record.address },
+                  })
                 "
               >
                 {{ $t('borrow.btn.deposit') }}
@@ -66,7 +69,7 @@
               <a-button
                 danger
                 class="btn"
-                @click="jump({ name: 'BorrowLoan', query: { tab: '', tokenName: record.name } })"
+                @click="jump({ name: 'BorrowLoan', query: { tab: '', tokenName: record.address } })"
               >
                 {{ $t('borrow.btn.borrow') }}
               </a-button>

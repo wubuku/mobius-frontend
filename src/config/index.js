@@ -1,5 +1,7 @@
 import { JsonProvider } from '@wormhole-stc/txn-wrapper';
-export const SOURCE_ADDRESS = '0x9553fa700207336dd51ef8b0e4f5a2e7';
+import BigNumber from 'bignumber.js';
+
+export const SOURCE_ADDRESS = '0x6a4d60e09c3d60d7260b1ca9a5e0cc4e';
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 export const TEST_NETWORK = '';
@@ -12,3 +14,8 @@ export const BROWSER_URL_OF_TRANCATION = async (txn) => {
     return '';
   }
 };
+
+export const ToChainAmount = (amount, precision) =>
+  new BigNumber(amount).multipliedBy(precision).toString();
+export const ToHumanAmount = (amount, precision) =>
+  new BigNumber(amount).dividedBy(precision).toString();

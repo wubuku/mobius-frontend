@@ -87,7 +87,7 @@
       <div class="item flex">
         <div class="label">市场剩余可借</div>
         <span v-if="selectedToken.tokens">
-          {{ selectedToken.tokens.value / selectedToken.precision }}
+          {{ ToHumanAmount(selectedToken.tokens.value, selectedToken.precision) }}
         </span>
       </div>
       <div class="item flex">
@@ -117,6 +117,7 @@
   import useToken from 'uses/useToken';
   import useUser from 'uses/useUser';
 
+  import { ToHumanAmount } from 'config';
   import { addTxn } from 'utils/Txn';
   import { numberInput } from 'utils';
 
@@ -266,6 +267,7 @@
         setAllAmount,
         numberInput,
         toHumanReadable,
+        ToHumanAmount,
       };
     },
   });
