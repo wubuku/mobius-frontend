@@ -22,7 +22,7 @@ export const TokenStandardPosition = (token) => {
   // Token 的 Overview
   const overview = JsonProvider(TEST_NETWORK).send('state.get_resource', [
     SOURCE_ADDRESS,
-    `${SOURCE_ADDRESS}::Treasury3::Position<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>`,
+    `${SOURCE_ADDRESS}::Treasury::Position<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>`,
     { decode: true },
   ]);
 
@@ -52,7 +52,7 @@ export const TokenStandardPosition = (token) => {
  * Get Transaction Status
  */
 export const GetTransactionStatus = (txHash) => {
-  return JsonProvider(TEST_NETWORK).getTransaction(txHash);
+  return JsonProvider(TEST_NETWORK).getTransactionInfo(txHash);
 };
 
 /**
@@ -72,7 +72,7 @@ export const GetPersonalVoucher = ({ account, token }) => {
 export const GetPersonalAssets = (account = '') => {
   return JsonProvider(TEST_NETWORK).send('state.get_resource', [
     account,
-    `${SOURCE_ADDRESS}::Assets2Gallery::AssetsGalleryStore<0x00000000000000000000000000000001::NFT::NFT<${SOURCE_ADDRESS}::Assets2::AMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Assets2::ABody<${SOURCE_ADDRESS}::Treasury3::Assets<${SOURCE_ADDRESS}::Management::StandardPosition>>>>`,
+    `${SOURCE_ADDRESS}::AssetsGallery::AssetsGalleryStore<0x00000000000000000000000000000001::NFT::NFT<${SOURCE_ADDRESS}::Assets::AMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Assets::ABody<${SOURCE_ADDRESS}::Treasury::Assets<${SOURCE_ADDRESS}::Management::StandardPosition>>>>`,
     { decode: true },
   ]);
 };
@@ -84,7 +84,7 @@ export const GetTokenAssetId = (account = '') => {
   return JsonProvider(TEST_NETWORK)
     .send('contract.call_v2', [
       {
-        function_id: `${SOURCE_ADDRESS}::Assets2Gallery::get_single_assets_id`,
+        function_id: `${SOURCE_ADDRESS}::AssetsGallery::get_single_assets_id`,
         type_args: ['0xf8af03dd08de49d81e4efd9e24c039cc::Management::StandardPosition'],
         args: [account],
       },

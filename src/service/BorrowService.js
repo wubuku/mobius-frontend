@@ -34,6 +34,22 @@ export const WithdrawContract = ({ token, nftId, amount }) => {
   });
 };
 
+export const BorrowContract = ({ token, nftId, amount }) => {
+  return TxnWrapper({
+    functionId: `${SOURCE_ADDRESS}::MarketScript::borrow`,
+    typeTag: [token.address],
+    params: [nftId, token.toChainAmount(amount)],
+  });
+};
+
+export const RepayContract = ({ token, nftId, amount }) => {
+  return TxnWrapper({
+    functionId: `${SOURCE_ADDRESS}::MarketScript::repay`,
+    typeTag: [token.address],
+    params: [nftId, token.toChainAmount(amount)],
+  });
+};
+
 // export const MintVoucher = ({ token, amount }) => {
 //   return TxnWrapper({
 //     functionId: `${SOURCE_ADDRESS}::MarketScript::mint_voucher`,

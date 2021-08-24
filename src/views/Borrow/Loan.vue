@@ -127,6 +127,7 @@
   import useUser from 'uses/useUser';
   import useQueryStore from 'uses/useQueryStore';
 
+  import { BorrowContract, RepayContract } from 'service/BorrowService';
   import { addTxn } from 'utils/Txn';
   import { numberInput } from 'utils';
   import { ToHumanAmount } from 'config';
@@ -158,9 +159,7 @@
       const risk = ref(0);
       const btnLoading = ref(false);
 
-      const canSubmit = computed(
-        () => !!selectedToken.value.name && amount.value > 0 && !inputLargerThanAmount.value,
-      );
+      const canSubmit = computed(() => !!selectedToken.value.name && amount.value > 0);
 
       const inputLargerThanAmount = computed(() => {
         return mode.value == ENUMS.TAB_NAME.BORROW.value
@@ -177,12 +176,17 @@
       });
 
       const submitBtnText = computed(() => {
-        if (amount.value == '' && amount.value == 0) {
+        if (isBorrowMode.value) {
+          if (amount.value > 0 && inputLargerThanAmount.value) {
+            return '余额不足';
+          }
           return '马上借';
-        } else if (amount.value > 0 && inputLargerThanAmount.value) {
-          return '余额不足';
+        } else {
+          // if (amount.value > 0 && inputLargerThanAmount.value) {
+          //   return '余额不足';
+          // }
+          return '马上还';
         }
-        return '马上借';
       });
 
       watch(selectedToken, () => {
@@ -210,9 +214,36 @@
       // method
       const submit = () => {
         btnLoading.value = true;
-        // if (mode.value == 'borrow') {
-        // } else if (mode.value == 'repay') {
-        // }
+        if (isBorrowMode.value) {
+          console.log({ token: selectedToken.value, nftId: assetId, amount: amount.value });
+          BorrowContract({
+            token: selectedToken.value,
+            nftId: assetId.value,
+            amount: amount.value,
+          })
+            .then((res) => {
+              formInit();
+              addTxn(res);
+              emitter.emit('getPersonalAsset');
+            })
+            .finally(() => {
+              btnLoading.value = false;
+            });
+        } else if (isRepayMode.value) {
+          RepayContract({
+            token: selectedToken.value,
+            nftId: assetId.value,
+            amount: amount.value,
+          })
+            .then((res) => {
+              formInit();
+              addTxn(res);
+              emitter.emit('getPersonalAsset');
+            })
+            .finally(() => {
+              btnLoading.value = false;
+            });
+        }
       };
 
       const setAllAmount = () => {

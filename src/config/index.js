@@ -13,7 +13,7 @@ export const ArrayToEnumParam = (array) => {
 };
 
 // Dapp Contract Address
-export const SOURCE_ADDRESS = '0x6a4d60e09c3d60d7260b1ca9a5e0cc4e';
+export const SOURCE_ADDRESS = '0xd2db690120eef1644641ff37fd927b73';
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 export const TEST_NETWORK = '';

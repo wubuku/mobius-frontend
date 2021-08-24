@@ -107,7 +107,21 @@
               emptyData.value = !res;
             } else {
               // 前面是固定格式
-              setPersonalAssets(res.json.items.vec[0][0] || []);
+
+              const vec = res.json?.items?.vec[0] || [];
+              if (Array.isArray(vec)) {
+                if (vec.length > 1) {
+                  // choose less id
+                  const lessIdNft = vec.reduce(
+                    (prev, current) => (current.id < prev.id ? current : prev),
+                    vec[0],
+                  );
+                  console.log(lessIdNft);
+                  setPersonalAssets(lessIdNft || []);
+                } else {
+                  setPersonalAssets(vec[0] || []);
+                }
+              }
             }
           })
           .catch((err) => {
@@ -115,7 +129,10 @@
           });
       };
 
-      emitter.on('getPersonalAsset', () => getPersonalAssets());
+      emitter.on('getPersonalAsset', () => {
+        console.log('sss');
+        getPersonalAssets();
+      });
 
       return {
         links: BorrowFooterLinks(t),

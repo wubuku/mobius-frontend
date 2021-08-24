@@ -22,18 +22,18 @@ export default () => {
   const isRepayMode = computed(() => mode.value === ENUMS.TAB_NAME.REPAY.value);
 
   watch(mode, () => {
-    const queryStr = window.localStorage.getItem(LS_NAME.value);
+    const queryStr = window.localStorage.getItem(lsNameCurrent.value);
     let tab = '';
     let address = selectedToken.value.address;
 
     if (queryStr) {
       const query = JSON.parse(queryStr);
       tab = query.tab;
-      address = query.address;
+      address = address || query.address;
     }
 
     window.localStorage.setItem(
-      LS_NAME.value,
+      lsNameCurrent.value,
       JSON.stringify({
         tab: mode.value,
         address,
