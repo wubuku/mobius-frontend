@@ -2,7 +2,10 @@
   <div class="empty" v-if="hasNoAsset">
     <img src="../../assets/images/borrow/no-resource.png" />
     <p>{{ $t('borrow.home.tips') }}</p>
-    <div class="btn primary" @click="deposit({ tab: 'deposit', tokenName: 'STC' })">
+    <div
+      class="btn primary"
+      @click="deposit({ tab: 'deposit', address: '0x00000000000000000000000000000001::STC::STC' })"
+    >
       {{ $t('borrow.btn.depositnow') }}
     </div>
   </div>
@@ -49,13 +52,13 @@
         :dataSource="collateralList"
         :columns="CollateralColumn"
         :pagination="false"
-        row-key="token_name"
+        row-key="address"
       >
         <template #amount="{ record }">
           <span>
             {{
               toHumanReadable({
-                tokenName: record.token_name,
+                address: record.address,
                 amount: record.token_amount,
               })
             }}
@@ -63,10 +66,10 @@
         </template>
         <template #action="{ record }">
           <div class="action-btn-box">
-            <a-button class="btn" @click="deposit({ tab: 'deposit', tokenName: record.address })">
+            <a-button class="btn" @click="deposit({ tab: 'deposit', address: record.address })">
               存款
             </a-button>
-            <a-button class="btn" @click="deposit({ tab: 'withdraw', tokenName: record.address })">
+            <a-button class="btn" @click="deposit({ tab: 'withdraw', address: record.address })">
               取款
             </a-button>
           </div>
@@ -76,17 +79,12 @@
     <p>取款和还款 如果是全部的话, 要传0</p>
     <div class="table-panel">
       <h2 class="table-head">贷款信息</h2>
-      <a-table
-        :dataSource="debtList"
-        :columns="DebtColumn"
-        :pagination="false"
-        row-key="token_name"
-      >
+      <a-table :dataSource="debtList" :columns="DebtColumn" :pagination="false" row-key="address">
         <template #amount="{ record }">
           <span>
             {{
               toHumanReadable({
-                tokenName: record.address,
+                address: record.address,
                 amount: record.token_amount,
               })
             }}
@@ -104,7 +102,7 @@
 </template>
 
 <script>
-  import { defineComponent, ref, watch, onMounted } from 'vue';
+  import { defineComponent, ref, watch, onMounted, inject } from 'vue';
 
   import AssetNumber from 'comp/Borrow/AssetNumber';
 
@@ -126,6 +124,7 @@
       const { accountHash, collateralList, debtList, hasNoAsset } = useUser();
       const { CollateralColumn, DebtColumn } = useTable();
       const { toHumanReadable } = useToken();
+      const ENUMS = inject('ENUMS');
       const router = useRouter();
 
       const option = ref({
@@ -168,7 +167,7 @@
       // method
       const deposit = (query) => {
         router.push({
-          name: 'BorrowDeposit',
+          name: ENUMS.ROUTE_NAME.BORROWDEPOSIT.value,
           query,
         });
       };
@@ -183,6 +182,7 @@
         collateralList,
         debtList,
         hasNoAsset,
+        ENUMS,
 
         toHumanReadable,
 

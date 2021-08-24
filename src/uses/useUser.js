@@ -13,10 +13,10 @@ export default () => {
     GetPersonalResource(account).then((tokens) => {
       if (Array.isArray(tokens)) {
         const name = address.split('::')[2];
-        currentResource.value = tokens.filter((token) => token['tokenName'] === address)[0] || {
+        currentResource.value = tokens.filter((token) => token['address'] === address)[0] || {
           amount: 0,
           name,
-          tokenName: address,
+          address,
         };
       }
     });

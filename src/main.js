@@ -27,4 +27,7 @@ antInit(app);
 import mitt from 'mitt';
 app.provide('emitter', mitt());
 
+import { ENUMS } from 'config';
+app.provide('ENUMS', ENUMS);
+
 app.use(SvgPlugin).use(ChartPlugin).use(JsonViewer).use(i18n).use(store).use(router).mount('#app');

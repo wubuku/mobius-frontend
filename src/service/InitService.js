@@ -108,7 +108,7 @@ export const GetPersonalResource = async (account = '') => {
           new BigNumber(resources[resource]),
         );
         return {
-          tokenName: resource,
+          address: resource,
           name: token,
           amount: amount.toSignificant(9),
         };

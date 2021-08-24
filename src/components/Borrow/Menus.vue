@@ -45,7 +45,6 @@
         console.log(name);
       };
       const toRouter = (routerName) => {
-        console.log(routerName);
         router.push({
           name: routerName,
         });

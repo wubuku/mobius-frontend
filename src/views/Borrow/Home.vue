@@ -18,7 +18,7 @@
           <div class="chart-box">
             <v-chart :option="option"></v-chart>
           </div>
-          <div class="btn primary borrow-btn" @click="goDeposit">
+          <div class="btn primary borrow-btn" @click="goLoan">
             {{ $t('borrow.home.main.borrowNow') }}
           </div>
         </div>
@@ -47,7 +47,7 @@
             {{
               numberWithUnit(
                 toHumanReadable({
-                  tokenName: record.name,
+                  address: record.address,
                   amount: record.tokens.value,
                 }),
               )
@@ -59,8 +59,8 @@
                 class="btn"
                 @click="
                   jump({
-                    name: 'BorrowDeposit',
-                    query: { tab: 'deposit', tokenName: record.address },
+                    name: ENUMS.ROUTE_NAME.BORROWDEPOSIT.value,
+                    query: { tab: ENUMS.TAB_NAME.DEPOSIT.value, address: record.address },
                   })
                 "
               >
@@ -69,7 +69,12 @@
               <a-button
                 danger
                 class="btn"
-                @click="jump({ name: 'BorrowLoan', query: { tab: '', tokenName: record.address } })"
+                @click="
+                  jump({
+                    name: ENUMS.ROUTE_NAME.BORROWLOAN.value,
+                    query: { tab: ENUMS.TAB_NAME.BORROW.value, address: record.address },
+                  })
+                "
               >
                 {{ $t('borrow.btn.borrow') }}
               </a-button>
@@ -82,7 +87,7 @@
 </template>
 
 <script>
-  import { defineComponent, onMounted, ref, watch } from 'vue';
+  import { defineComponent, inject, onMounted, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import LabelNumber from 'comp/Borrow/LabelNumber';
@@ -94,6 +99,7 @@
   import { GetPersonalAssets, GetPersonalVoucher, GetTokenAssetId } from 'service/InitService';
   import { numberWithUnit } from 'utils';
   import { useRouter } from 'vue-router';
+  import { ENUMS } from 'config';
 
   export default defineComponent({
     props: {},
@@ -103,6 +109,7 @@
     setup() {
       const { t } = useI18n();
       const router = useRouter();
+      const ENUMS = inject('ENUMS');
       const { tokenList, toHumanReadable } = useToken();
       const { TokenColumn } = useTable();
       const { accountHash, setPersonalAssets } = useUser();
@@ -138,8 +145,8 @@
         ],
       });
 
-      const goDeposit = () => {
-        router.push({ name: 'BorrowDeposit' });
+      const goLoan = () => {
+        router.push({ name: ENUMS.ROUTE_NAME.BORROWLOAN.value });
       };
 
       const jump = ({ name = '', query = {} }) => {
@@ -153,8 +160,9 @@
         tokenList,
         TokenColumn,
         modelShow,
+        ENUMS,
 
-        goDeposit,
+        goLoan,
         jump,
         toHumanReadable,
         numberWithUnit,

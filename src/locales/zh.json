@@ -89,6 +89,12 @@
         "mortgareValue": "抵押品价值"
       }
     },
+    "tab": {
+      "deposit": "存款",
+      "withdraw": "取款",
+      "borrow": "借款",
+      "repay": "还款"
+    },
     "btn": {
       "connect": "链接钱包",
       "depositnow": "马上存款!",

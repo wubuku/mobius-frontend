@@ -48,7 +48,7 @@ export default () => {
     CollateralColumn: [
       {
         title: '你的存款',
-        dataIndex: 'token_name',
+        dataIndex: 'name',
       },
       {
         title: '当前余额',
@@ -74,7 +74,7 @@ export default () => {
     DebtColumn: [
       {
         title: '资产',
-        dataIndex: 'token_name',
+        dataIndex: 'name',
       },
       {
         title: '借款数量',

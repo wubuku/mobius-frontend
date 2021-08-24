@@ -1,7 +1,7 @@
 <template>
   <div class="borrow-layout">
     <div class="borrow-sider">
-      <router-link :to="{ name: 'BorrowHome' }">
+      <router-link :to="{ name: ENUMS.ROUTE_NAME.BORROWHOME.value }">
         <img src="../assets/images/borrow/logo.png" class="logo" />
       </router-link>
       <borrow-menus></borrow-menus>
@@ -67,6 +67,7 @@
       const { startTransactionCheck } = useTransaction();
       const store = useStore();
       const emptyData = ref(false);
+      const ENUMS = inject('ENUMS');
 
       startTransactionCheck();
 
@@ -119,6 +120,7 @@
       return {
         links: BorrowFooterLinks(t),
         theme,
+        ENUMS,
       };
     },
   });

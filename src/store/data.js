@@ -1,4 +1,5 @@
 import { toTokenString } from 'utils';
+
 export default {
   namespaced: true,
   state: {
@@ -14,7 +15,7 @@ export default {
       state.collateral = (list.collateral || []).map((asset) => {
         const address = toTokenString(asset.token_code);
         return {
-          token_name: address.split('::')[2],
+          name: address.split('::')[2],
           address,
           ...asset,
         };
@@ -23,7 +24,7 @@ export default {
       state.debt = (list.debt || []).map((asset) => {
         const address = toTokenString(asset.token_code);
         return {
-          token_name: address.split('::')[2],
+          name: address.split('::')[2],
           address,
           ...asset,
         };

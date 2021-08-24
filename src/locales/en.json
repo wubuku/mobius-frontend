@@ -93,6 +93,12 @@
     "assets": {
       "Available Rewards": "Available Rewards"
     },
+    "tab": {
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "borrow": "Borrow",
+      "repay": "Repay"
+    },
     "btn": {
       "connect": "Connect",
       "depositnow": "Deposit Now!",
