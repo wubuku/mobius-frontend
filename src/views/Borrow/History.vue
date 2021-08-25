@@ -56,6 +56,18 @@
         });
       });
 
+      onMounted(() => {
+        getTxnHistoryList();
+      });
+
+      const getTxnHistoryList = () => {
+        if (!chainId) return;
+
+        getAllTxn().then((res) => {
+          dataSource.value = res ? formatTxnResultToTimeSortedList(res) : [];
+        });
+      };
+
       return {
         dataSource,
 
