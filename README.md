@@ -18,6 +18,12 @@ pnpm run serve
 pnpm run build
 ```
 
+### Test
+
+```
+pnpm run test:unit
+```
+
 ### Lints and fixes files
 
 ```
