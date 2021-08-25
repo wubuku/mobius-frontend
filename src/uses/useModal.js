@@ -2,11 +2,8 @@ import { createVNode } from 'vue';
 import { Modal, notification } from 'ant-design-vue';
 import { LinkOutlined, SmileOutlined } from '@ant-design/icons-vue';
 import { BROWSER_URL_OF_TRANSACTION } from 'config';
-import useUser from 'uses/useUser';
 
 export default () => {
-  const { chainId } = useUser();
-
   /**
    * Modal Content with txn
    */
@@ -21,7 +18,7 @@ export default () => {
         createVNode(
           'a',
           {
-            href: BROWSER_URL_OF_TRANSACTION({ chainId, txn }),
+            href: BROWSER_URL_OF_TRANSACTION({ chainId: window.starcoin.networkVersion, txn }),
             target: '_blank',
           },
           [createVNode(LinkOutlined), txn],
