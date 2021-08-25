@@ -131,10 +131,12 @@
   import { addTxn } from 'utils/Txn';
   import { numberInput } from 'utils';
   import { ToHumanAmount } from 'config';
+  import { useStore } from 'vuex';
 
   export default defineComponent({
     props: {},
     setup() {
+      const store = useStore();
       const { tokenList, toHumanReadable } = useToken();
       const { accountHash, myResource, currentResource, debtList, assetId } = useUser();
       const {

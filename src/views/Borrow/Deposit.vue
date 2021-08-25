@@ -139,11 +139,13 @@
   import useToken from 'uses/useToken';
   import useUser from 'uses/useUser';
   import useQueryStore from 'uses/useQueryStore';
+  import { useStore } from 'vuex';
 
   export default defineComponent({
     props: {},
     setup() {
       const $message = inject('$message');
+      const store = useStore();
       const { tokenList, toHumanReadable } = useToken();
       const { accountHash, myResource, currentResource, collateralList, assetId } = useUser();
       const {
