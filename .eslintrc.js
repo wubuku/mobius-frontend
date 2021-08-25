@@ -1,16 +1,20 @@
 module.exports = {
   root: true,
+
   env: {
     node: true,
   },
+
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     'plugin:@intlify/vue-i18n/recommended',
   ],
+
   parserOptions: {
     parser: 'babel-eslint',
   },
+
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -25,6 +29,7 @@ module.exports = {
       },
     ],
   },
+
   settings: {
     'vue-i18n': {
       localeDir: './locales/*.{json,json5,yaml,yml}', // extension is glob formatting!
@@ -33,4 +38,13 @@ module.exports = {
       messageSyntaxVersion: '^9.0.0',
     },
   },
+
+  overrides: [
+    {
+      files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/**/*.spec.{j,t}s?(x)'],
+      env: {
+        mocha: true,
+      },
+    },
+  ],
 };
