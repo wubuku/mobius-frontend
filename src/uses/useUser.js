@@ -29,8 +29,14 @@ export default () => {
     // Page Data
     collateralList: computed(() => store.state.data.collateral),
     assetId: computed(() => store.state.data.assetId),
-    debtList: computed(() => store.state.data.debt),
-    chainId: computed(() => store.state.data.chainId),
+    debtList: computed(() => {
+      console.log(store);
+      return store.state.data.debt;
+    }),
+    chainId: computed(() => {
+      console.log(store);
+      return store.state.data.chainId;
+    }),
 
     hasNoAsset: computed(
       () => store.state.data.collateral.length === 0 && store.state.data.debt.length === 0,
