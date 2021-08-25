@@ -207,6 +207,7 @@
           type: 'BORROW',
           tokenList: tokenList.value,
         });
+        tokenListWatchHandler({ tokenList });
       });
 
       const formInit = () => {

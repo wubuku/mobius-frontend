@@ -221,6 +221,7 @@
           type: 'DEPOSIT',
           tokenList: tokenList.value,
         });
+        tokenListWatchHandler({ tokenList });
       });
 
       const formInit = () => {
