@@ -18,10 +18,12 @@ export const SOURCE_ADDRESS = '0xd2db690120eef1644641ff37fd927b73';
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 export const TEST_NETWORK = '';
 
-export const BROWSER_URL_OF_TRANSACTION = ({ chainId, txn }) =>
-  `https://stcscan.io/${
-    ENUMS.CHAIN_NAME[chainId.value ? chainId.value : chainId].value
-  }/transactions/detail/${txn}`;
+export const BROWSER_URL_OF_TRANSACTION = (txn = '') =>
+  txn
+    ? `https://stcscan.io/${
+        ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value
+      }/transactions/detail/${txn}`
+    : '';
 
 export const ToChainAmount = (amount, precision) =>
   new BigNumber(amount).multipliedBy(precision).toString();

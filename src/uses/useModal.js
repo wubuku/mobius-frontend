@@ -18,7 +18,7 @@ export default () => {
         createVNode(
           'a',
           {
-            href: BROWSER_URL_OF_TRANSACTION({ chainId: window.starcoin.networkVersion, txn }),
+            href: BROWSER_URL_OF_TRANSACTION(txn),
             target: '_blank',
           },
           [createVNode(LinkOutlined), txn],

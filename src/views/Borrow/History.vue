@@ -29,7 +29,6 @@
     },
     setup() {
       const { HistoryColumn } = useTable();
-      const { chainId } = useUser();
       const ENUMS = inject('ENUMS');
 
       const dataSource = ref([]);
@@ -40,7 +39,7 @@
             return {
               ...txnResult[txn],
               txnHash: txn,
-              browserUrl: BROWSER_URL_OF_TRANSACTION({ chainId, txn }),
+              browserUrl: BROWSER_URL_OF_TRANSACTION(txn),
               createdAtStr: dayjs(txnResult[txn].createdAt).format('YYYY-MM-DD HH:mm:ss'),
               key: index,
             };
@@ -50,19 +49,11 @@
           });
       };
 
-      watch(chainId, () => {
-        getAllTxn().then((res) => {
-          dataSource.value = res ? formatTxnResultToTimeSortedList(res) : [];
-        });
-      });
-
       onMounted(() => {
         getTxnHistoryList();
       });
 
       const getTxnHistoryList = () => {
-        if (!chainId) return;
-
         getAllTxn().then((res) => {
           dataSource.value = res ? formatTxnResultToTimeSortedList(res) : [];
         });

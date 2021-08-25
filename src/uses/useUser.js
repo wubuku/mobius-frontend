@@ -25,14 +25,8 @@ export default () => {
   const accountHash = computed(() => store.state.accountHash);
   const collateralList = computed(() => store.state.data.collateral);
   const assetId = computed(() => store.state.data.assetId);
-  const debtList = computed(() => {
-    console.log(store);
-    return store.state.data.debt;
-  });
-  const chainId = computed(() => {
-    console.log(store);
-    return store.state.data.chainId;
-  });
+  const debtList = computed(() => store.state.data.debt);
+
   const hasNoAsset = computed(
     () => store.state.data.collateral.length === 0 && store.state.data.debt.length === 0,
   );
@@ -45,11 +39,9 @@ export default () => {
     collateralList,
     assetId,
     debtList,
-    chainId,
     hasNoAsset,
 
     // Actions
     setPersonalAssets: (assets) => store.dispatch('data/$updateAssetsData', assets),
-    setChainId: (chainId) => store.dispatch('data/$updateChainId', chainId),
   };
 };

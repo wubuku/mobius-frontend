@@ -47,7 +47,7 @@
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
 
   import useToken from 'uses/useToken';
-  import { GetPersonalAssets, GetTransactionStatus, GetChainId } from 'service/InitService';
+  import { GetPersonalAssets, GetTransactionStatus } from 'service/InitService';
 
   import { toTokenString } from 'utils';
 
@@ -61,7 +61,7 @@
       const { t } = useI18n();
       const theme = ref(false);
       const emitter = inject('emitter');
-      const { accountHash, setPersonalAssets, setChainId } = useUser();
+      const { accountHash, setPersonalAssets } = useUser();
       const { tokenList, getTokenList } = useToken();
       const { startTransactionCheck } = useTransaction();
       const store = useStore();
@@ -90,14 +90,7 @@
 
         getTokenList();
         getPersonalAssets();
-        getChainId();
       });
-
-      const getChainId = () => {
-        GetChainId().then((res) => {
-          setChainId(res);
-        });
-      };
 
       // method
       const getPersonalAssets = () => {
