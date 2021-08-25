@@ -199,15 +199,14 @@
         );
       });
 
+      emitter.on('updateAccountHash', () => {
+        getMyResource();
+      });
+
       // watch
       watch(selectedToken, () => {
-        selectedTokenWatchHandler({ accountHash });
-        if (isDepositMode.value) {
-          myResource({
-            account: accountHash.value,
-            address: selectedToken.value.address,
-          });
-        }
+        selectedTokenWatchHandler();
+        getMyResource();
       });
 
       watch(tokenList, () => {
@@ -226,6 +225,15 @@
         amount.value = '';
       };
 
+      const getMyResource = () => {
+        if (isDepositMode.value && accountHash.value) {
+          myResource({
+            account: accountHash.value,
+            address: selectedToken.value.address,
+          });
+        }
+      };
+
       // method
       const submit = () => {
         btnLoading.value = true;
@@ -238,7 +246,13 @@
               amount: amount.value,
             })
               .then((res) => {
-                addTxn(res);
+                addTxn({
+                  txn: res,
+                  address: selectedToken.value.address,
+                  name: selectedToken.value.name,
+                  oper: mode.value,
+                  amount: amount.value,
+                });
                 formInit();
                 emitter.emit('getPersonalAsset');
               })
@@ -252,8 +266,14 @@
               amount: amount.value,
             })
               .then((res) => {
+                addTxn({
+                  txn: res,
+                  address: selectedToken.value.address,
+                  name: selectedToken.value.name,
+                  oper: mode.value,
+                  amount: amount.value,
+                });
                 formInit();
-                addTxn(res);
                 emitter.emit('getPersonalAsset');
               })
               .finally(() => {
@@ -267,8 +287,14 @@
             amount: amount.value === maxWithdrawAmount.value ? 0 : amount.value,
           })
             .then((res) => {
+              addTxn({
+                txn: res,
+                address: selectedToken.value.address,
+                name: selectedToken.value.name,
+                oper: mode.value,
+                amount: amount.value,
+              });
               formInit();
-              addTxn(res);
               emitter.emit('getPersonalAsset');
             })
             .finally(() => {

@@ -37,6 +37,7 @@
       const LS_KEY_NAME = 'connectorId';
       const btnText = ref(CONNECT_TEXT);
       const onBoarding = new StarMaskOnboarding();
+      const emitter = inject('emitter');
 
       const isStarMaskInstalled = computed(() => {
         return StarMaskOnboarding.isStarMaskInstalled();
@@ -70,6 +71,7 @@
           store.dispatch('$updateAccountHash', accounts[0] || '');
           btnText.value = shortCutOfAccountHash(accountHash.value || '');
           window.localStorage.setItem(LS_KEY_NAME, 'stc');
+          emitter.emit('updateAccountHash');
         }
       };
 
@@ -96,7 +98,6 @@
        * Connect Btn Click Handler
        */
       const connectWallet = () => {
-        console.log(accountHash.value);
         if (accountHash.value) {
           // showAccountDialog = true;
         } else {

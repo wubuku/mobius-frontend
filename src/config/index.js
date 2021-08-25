@@ -18,14 +18,10 @@ export const SOURCE_ADDRESS = '0xd2db690120eef1644641ff37fd927b73';
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 export const TEST_NETWORK = '';
 
-export const BROWSER_URL_OF_TRANCATION = async (txn) => {
-  try {
-    const { name } = await JsonProvider(TEST_NETWORK).detectNetwork();
-    return `https://stcscan.io/${name}/transactions/detail/${txn}`;
-  } catch (err) {
-    return '';
-  }
-};
+export const BROWSER_URL_OF_TRANSACTION = ({ chainId, txn }) =>
+  `https://stcscan.io/${
+    ENUMS.CHAIN_NAME[chainId.value ? chainId.value : chainId].value
+  }/transactions/detail/${txn}`;
 
 export const ToChainAmount = (amount, precision) =>
   new BigNumber(amount).multipliedBy(precision).toString();
@@ -35,6 +31,13 @@ export const ToHumanAmount = (amount, precision) =>
 export const ENUMS = {
   // Tab Name Enum
   TAB_NAME: new Enum(...ArrayToEnumParam(['deposit', 'withdraw', 'borrow', 'repay'])),
+  CHAIN_NAME: new Enum(
+    ...ArrayToEnumParam([
+      [1, 'main'],
+      [251, 'barnard'],
+      [253, 'halley'],
+    ]),
+  ),
   ROUTE_NAME: new Enum(
     ...ArrayToEnumParam([
       'BorrowHome',

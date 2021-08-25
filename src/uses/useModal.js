@@ -1,48 +1,51 @@
 import { createVNode } from 'vue';
 import { Modal, notification } from 'ant-design-vue';
 import { LinkOutlined, SmileOutlined } from '@ant-design/icons-vue';
-import { BROWSER_URL_OF_TRANCATION } from 'config';
-
-/**
- * Modal Content with txn
- */
-const TransacationContentBody = async (txn) => {
-  return createVNode(
-    'p',
-    {
-      className: 'txn-noti',
-    },
-    [
-      'Trasaction Broswer Link: ',
-      createVNode(
-        'a',
-        {
-          href: await BROWSER_URL_OF_TRANCATION(txn),
-          target: '_blank',
-        },
-        [createVNode(LinkOutlined), txn],
-      ),
-    ],
-  );
-};
+import { BROWSER_URL_OF_TRANSACTION } from 'config';
+import useUser from 'uses/useUser';
 
 export default () => {
+  const { chainId } = useUser();
+
+  /**
+   * Modal Content with txn
+   */
+  const TransacationContentBody = (txn) => {
+    return createVNode(
+      'p',
+      {
+        className: 'txn-noti',
+      },
+      [
+        'Trasaction Broswer Link: ',
+        createVNode(
+          'a',
+          {
+            href: BROWSER_URL_OF_TRANSACTION({ chainId, txn }),
+            target: '_blank',
+          },
+          [createVNode(LinkOutlined), txn],
+        ),
+      ],
+    );
+  };
+
   //
-  const openTxnModal = async (txn) => {
+  const openTxnModal = (txn) => {
     Modal.info({
       centered: true,
       width: '480px',
       title: 'Transcation Submit!',
-      content: await TransacationContentBody(txn),
+      content: TransacationContentBody(txn),
       okText: 'OK',
     });
   };
 
   //
-  const openTxnCheckedNotification = async (txn) => {
+  const openTxnCheckedNotification = (txn) => {
     notification.open({
       message: 'Transcation Success!',
-      description: await TransacationContentBody(txn),
+      description: TransacationContentBody(txn),
       icon: createVNode(SmileOutlined, { style: 'color: #108ee9' }),
     });
   };

@@ -103,14 +103,13 @@
 
 <script>
   import { defineComponent, ref, watch, onMounted, inject } from 'vue';
+  import { useRouter } from 'vue-router';
 
   import AssetNumber from 'comp/Borrow/AssetNumber';
 
-  import { GetTokenAssetId } from 'service/InitService';
   import useUser from 'uses/useUser';
   import useTable from 'uses/useTable';
   import useToken from 'uses/useToken';
-  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     props: {},
@@ -156,12 +155,6 @@
             ],
           },
         ],
-      });
-
-      watch(accountHash, () => {
-        GetTokenAssetId(accountHash.value).then((res) => {
-          console.log(res);
-        });
       });
 
       // method

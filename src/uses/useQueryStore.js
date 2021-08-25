@@ -81,8 +81,8 @@ export default () => {
       }
     },
 
-    selectedTokenWatchHandler: ({ accountHash }) => {
-      if (!selectedToken.value.name || !accountHash.value) return;
+    selectedTokenWatchHandler: () => {
+      if (!selectedToken.value.name) return;
 
       window.localStorage.setItem(
         lsNameCurrent.value,

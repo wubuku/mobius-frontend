@@ -48,6 +48,7 @@
   import { useI18n } from 'vue-i18n';
   // import MAccount from 'comp/Header/Account';
   // import ThemeSwitch from 'comp/ThemeSwitch';
+
   export default defineComponent({
     props: {},
     components: {
@@ -60,13 +61,6 @@
       const router = useRouter();
       const APP_NAME = process.env.VUE_APP_NAME;
       const current = ref(['Home']);
-
-      watch(
-        () => route,
-        (route) => {
-          console.log(route);
-        },
-      );
 
       // set current route
       current.value = [route.name];

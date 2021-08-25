@@ -93,6 +93,14 @@ export const GetTokenAssetId = (account = '') => {
 };
 
 /**
+ *  Get Chain Id
+ */
+export const GetChainId = async () => {
+  const { chainId } = await JsonProvider(TEST_NETWORK).detectNetwork();
+  return chainId || '';
+};
+
+/**
  * Personal Resource
  */
 export const GetPersonalResource = async (account = '') => {

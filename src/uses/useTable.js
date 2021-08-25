@@ -104,5 +104,31 @@ export default () => {
         },
       },
     ],
+
+    HistoryColumn: [
+      {
+        title: '时间',
+        dataIndex: 'createdAtStr',
+        width: '200px',
+      },
+      {
+        title: '操作',
+        dataIndex: 'oper',
+      },
+      {
+        title: '资产',
+        dataIndex: 'name',
+      },
+      {
+        title: '数量',
+        dataIndex: 'amount',
+      },
+      {
+        title: '查看详情',
+        slots: {
+          customRender: 'detail',
+        },
+      },
+    ],
   };
 };

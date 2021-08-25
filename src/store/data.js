@@ -6,6 +6,7 @@ export default {
     collateral: [],
     debt: [],
     assetId: '',
+    chainId: '',
   },
   mutations: {
     UPDATE_ASSETS_DATA(state, payload) {
@@ -30,10 +31,16 @@ export default {
         };
       });
     },
+    UPDATE_CHAIN_ID(state, payload) {
+      state.chainId = payload || '';
+    },
   },
   actions: {
     $updateAssetsData({ commit }, payload) {
       commit('UPDATE_ASSETS_DATA', payload);
+    },
+    $updateChainId({ commit }, payload) {
+      commit('UPDATE_CHAIN_ID', payload);
     },
   },
 };

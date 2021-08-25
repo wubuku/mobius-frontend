@@ -30,6 +30,7 @@ export default () => {
     collateralList: computed(() => store.state.data.collateral),
     assetId: computed(() => store.state.data.assetId),
     debtList: computed(() => store.state.data.debt),
+    chainId: computed(() => store.state.data.chainId),
 
     hasNoAsset: computed(
       () => store.state.data.collateral.length === 0 && store.state.data.debt.length === 0,
@@ -37,5 +38,6 @@ export default () => {
 
     // Actions
     setPersonalAssets: (assets) => store.dispatch('data/$updateAssetsData', assets),
+    setChainId: (chainId) => store.dispatch('data/$updateChainId', chainId),
   };
 };

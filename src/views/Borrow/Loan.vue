@@ -89,7 +89,7 @@
     <a-card class="right">
       <div class="item slider">
         <div class="label">低风险</div>
-        <div class="label">高风险</div>
+        <div class="label high">高风险</div>
         <a-slider id="test" :tip-formatter="null" v-model:value="risk" />
       </div>
       <a-divider :dashed="true" />
@@ -190,9 +190,9 @@
       });
 
       watch(selectedToken, () => {
-        selectedTokenWatchHandler({ accountHash });
+        selectedTokenWatchHandler();
         // TODO:
-        // 我的借款
+        // 获取我的借款
       });
 
       watch(tokenList, () => {
@@ -215,15 +215,20 @@
       const submit = () => {
         btnLoading.value = true;
         if (isBorrowMode.value) {
-          console.log({ token: selectedToken.value, nftId: assetId, amount: amount.value });
           BorrowContract({
             token: selectedToken.value,
             nftId: assetId.value,
             amount: amount.value,
           })
             .then((res) => {
+              addTxn({
+                txn: res,
+                address: selectedToken.value.address,
+                name: selectedToken.value.name,
+                oper: mode.value,
+                amount: amount.value,
+              });
               formInit();
-              addTxn(res);
               emitter.emit('getPersonalAsset');
             })
             .finally(() => {
@@ -236,8 +241,14 @@
             amount: amount.value,
           })
             .then((res) => {
+              addTxn({
+                txn: res,
+                address: selectedToken.value.address,
+                name: selectedToken.value.name,
+                oper: mode.value,
+                amount: amount.value,
+              });
               formInit();
-              addTxn(res);
               emitter.emit('getPersonalAsset');
             })
             .finally(() => {
@@ -300,6 +311,22 @@
       top: 30px;
       width: 136px;
       z-index: 1;
+    }
+  }
+
+  .slider {
+    position: relative;
+    padding-top: 10px;
+
+    .label {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      &.high {
+        left: initial;
+        right: 0;
+      }
     }
   }
 

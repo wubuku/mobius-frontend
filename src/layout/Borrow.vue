@@ -47,8 +47,7 @@
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
 
   import useToken from 'uses/useToken';
-  // import { getAllUncheckedTxns, doneTxn } from 'utils';
-  import { GetPersonalAssets, GetTransactionStatus } from 'service/InitService';
+  import { GetPersonalAssets, GetTransactionStatus, GetChainId } from 'service/InitService';
 
   import { toTokenString } from 'utils';
 
@@ -62,18 +61,12 @@
       const { t } = useI18n();
       const theme = ref(false);
       const emitter = inject('emitter');
-      const { accountHash, setPersonalAssets } = useUser();
+      const { accountHash, setPersonalAssets, setChainId } = useUser();
       const { tokenList, getTokenList } = useToken();
       const { startTransactionCheck } = useTransaction();
       const store = useStore();
       const emptyData = ref(false);
       const ENUMS = inject('ENUMS');
-
-      startTransactionCheck();
-
-      window.starcoin.on('tx:confirmed', () => {
-        console.log(...arguments);
-      });
 
       watch(accountHash, () => {
         getPersonalAssets();
@@ -93,9 +86,18 @@
       onMounted(() => {
         theme.value = window.localStorage.getItem('theme') === 'dark';
 
+        startTransactionCheck();
+
         getTokenList();
         getPersonalAssets();
+        getChainId();
       });
+
+      const getChainId = () => {
+        GetChainId().then((res) => {
+          setChainId(res);
+        });
+      };
 
       // method
       const getPersonalAssets = () => {
@@ -116,7 +118,6 @@
                     (prev, current) => (current.id < prev.id ? current : prev),
                     vec[0],
                   );
-                  console.log(lessIdNft);
                   setPersonalAssets(lessIdNft || []);
                 } else {
                   setPersonalAssets(vec[0] || []);
@@ -130,7 +131,6 @@
       };
 
       emitter.on('getPersonalAsset', () => {
-        console.log('sss');
         getPersonalAssets();
       });
 

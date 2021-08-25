@@ -1,4 +1,3 @@
-import { inject } from 'vue';
 import { Modal } from 'ant-design-vue';
 import { GetTransactionStatus } from 'service/InitService';
 import { getAllUncheckedTxns, checkedTxn } from 'utils/Txn';
@@ -6,7 +5,6 @@ import { getAllUncheckedTxns, checkedTxn } from 'utils/Txn';
 export default () => {
   const TXN_CHECK_INTERVAL = 3000;
   let rolling = true;
-  const emitter = inject('emitter');
 
   const startTransactionCheck = async () => {
     try {
@@ -20,7 +18,6 @@ export default () => {
         if (currentTxnStatus?.status === 'Executed') {
           Modal.destroyAll();
           checkedTxn(currentTxn);
-          emitter.emit('getPersonalAsset');
         }
       }
 
