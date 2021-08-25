@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: deploy
 
 # Controls when the workflow will run
 on:
@@ -28,8 +28,8 @@ jobs:
       - uses: manyuanrong/setup-ossutil@v2.0
         with:
           endpoint: oss-cn-hongkong.aliyuncs.com
-          access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.ACCESS_KEY_SECRET }}
+          access-key-id: ${{ secrets.ALIYUN_OSS_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_OSS_ACCESS_KEY_SECRET }}
 
       - name: Cache pnpm modules
         uses: actions/cache@v2
