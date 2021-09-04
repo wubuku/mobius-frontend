@@ -1,11 +1,11 @@
 //No interest rate calculation needed
 import BigNumber from 'bignumber.js';
 
+// amount 
 export const gain = (amount, index, user_index) => {
 	let amount_b = new BigNumber(amount);
 	let ret = amount_b.multipliedBy(index).dividedBy(user_index).minus(amount);
 
-	// return amount * index / user_index - amount;
 	return ret.toFixed(0);
 };
 

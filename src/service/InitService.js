@@ -118,3 +118,28 @@ export const GetPersonalResource = async (account = '') => {
     console.log(err);
   }
 };
+
+/**
+ * USDT Oracle
+ */
+export const GetTokenUSDPrice = (token = 'STC') => {
+	let oracleType;
+	switch (token) {
+		case 'STC':
+			oracleType = '0x1::STCUSDOracle::STCUSD';
+			break;
+		case 'MBTC':
+			oracleType = `${SOURCE_ADDRESS}::MBTCUSDOracle::MBTCUSD`;
+			break;
+		case 'METH':
+			oracleType = `${SOURCE_ADDRESS}::METHUSDOracle::METHUSD`;
+			break;
+		case 'MUSDT':
+			return [1];
+		default:
+			throw 'no such token!'
+	}
+	return JsonProvider(TEST_NETWORK).send('contract.call_v2', [{
+		function_id: '0x1::PriceOracle::read', type_args: [oracleType], args: [`${SOURCE_ADDRESS}`] 
+	}]).then(res => {console.log(res)});	
+}

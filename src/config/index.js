@@ -16,7 +16,7 @@ export const ArrayToEnumParam = (array) => {
 export const SOURCE_ADDRESS = '0xd2db690120eef1644641ff37fd927b73';
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
-export const TEST_NETWORK = '';
+export const TEST_NETWORK = 'https://halley-seed.starcoin.org';
 
 export const BROWSER_URL_OF_TRANSACTION = (txn = '') =>
   txn
