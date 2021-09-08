@@ -7,7 +7,7 @@ import { get, set, update, createStore } from 'idb-keyval';
 const MobiusStore = createStore('mobius-db', 'mobius-store');
 
 import useModal from 'uses/useModal';
-const { openTxnModal, openTxnCheckedNotification } = useModal();
+const { openTxnModal, openTxnCheckedNotification, openTxnCheckedFailedNotification } = useModal();
 
 const TXN_KEY = (account) => `${account}_txns`;
 
@@ -36,6 +36,23 @@ export const checkedTxn = (txn) => {
   if (!window.starcoin.selectedAddress) return Promise.reject();
 
   openTxnCheckedNotification(txn);
+  return update(
+    TXN_KEY(window.starcoin.selectedAddress),
+    (val = {}) => {
+      val[txn] = {
+        ...val[txn],
+        status: true,
+      };
+      return val;
+    },
+    MobiusStore,
+  );
+};
+
+export const checkedTxnFaild = (txn) => {
+  if (!window.starcoin.selectedAddress) return Promise.reject();
+
+  openTxnCheckedFailedNotification(txn);
   return update(
     TXN_KEY(window.starcoin.selectedAddress),
     (val = {}) => {

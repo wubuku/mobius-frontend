@@ -1,6 +1,6 @@
 import { createVNode } from 'vue';
 import { Modal, notification } from 'ant-design-vue';
-import { LinkOutlined, SmileOutlined } from '@ant-design/icons-vue';
+import { LinkOutlined, SmileOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import { BROWSER_URL_OF_TRANSACTION } from 'config';
 
 export default () => {
@@ -40,6 +40,7 @@ export default () => {
 
   //
   const openTxnCheckedNotification = (txn) => {
+    if (!txn) return;
     notification.open({
       message: 'Transcation Success!',
       description: TransacationContentBody(txn),
@@ -47,8 +48,18 @@ export default () => {
     });
   };
 
+  const openTxnCheckedFailedNotification = (txn) => {
+    if (!txn) return;
+    notification.open({
+      message: 'Transcation Failed!',
+      description: TransacationContentBody(txn),
+      icon: createVNode(CloseOutlined, { style: 'color: #FF3333' }),
+    });
+  };
+
   return {
     openTxnModal,
     openTxnCheckedNotification,
+    openTxnCheckedFailedNotification,
   };
 };

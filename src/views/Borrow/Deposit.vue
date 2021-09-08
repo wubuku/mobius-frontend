@@ -131,7 +131,6 @@
   import { useRoute, useRouter } from 'vue-router';
 
   import { DepositContract, WithdrawContract, InitAssetContract } from 'service/BorrowService';
-  import { GetTransactionStatus } from 'service/InitService';
   import { addTxn } from 'utils/Txn';
   import { numberInput } from 'utils';
   import { ToHumanAmount } from 'config';

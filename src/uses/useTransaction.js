@@ -1,6 +1,6 @@
 import { Modal } from 'ant-design-vue';
 import { GetTransactionStatus } from 'service/InitService';
-import { getAllUncheckedTxns, checkedTxn } from 'utils/Txn';
+import { getAllUncheckedTxns, checkedTxn, checkedTxnFaild } from 'utils/Txn';
 
 export default () => {
   const TXN_CHECK_INTERVAL = 3000;
@@ -18,6 +18,9 @@ export default () => {
         if (currentTxnStatus?.status === 'Executed') {
           Modal.destroyAll();
           checkedTxn(currentTxn);
+        } else if (typeof currentTxnStatus?.status?.MoveAbort == 'object') {
+          Modal.destroyAll();
+          checkedTxnFaild(currentTxn);
         }
       }
 

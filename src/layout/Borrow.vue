@@ -123,9 +123,9 @@
           });
       };
 
-      emitter.on('getPersonalAsset', () => {
-        getPersonalAssets();
-      });
+      // emitter.on('getPersonalAsset', () => {
+      //   getPersonalAssets();
+      // });
 
       return {
         links: BorrowFooterLinks(t),
@@ -244,9 +244,6 @@
       margin-right: 15px;
       background: url(../assets/images/borrow/icon/gas.png) center center / contain no-repeat;
     }
-  }
-
-  .connect-wallet {
   }
 </style>
 

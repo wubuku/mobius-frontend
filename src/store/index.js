@@ -6,49 +6,35 @@ import Constans from 'utils/Constants';
 import { hexToStr, toTokenString } from 'utils';
 import { GetTokenList, TokenStandardPosition } from 'service/InitService';
 
-let tokenUpdating = false;
-const TOKEN_UPDATE_DURATION = 3e3;
-const UpdateTokenList = (commit) => {
-  if (tokenUpdating) {
-    return;
-  }
+const UpdateTokenList = async (commit) => {
   // Get Token List First
-  GetTokenList()
-    .then((res) => {
-      const tokens = res?.json?.payload?.support_token_codes || [];
+  try {
+    const res = await GetTokenList();
+    const tokens = res?.json?.payload?.support_token_codes || [];
 
-      if (tokens.length > 0) {
-        // Get Detail of each Token
-        Promise.all(
-          tokens.map((token) => {
-            return TokenStandardPosition(toTokenString(token));
-          }),
-        )
-          .then((tokenDetails) => {
-            // Merge Detail and Token Basic Name
-            commit(
-              'SET_TOKEN_LIST',
-              tokenDetails.map((detail, index) => {
-                return {
-                  address: toTokenString(tokens[index]),
-                  name: hexToStr(tokens[index].name),
-                  ...detail,
-                };
-              }),
-            );
-          })
-          .finally(() => {
-            // FIXME: need to stop
-            // setTimeout(() => {
-            //   tokenUpdating = false;
-            //   UpdateTokenList(commit);
-            // }, TOKEN_UPDATE_DURATION);
-          });
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+    if (tokens.length > 0) {
+      // Get Detail of each Token
+      const tokenDetails = await Promise.all(
+        tokens.map((token) => {
+          return TokenStandardPosition(toTokenString(token));
+        }),
+      );
+      // Merge Detail and Token Basic Name
+      commit(
+        'SET_TOKEN_LIST',
+        tokenDetails.map((detail, index) => {
+          return {
+            address: toTokenString(tokens[index]),
+            name: hexToStr(tokens[index].name),
+            ...detail,
+          };
+        }),
+      );
+      return true;
+    }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export default createStore({
@@ -103,8 +89,8 @@ export default createStore({
         console.warn(e);
       }
     },
-    $getTokenList({ commit }) {
-      UpdateTokenList(commit);
+    async $getTokenList({ commit }) {
+      return await UpdateTokenList(commit);
     },
   },
   modules: {

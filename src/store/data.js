@@ -3,37 +3,55 @@ import { toTokenString } from 'utils';
 export default {
   namespaced: true,
   state: {
-    collateral: [],
-    debt: [],
     assetId: '',
+    collateral: {},
+    debt: {},
+    wallet: {},
+    walletArray: [],
   },
   mutations: {
     UPDATE_ASSETS_DATA(state, payload) {
-      const list = payload.body.assets;
+      const { collateral = [], debt = [] } = payload.body.assets;
       state.assetId = payload.id;
 
-      state.collateral = (list.collateral || []).map((asset) => {
+      collateral.forEach((asset) => {
         const address = toTokenString(asset.token_code);
-        return {
+        const name = address.split('::')[2];
+        state.collateral[name] = {
           name: address.split('::')[2],
           address,
           ...asset,
         };
       });
 
-      state.debt = (list.debt || []).map((asset) => {
+      debt.forEach((asset) => {
         const address = toTokenString(asset.token_code);
-        return {
+        const name = address.split('::')[2];
+        state.debt[name] = {
           name: address.split('::')[2],
           address,
           ...asset,
         };
       });
     },
+    UPDATE_WALLET_DATA(state, payload = []) {
+      if (payload.length === 0) {
+        state.wallet = {};
+        state.walletArray = [];
+      } else {
+        state.walletArray = [...payload];
+        payload.forEach((token) => {
+          state.wallet[token.name] = token;
+        });
+      }
+    },
   },
   actions: {
     $updateAssetsData({ commit }, payload) {
       commit('UPDATE_ASSETS_DATA', payload);
+    },
+    $updateWalletResource({ commit }, payload) {
+      commit('UPDATE_WALLET_DATA', payload);
     },
   },
 };

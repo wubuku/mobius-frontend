@@ -100,20 +100,25 @@ export const GetPersonalResource = async (account = '') => {
     if (!window.starcoin) return;
 
     const resources = await JsonProvider().getBalances(account);
-    return Promise.all(
-      Object.keys(resources).map(async (resource) => {
-        const [address, module, token] = resource.split('::');
-        const amount = await CurrencyAmount.fromRawAmount(
-          Star.onChain(parseInt(window.starcoin.networkVersion)),
-          new BigNumber(resources[resource]),
-        );
-        return {
-          address: resource,
-          name: token,
-          amount: amount.toSignificant(9),
-        };
-      }),
-    );
+
+    return typeof resources == 'object'
+      ? Promise.all(
+          Object.keys(resources).map(async (resource) => {
+            const [address, module, token] = resource.split('::');
+
+            const amount = await CurrencyAmount.fromRawAmount(
+              Star.onChain(parseInt(window.starcoin.networkVersion)),
+              new BigNumber(resources[resource]),
+            );
+
+            return {
+              address: resource,
+              name: token,
+              amount: amount.toSignificant(9),
+            };
+          }),
+        )
+      : Promise.resolve([]);
   } catch (err) {
     console.log(err);
   }
@@ -123,23 +128,31 @@ export const GetPersonalResource = async (account = '') => {
  * USDT Oracle
  */
 export const GetTokenUSDPrice = (token = 'STC') => {
-	let oracleType;
-	switch (token) {
-		case 'STC':
-			oracleType = '0x1::STCUSDOracle::STCUSD';
-			break;
-		case 'MBTC':
-			oracleType = `${SOURCE_ADDRESS}::MBTCUSDOracle::MBTCUSD`;
-			break;
-		case 'METH':
-			oracleType = `${SOURCE_ADDRESS}::METHUSDOracle::METHUSD`;
-			break;
-		case 'MUSDT':
-			return [1];
-		default:
-			throw 'no such token!'
-	}
-	return JsonProvider(TEST_NETWORK).send('contract.call_v2', [{
-		function_id: '0x1::PriceOracle::read', type_args: [oracleType], args: [`${SOURCE_ADDRESS}`] 
-	}]).then(res => {console.log(res)});	
-}
+  let oracleType;
+  switch (token) {
+    case 'STC':
+      oracleType = '0x1::STCUSDOracle::STCUSD';
+      break;
+    case 'MBTC':
+      oracleType = `${SOURCE_ADDRESS}::MBTCUSDOracle::MBTCUSD`;
+      break;
+    case 'METH':
+      oracleType = `${SOURCE_ADDRESS}::METHUSDOracle::METHUSD`;
+      break;
+    case 'MUSDT':
+      return [1];
+    default:
+      throw 'no such token!';
+  }
+  return JsonProvider(TEST_NETWORK)
+    .send('contract.call_v2', [
+      {
+        function_id: '0x1::PriceOracle::read',
+        type_args: [oracleType],
+        args: [`${SOURCE_ADDRESS}`],
+      },
+    ])
+    .then((res) => {
+      console.log(res);
+    });
+};

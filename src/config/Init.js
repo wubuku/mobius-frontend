@@ -19,6 +19,7 @@ import {
   Descriptions,
   Slider,
   Modal,
+  Dropdown,
 } from 'ant-design-vue';
 
 export const antInit = (app) => {
@@ -38,7 +39,8 @@ export const antInit = (app) => {
     .use(Divider)
     .use(Descriptions)
     .use(Slider)
-    .use(Modal);
+    .use(Modal)
+    .use(Dropdown);
 
   app.provide('$modal', Modal);
   app.provide('$message', message);

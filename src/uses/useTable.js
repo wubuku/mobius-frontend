@@ -1,46 +1,127 @@
 export default () => {
   return {
-    TokenColumn: [
+    // TokenColumn: [
+    //   {
+    //     title: '资产',
+    //     dataIndex: 'name',
+    //   },
+    //   {
+    //     title: '存款市场',
+    //     dataIndex: 'age',
+    //     width: '110px',
+    //     sorter: true,
+    //   },
+    //   {
+    //     title: '存款APY',
+    //     dataIndex: 'token_risk_params.deposit_apy.mantissa',
+    //     sorter: true,
+    //   },
+    //   {
+    //     title: '借款市场',
+    //     dataIndex: 'name1',
+    //     width: '110px',
+    //     sorter: true,
+    //   },
+    //   {
+    //     title: '借款APY',
+    //     dataIndex: 'token_risk_params.borrow_apy.mantissa',
+    //     sorter: true,
+    //   },
+    //   {
+    //     title: '剩余可借',
+    //     dataIndex: 'liquidity',
+    //     width: '110px',
+    //     sorter: true,
+    //     slots: {
+    //       customRender: 'liquidity',
+    //     },
+    //   },
+    //   {
+    //     title: '操作',
+    //     key: 'action',
+    //     slots: {
+    //       customRender: 'action',
+    //     },
+    //   },
+    // ],
+
+    TokenColumnDeposit: [
       {
         title: '资产',
         dataIndex: 'name',
       },
       {
         title: '存款市场',
-        dataIndex: 'age',
+        dataIndex: 'collateral_amount',
         width: '110px',
-        sorter: true,
-      },
-      {
-        title: '存款APY',
-        dataIndex: 'token_risk_params.deposit_apy.mantissa',
-        sorter: true,
-      },
-      {
-        title: '借款市场',
-        dataIndex: 'name1',
-        width: '110px',
-        sorter: true,
-      },
-      {
-        title: '借款APY',
-        dataIndex: 'token_risk_params.borrow_apy.mantissa',
-        sorter: true,
-      },
-      {
-        title: '剩余可借',
-        dataIndex: 'liquidity',
-        width: '110px',
-        sorter: true,
+        sorter: (prev, next) => prev.collateral_amount - next.collateral_amount,
         slots: {
-          customRender: 'liquidity',
+          customRender: 'collateral_amount',
         },
       },
       {
-        title: '操作',
-        key: 'action',
+        title: '存款APY',
+        dataIndex: 'supply_rate.mantissa',
+        sorter: (prev, next) => prev.supply_rate.mantissa - next.supply_rate.mantissa,
         slots: {
-          customRender: 'action',
+          customRender: 'supply_rate',
+        },
+      },
+      {
+        title: 'Supply',
+        dataIndex: 'collateral',
+        width: '110px',
+        sorter: (prev, next) => prev.collateral - next.collateral,
+        slots: {
+          customRender: 'collateral',
+        },
+      },
+      {
+        title: '钱包',
+        dataIndex: 'walletResource',
+        width: '110px',
+        sorter: (prev, next) => prev.walletResource - next.walletResource,
+        slots: {
+          customRender: 'wallet',
+        },
+      },
+    ],
+
+    TokenColumnBorrow: [
+      {
+        title: '资产',
+        dataIndex: 'name',
+      },
+      {
+        title: '借款市场',
+        dataIndex: 'debt_amount',
+        width: '110px',
+        sorter: (prev, next) => prev.debt_amount - next.debt_amount,
+      },
+      {
+        title: '借款APY',
+        dataIndex: 'borrow_rate.mantissa',
+        sorter: (prev, next) => prev.borrow_rate.mantissa - next.borrow_rate.mantissa,
+        slots: {
+          customRender: 'borrow_rate',
+        },
+      },
+      {
+        title: 'Borrow',
+        dataIndex: 'debt',
+        width: '110px',
+        sorter: (prev, next) => prev.debt - next.debt,
+        slots: {
+          customRender: 'debt',
+        },
+      },
+      {
+        title: 'LIQUIDITY',
+        dataIndex: 'tokens.value',
+        width: '110px',
+        sorter: (prev, next) => prev.tokens.value - next.tokens.value,
+        slots: {
+          customRender: 'liquidity',
         },
       },
     ],

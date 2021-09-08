@@ -1,9 +1,9 @@
 <template>
   <div v-if="accountHash" class="btn primary account-btn">
     {{ btnText }}
-    <div class="btn still primary token-btn">0.000000</div>
+    <!-- <div class="btn still primary token-btn">0.000000</div> -->
   </div>
-  <div v-else class="btn primary connect-wallet" @click="connectWallet">
+  <div v-else class="btn primary account-btn" @click="connectWallet">
     {{ $t('borrow.btn.connect') }}
   </div>
 </template>
@@ -132,9 +132,12 @@
   .account-btn {
     background: #5667d6;
     display: flex;
-    padding: 2px;
+    padding: 0 10px;
+    height: 44px;
+    border-radius: 2px;
+    font-size: 14px;
     align-items: center;
-    padding-left: 20px;
+    margin: 0 10px;
 
     .token-btn {
       min-width: 90px;
