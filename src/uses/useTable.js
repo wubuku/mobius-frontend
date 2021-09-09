@@ -49,6 +49,9 @@ export default () => {
       {
         title: '资产',
         dataIndex: 'name',
+        slots: {
+          customRender: 'name',
+        },
       },
       {
         title: '存款市场',
@@ -91,6 +94,9 @@ export default () => {
       {
         title: '资产',
         dataIndex: 'name',
+        slots: {
+          customRender: 'name',
+        },
       },
       {
         title: '借款市场',

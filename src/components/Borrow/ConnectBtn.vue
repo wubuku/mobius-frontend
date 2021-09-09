@@ -130,9 +130,9 @@
 
 <style lang="less" scoped>
   .account-btn {
-    background: #5667d6;
+    background: rgb(24, 28, 58);
     display: flex;
-    padding: 0 10px;
+    padding: 0 16px;
     height: 44px;
     border-radius: 2px;
     font-size: 14px;

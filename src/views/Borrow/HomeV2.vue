@@ -85,6 +85,12 @@
               :loading="tableLoading"
               :customRow="(record) => tableEventHandler('deposit', record)"
             >
+              <template #name="{ record }">
+                <div class="coin">
+                  <img :src="CoinIcon(record.name)" class="coin-icon" />
+                  {{ record.name }}
+                </div>
+              </template>
               <template #collateral_amount="{ record }">
                 {{ record.collateral_amount }}
               </template>
@@ -118,7 +124,14 @@
               :pagination="false"
               :rowKey="(record) => record.dataIndex"
               :loading="tableLoading"
+              :customRow="(record) => tableEventHandler('borrow', record)"
             >
+              <template #name="{ record }">
+                <div class="coin">
+                  <img :src="CoinIcon(record.name)" class="coin-icon" />
+                  {{ record.name }}
+                </div>
+              </template>
               <template #borrow_rate="{ record }">
                 {{
                   toPercent(
@@ -146,12 +159,18 @@
       </div>
     </div>
   </div>
-  {{ modalToken }}
+
   <deposit-modal
     v-model:visible="depositModalVisible"
     :token="modalToken"
     v-if="depositModalVisible"
   ></deposit-modal>
+
+  <borrow-modal
+    v-model:visible="borrowModalVisible"
+    :token="modalToken"
+    v-if="borrowModalVisible"
+  ></borrow-modal>
 </template>
 
 <script>
@@ -167,6 +186,7 @@
 
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
   import DepositModal from 'comp/Modal/Deposit';
+  import BorrowModal from 'comp/Modal/Borrow';
 
   import { numberWithUnit } from 'utils';
   import useToken from 'uses/useToken';
@@ -179,6 +199,7 @@
     components: {
       ConnectBtn,
       DepositModal,
+      BorrowModal,
     },
     setup() {
       const emitter = inject('emitter');
@@ -190,12 +211,17 @@
 
       const tableLoading = ref(false);
       const depositModalVisible = ref(false);
+      const borrowModalVisible = ref(false);
+
       const modalToken = ref({});
       const tokenListWithResource = ref([]);
       const dropdownFlag = computed(() => {
         const lang = i18n.locale;
         return require(`../../assets/locales/${lang}.svg`);
       });
+      const CoinIcon = (tokenName) => {
+        return require(`../../assets/images/coin/${tokenName.toLowerCase()}.png`);
+      };
 
       const stopEffect = watchEffect(
         () => {
@@ -230,8 +256,13 @@
       const tableEventHandler = (type, record) => {
         return {
           onClick: () => {
+            console.log(type);
             modalToken.value = { ...record };
-            depositModalVisible.value = true;
+            if (type === 'deposit') {
+              depositModalVisible.value = true;
+            } else if (type === 'borrow') {
+              borrowModalVisible.value = true;
+            }
           },
         };
       };
@@ -246,8 +277,10 @@
         dropdownFlag,
 
         depositModalVisible,
+        borrowModalVisible,
         modalToken,
 
+        CoinIcon,
         numberWithUnit,
         tableEventHandler,
         toHumanReadable,
@@ -263,7 +296,7 @@
   .app-home {
     width: 100%;
     min-height: 100vh;
-    background-color: #1b1c28;
+    background-color: rgb(9, 13, 39);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -387,6 +420,16 @@
 
           h2 {
             margin: 0;
+          }
+
+          .coin {
+            display: flex;
+            align-items: center;
+            .coin-icon {
+              width: 34px;
+              height: 34px;
+              margin-right: 10px;
+            }
           }
 
           .list {

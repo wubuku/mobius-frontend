@@ -40,7 +40,7 @@ export const numberInput = (value) => {
   return value
     .replace(/[^\d.]/g, '')
     .replace(/(^0)(\d+)/, '$2')
-    .replace(/^(\.*)(\d+)(\.?)(\d{0,9}).*$/g, '$2$3$4');
+    .replace(/^(\.*)(\d+)(\.?)(\d{0,20}).*$/g, '$2$3$4');
 };
 
 /**
