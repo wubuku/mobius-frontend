@@ -49,6 +49,7 @@ export default () => {
       {
         title: '资产',
         dataIndex: 'name',
+        width: '125px',
         slots: {
           customRender: 'name',
         },
@@ -65,6 +66,7 @@ export default () => {
       {
         title: '存款APY',
         dataIndex: 'supply_rate.mantissa',
+        width: '110px',
         sorter: (prev, next) => prev.supply_rate.mantissa - next.supply_rate.mantissa,
         slots: {
           customRender: 'supply_rate',
@@ -82,7 +84,6 @@ export default () => {
       {
         title: '钱包',
         dataIndex: 'walletResource',
-        width: '110px',
         sorter: (prev, next) => prev.walletResource - next.walletResource,
         slots: {
           customRender: 'wallet',
@@ -94,6 +95,7 @@ export default () => {
       {
         title: '资产',
         dataIndex: 'name',
+        width: '125px',
         slots: {
           customRender: 'name',
         },
@@ -107,6 +109,7 @@ export default () => {
       {
         title: '借款APY',
         dataIndex: 'borrow_rate.mantissa',
+        width: '110px',
         sorter: (prev, next) => prev.borrow_rate.mantissa - next.borrow_rate.mantissa,
         slots: {
           customRender: 'borrow_rate',
@@ -124,7 +127,6 @@ export default () => {
       {
         title: 'LIQUIDITY',
         dataIndex: 'tokens.value',
-        width: '110px',
         sorter: (prev, next) => prev.tokens.value - next.tokens.value,
         slots: {
           customRender: 'liquidity',

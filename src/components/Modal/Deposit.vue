@@ -1,5 +1,12 @@
 <template>
-  <a-modal v-bind="$attrs" :title="token.name" :closable="!btnLoading" centered :footer="null">
+  <a-modal
+    v-bind="$attrs"
+    :title="token.name"
+    :closable="!btnLoading"
+    centered
+    :footer="null"
+    width="360px"
+  >
     <div class="input-box">
       <a-input
         class="amount"

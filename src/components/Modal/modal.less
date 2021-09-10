@@ -13,23 +13,24 @@
 .modal-info {
   width: 100%;
   min-height: 200px;
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #090d27;
+  padding: 34px 20px 0;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: #ededed;
 
   .info-item {
     width: 100%;
     display: flex;
-    height: 40px;
-    line-height: 40px;
+    align-items: center;
     font-size: 16px;
+    line-height: 1;
+    margin: 16px 0;
     .right {
       margin-left: auto;
+      font-size: 24px;
+
       &.highlight {
         color: rgb(251, 191, 36);
       }
@@ -37,13 +38,13 @@
   }
 }
 .modal-tab {
-  width: 80%;
+  width: 100%;
   display: flex;
-  gap: 50px;
   margin: 40px auto 0;
+  border-bottom: 1px solid #16409c;
 
   .modal-tab-item {
-    width: 300px;
+    flex: 1;
     height: 44px;
     font-size: 16px;
     font-weight: bolder;
@@ -52,12 +53,11 @@
     justify-content: center;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    color: rgb(209, 213, 219);
+    color: #ededed;
 
     &.active {
       color: white;
-      background-color: rgb(9, 13, 39);
-      border-bottom: 2px solid rgb(251, 191, 36);
+      border-bottom: 2px solid #16409c;
     }
     &:hover {
       background-color: #252a4a;
@@ -124,4 +124,6 @@
   border-radius: 10px;
   margin: 30px 0 20px;
   font-size: 18px;
+  background-color: #efaf4e;
+  color: #242428;
 }

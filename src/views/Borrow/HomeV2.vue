@@ -2,12 +2,7 @@
   <div class="app-home">
     <div class="app-container">
       <div class="app-header">
-        <router-link :to="{ name: 'Home' }">
-          <img src="../../assets/images/logo.png" class="logo" />
-        </router-link>
-      </div>
-
-      <div class="main">
+        <div class="logo">BFLY.FINANCE</div>
         <div class="collect-box">
           <connect-btn></connect-btn>
           <a-dropdown placement="bottomRight" trigger="hover">
@@ -26,49 +21,32 @@
             </template>
           </a-dropdown>
         </div>
+      </div>
 
+      <div class="main">
         <div class="dashboard-box">
-          <div class="main-data">
-            <div class="data-box">
-              <div class="account-status">
-                <h2>Supply Balance</h2>
-                <p>$0</p>
-              </div>
-              <div class="account-status small">
-                <h2>Venus Earned</h2>
-                <p>$0</p>
-              </div>
-            </div>
-
-            <div class="circle">
-              <p>$0</p>
-              <p class="desc">
-                <span>ESTIMATED</span>
-                <span>DAILY EARNINGS</span>
-              </p>
-            </div>
-
-            <div class="data-box">
-              <div class="account-status">
-                <h2>Borrow Balance</h2>
-                <p>$0</p>
-              </div>
-              <div class="account-status small">
-                <h2>Net APY</h2>
-                <p>$0</p>
-              </div>
-            </div>
+          <div class="my-info-box">
+            <div class="label">预估当日收益</div>
+            <div class="num large up blod">$12.32</div>
           </div>
-
-          <div class="summary-data">
-            <div class="summary-data-item">
-              <p class="big-number-price">$0</p>
-              <p class="small-title">Available Credit</p>
+          <div class="line">
+            <div class="my-info-box">
+              <div class="label">供应余额</div>
+              <div class="num large my blod">$12.32</div>
             </div>
-
-            <div class="summary-data-item right">
-              <p class="big-number-price">$0</p>
-              <p class="small-title">Available Credit</p>
+            <div class="my-info-box">
+              <div class="label">借贷余额</div>
+              <div class="num large my blod">$12.32</div>
+            </div>
+            <div class="my-info-box flex credit-balance">
+              <div class="label">
+                <span>可用信用额度</span>
+                <span class="progress">
+                  <span class="title">借贷限额</span>
+                  <a-progress :percent="30" />
+                </span>
+              </div>
+              <div class="num large my blod">$12.32</div>
             </div>
           </div>
         </div>
@@ -111,8 +89,10 @@
               </template>
 
               <template #wallet="{ record }">
-                {{ toPrecision(wallet[record.name]?.amount) }}
-                {{ record.name }}
+                <div class="num my">
+                  {{ toPrecision(wallet[record.name]?.amount) }}
+                  {{ record.name }}
+                </div>
               </template>
             </a-table>
           </div>
@@ -292,169 +272,12 @@
   });
 </script>
 
-<style lang="less" scoped>
-  .app-home {
+<style lang="less">
+  @import '../../assets/style/app.less';
+
+  .main {
     width: 100%;
-    min-height: 100vh;
-    background-color: rgb(9, 13, 39);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-
-    .app-container {
-      flex: 1;
-      width: 100%;
-      max-width: 1200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 20px;
-
-      .app-header {
-        width: 100%;
-        height: 84px;
-        border-radius: 10px;
-        background-color: #303456;
-        align-items: center;
-        display: flex;
-        padding: 0 2.5rem;
-
-        .logo {
-          width: 200px;
-        }
-      }
-
-      .main {
-        width: 100%;
-        margin-top: 1.75rem;
-
-        .collect-box {
-          display: flex;
-          justify-content: flex-end;
-          margin: 10px 0 40px;
-          align-items: center;
-          .account-btn {
-            flex-shrink: 0;
-          }
-
-          .dropdown-placeholder {
-            height: 100%;
-          }
-        }
-
-        .dashboard-box {
-          display: flex;
-          flex-direction: column;
-          margin: 0 auto;
-
-          width: 100%;
-          max-width: 800px;
-          height: 300px;
-
-          .main-data {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-
-            p {
-              margin-bottom: 0;
-            }
-          }
-
-          .circle {
-            width: 128px;
-            height: 128px;
-            border: 2px solid rgb(245, 158, 11);
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-
-            p {
-              font-size: 20px;
-              margin-bottom: 3px;
-              font-weight: bold;
-            }
-
-            .desc {
-              font-size: 12px;
-              font-weight: normal;
-              span {
-                display: block;
-              }
-            }
-          }
-
-          .summary-data {
-            padding-top: 30px;
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-
-            &:before {
-              content: '';
-              display: block;
-              width: 100%;
-              height: 0;
-              position: absolute;
-              border-top: 1px solid rgb(37, 42, 74);
-              top: 75px;
-            }
-
-            .summary-data-item {
-              &.right {
-                text-align: right;
-              }
-            }
-          }
-        }
-
-        .markets {
-          margin-top: 50px;
-          display: flex;
-          justify-content: space-between;
-
-          h2 {
-            margin: 0;
-          }
-
-          .coin {
-            display: flex;
-            align-items: center;
-            .coin-icon {
-              width: 34px;
-              height: 34px;
-              margin-right: 10px;
-            }
-          }
-
-          .list {
-            width: 49%;
-            background-color: #303456;
-            border-radius: 10px;
-            padding-bottom: 20px;
-            h2 {
-              color: white;
-              padding: 1.5rem 15px;
-            }
-          }
-        }
-
-        @media (max-width: 1024px) {
-          .markets {
-            flex-direction: column;
-            gap: 20px;
-            .list {
-              width: 100%;
-            }
-          }
-        }
-      }
-    }
+    margin-top: 1.75rem;
   }
 
   .flag {

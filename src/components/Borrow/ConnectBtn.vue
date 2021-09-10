@@ -130,36 +130,17 @@
 
 <style lang="less" scoped>
   .account-btn {
-    background: rgb(24, 28, 58);
     display: flex;
     padding: 0 16px;
     height: 44px;
-    border-radius: 2px;
     font-size: 14px;
     align-items: center;
     margin: 0 10px;
-
-    .token-btn {
-      min-width: 90px;
-      background: #fff9e2;
-      color: #ffbc36;
-      display: flex;
-      margin-left: 20px;
-      padding: 2px;
-      padding-right: 10px;
-      align-items: center;
-
-      &:before {
-        content: '';
-        display: block;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: url(../../assets/images/borrow/icon/m.png) center center / 19px 15px no-repeat
-          #ffbc36;
-        flex-shrink: 0;
-        margin-right: 10px;
-      }
-    }
+    background: #16409c;
+    border-radius: 16px;
+    font-weight: 800;
+    color: #d9d9ec;
+    line-height: 18px;
+    font-family: Source Han Sans CN;
   }
 </style>
