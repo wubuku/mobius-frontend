@@ -160,6 +160,7 @@ body {
 
       .progress {
         display: flex;
+        align-items: center;
 
         .title {
           flex-shrink: 0;
@@ -210,12 +211,81 @@ body {
   }
 }
 
-@media (max-width: 1024px) {
-  .markets {
-    flex-direction: column;
-    gap: 20px;
-    .list {
-      width: 100%;
+@media (max-width: 750px) {
+  .app-home {
+    padding-bottom: 20px;
+    background: url(../images/borrow/bg-top.png) center 0 / 100% no-repeat;
+
+    &::before,
+    &::after {
+      background: url(../images/borrow/bg-bottom.png) center 0 / 100% no-repeat;
+    }
+
+    .app-header {
+      padding: 0 10px;
+      .logo {
+        font-size: 36px;
+      }
+    }
+
+    .dashboard-box {
+      margin-top: 50px;
+      padding: 0 10px;
+      gap: 0;
+
+      .my-info-box {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .line {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .credit-balance {
+        .label {
+          gap: 0;
+          span {
+            margin-bottom: 5px;
+          }
+        }
+        .progress {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      .ant-progress-line {
+        width: 180px;
+        .ant-progress-outer {
+          width: 140px;
+        }
+      }
+    }
+
+    .markets {
+      flex-direction: column;
+      gap: 0;
+      padding: 0 10px;
+      .list {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .ant-table-body {
+    overflow-x: scroll;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 16px 10px;
+
+    &:last-child {
+      min-width: 120px;
+      padding-right: 16px;
     }
   }
 }
