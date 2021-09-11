@@ -137,7 +137,7 @@
                 {{
                   toHumanReadable({
                     address: record.address,
-                    amount: record.debt?.debtAsset?.token_amount,
+                    amount: record.debt?.debtAsset?.token_amount || 0,
                   })
                 }}
                 {{ record.name }}
