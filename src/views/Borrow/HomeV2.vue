@@ -137,7 +137,7 @@
                 {{
                   toHumanReadable({
                     address: record.address,
-                    amount: record.debt.debtAsset.token_amount,
+                    amount: record.debt?.debtAsset?.token_amount,
                   })
                 }}
                 {{ record.name }}
@@ -266,7 +266,7 @@
       };
 
       emitter.on('getPersonalAssets', () => {
-        console.log('ssss');
+        getPersonalAssets();
       });
 
       const switchLanguage = (locale) => {
