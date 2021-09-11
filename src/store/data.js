@@ -17,10 +17,11 @@ export default {
       collateral.forEach((asset) => {
         const address = toTokenString(asset.token_code);
         const name = address.split('::')[2];
+
         state.collateral[name] = {
           name: address.split('::')[2],
           address,
-          ...asset,
+          collateralAsset: asset,
         };
       });
 
@@ -30,7 +31,7 @@ export default {
         state.debt[name] = {
           name: address.split('::')[2],
           address,
-          ...asset,
+          debtAsset: asset,
         };
       });
     },

@@ -27,10 +27,10 @@ export const numberWithUnit = (num) => {
   if (num == 0) return num;
   if (isNaN(num)) return '';
 
-  var unit = ['', 'K', 'M', 'B'];
+  var unit = ['', '', 'K', 'M', 'B'];
 
   var digit = Math.floor(Math.log(num) / Math.log(1000));
-  return (num / Math.pow(1000, Math.floor(digit))).toFixed(3) + ' ' + unit[digit];
+  return (num / Math.pow(1000, Math.floor(digit))).toFixed(3) + ' ' + (unit[digit] || '');
 };
 
 /**

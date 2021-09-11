@@ -3,10 +3,14 @@
     v-bind="$attrs"
     :title="token.name"
     :closable="!btnLoading"
+    :maskClosable="!btnLoading"
     centered
     :footer="null"
     width="360px"
   >
+    <!-- <span style="color: white">
+      {{ token }}
+    </span> -->
     <div class="input-box">
       <a-input
         class="amount"
@@ -37,43 +41,74 @@
     </div>
 
     <div class="modal-info">
+      <!--  -->
       <div class="info-item">
         借款APY
-        <span class="right">1.24%</span>
+        <span class="right">{{ toPercent(toReadMantissa(token.borrow_rate.mantissa)) }}</span>
       </div>
-      <div class="info-item">
+      <!-- <div class="info-item">
         Distribution APY
         <span class="right">1.24%</span>
-      </div>
+      </div> -->
+
+      <!--  -->
       <div class="info-item">
-        Borrow Limit
-        <span class="right">1.24%</span>
+        Borrow Balance
+        <span class="right">
+          $
+          {{
+            getOracleValue({
+              amount: toHumanReadable({
+                amount: token.debt?.debtAsset?.token_amount,
+                address: token.address,
+              }),
+              oracle: token.oracle,
+            })
+          }}
+          <span class="arrow-box" v-if="amount > 0">
+            <ArrowRightOutlined class="arrow" />
+            ${{ borrowBalance }}
+          </span>
+        </span>
       </div>
+      <!--  -->
       <div class="info-item">
         Borrow Limit Used
-        <span class="right highlight">1.24%</span>
+        <span class="right highlight">0%</span>
       </div>
+      <!--  -->
       <a-button class="btn submit-btn" :disabled="!canSubmit" @click="submit" :loading="btnLoading">
         {{ submitBtnText }}
       </a-button>
-      <div class="info-item" v-if="isRepayMode">
-        Wallet Balance
-        <span class="right highlight">{{ token?.walletResource }} {{ token.name }}</span>
+
+      <!-- Currently borrow -->
+      <div class="info-item">
+        Currently Borrowing
+        <span class="right" :class="{ highlight: isBorrowMode }">
+          {{ CurrentlyBorrwing }} {{ token.name }}
+        </span>
       </div>
-      <div class="info-item" v-if="isBorrowMode">
-        isRepayMode Balance
-        <span class="right highlight">123 {{ token.name }}</span>
+
+      <!-- Wallet Balance -->
+      <div class="info-item">
+        Wallet Balance
+        <span class="right" :class="{ highlight: isRepayMode }">
+          {{ token?.walletResource }} {{ token.name }}
+        </span>
       </div>
     </div>
   </a-modal>
 </template>
 
 <script>
+  import BigNumber from 'bignumber.js';
   import { computed, defineComponent, inject, reactive, ref, watch } from 'vue';
   import { numberInput } from 'utils';
+  import { ArrowRightOutlined } from '@ant-design/icons-vue';
   import { BorrowContract, RepayContract } from 'service/BorrowService';
   import useToken from '../../uses/useToken';
   import useUser from '../../uses/useUser';
+  import useTransaction from '../../uses/useTransaction';
 
   export default defineComponent({
     props: {
@@ -82,28 +117,39 @@
         default: () => {},
       },
     },
+    components: {
+      ArrowRightOutlined,
+    },
     setup(props, { emit, attrs }) {
-      const { toHumanReadable } = useToken();
-      const { assetId, getPersonalAssets } = useUser();
+      const { toHumanReadable, toReadMantissa, toPercent, getOracleValue } = useToken();
+      const { startTransactionCheck } = useTransaction();
+      const { assetId } = useUser();
+
       const ENUMS = inject('ENUMS');
+      const messageModal = inject('$message');
+
+      const { token } = reactive(props);
+
       const mode = ref(ENUMS.TAB_NAME.BORROW.value);
       const amount = ref('');
+      const borrowBalance = ref('');
       const btnLoading = ref(false);
-      const { token, visible } = reactive(props);
       const amountInput = ref(null);
 
-      const maxWithdrawAmount = computed(() =>
+      // CurrentlyBorrwing
+      const CurrentlyBorrwing = computed(() =>
         toHumanReadable({
           address: token?.address,
-          amount: token?.tokens.value,
+          amount: token.debt?.debtAsset?.token_amount || 0,
         }),
       );
+
       const isBorrowMode = computed(() => mode.value === ENUMS.TAB_NAME.BORROW.value);
       const isRepayMode = computed(() => mode.value === ENUMS.TAB_NAME.REPAY.value);
       const inputLargerThanAmount = computed(() => {
         return isBorrowMode.value
-          ? amount.value > ~~token?.walletResource
-          : amount.value > ~~maxWithdrawAmount.value;
+          ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
+          : new BigNumber(amount.value).isGreaterThan(CurrentlyBorrwing.value);
       });
       const canSubmit = computed(
         () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
@@ -113,10 +159,30 @@
         if (inputLargerThanAmount.value) return 'Not enough balance';
         return '';
       });
+      const totalBalance = computed(() => {
+        if (amount.value == 0) return 0;
+        const currentBalance = new BigNumber(
+          toHumanReadable({
+            amount: token.debt?.debtAsset?.token_amount,
+            address: token.address,
+          }),
+        );
+
+        return isBorrowMode.value
+          ? currentBalance.plus(amount.value)
+          : currentBalance.minus(amount.value);
+      });
 
       watch(mode, () => {
         amount.value = '';
         amountInput.value.focus();
+      });
+
+      watch(amount, () => {
+        borrowBalance.value = getOracleValue({
+          amount: totalBalance.value,
+          oracle: token.oracle,
+        });
       });
 
       const setAllAmount = () => {
@@ -125,7 +191,7 @@
         }
 
         if (isRepayMode.value) {
-          amount.value = maxWithdrawAmount.value;
+          amount.value = CurrentlyBorrwing.value;
         }
       };
 
@@ -133,37 +199,42 @@
         amount.value = '';
       };
 
-      const submit = () => {
+      const submit = async () => {
         btnLoading.value = true;
 
         // Borrow or Withdraw
         if (isBorrowMode.value) {
-          BorrowContract({
-            token: token,
-            nftId: assetId.value,
-            amount: amount.value,
-          })
-            .then((res) => {
-              formInit();
-              emit('update:visible', !attrs.visible);
-            })
-            .finally(() => {
-              btnLoading.value = false;
+          try {
+            const txn = await BorrowContract({
+              token: token,
+              nftId: assetId.value,
+              amount: amount.value,
             });
+            await startTransactionCheck(txn);
+            formInit();
+            messageModal.success('Transaction Success!');
+          } catch (err) {
+            if (err.message) {
+              messageModal.error(err.message);
+            }
+          }
         } else if (isRepayMode.value) {
-          RepayContract({
-            token: token,
-            nftId: assetId.value,
-            amount: amount.value,
-          })
-            .then((res) => {
-              formInit();
-              emit('update:visible', !attrs.visible);
-            })
-            .finally(() => {
-              btnLoading.value = false;
+          try {
+            const txn = await RepayContract({
+              token: token,
+              nftId: assetId.value,
+              amount: amount.value,
             });
+            await startTransactionCheck(txn);
+            messageModal.success('Transaction Success!');
+          } catch (err) {
+            if (err.message) {
+              messageModal.error(err.message);
+            }
+          }
         }
+
+        btnLoading.value = false;
       };
 
       return {
@@ -173,16 +244,22 @@
         isRepayMode,
         isBorrowMode,
         inputLargerThanAmount,
-        maxWithdrawAmount,
+        CurrentlyBorrwing,
         submitBtnText,
         errorText,
         btnLoading,
         amountInput,
+        totalBalance,
+        borrowBalance,
 
         canSubmit,
         setAllAmount,
         submit,
         numberInput,
+        toReadMantissa,
+        toPercent,
+        toHumanReadable,
+        getOracleValue,
       };
     },
   });

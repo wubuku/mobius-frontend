@@ -103,25 +103,19 @@ export default () => {
       {
         title: '借款市场',
         dataIndex: 'debt_amount',
-        width: '110px',
+        // width: '110px',
         sorter: (prev, next) => prev.debt_amount - next.debt_amount,
+        slots: {
+          customRender: 'debt_amount',
+        },
       },
       {
         title: '借款APY',
         dataIndex: 'borrow_rate.mantissa',
-        width: '110px',
+        // width: '110px',
         sorter: (prev, next) => prev.borrow_rate.mantissa - next.borrow_rate.mantissa,
         slots: {
           customRender: 'borrow_rate',
-        },
-      },
-      {
-        title: 'Borrow',
-        dataIndex: 'debt',
-        width: '110px',
-        sorter: (prev, next) => prev.debt - next.debt,
-        slots: {
-          customRender: 'debt',
         },
       },
       {

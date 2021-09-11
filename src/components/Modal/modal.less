@@ -30,6 +30,21 @@
     .right {
       margin-left: auto;
       font-size: 24px;
+      display: flex;
+      align-items: center;
+      max-width: 200px;
+
+      .arrow-box {
+        display: flex;
+        align-items: center;
+
+        .arrow {
+          font-size: 16px;
+          margin: 0 5px;
+          font-weight: bolder;
+          color: rgb(251, 191, 36);
+        }
+      }
 
       &.highlight {
         color: rgb(251, 191, 36);
@@ -75,15 +90,13 @@
 }
 
 .amount {
-  padding-right: 20px;
-  padding-left: 20px;
   background: transparent;
   color: white;
   border: none;
   text-align: center;
   color: rgb(251, 191, 36);
   font-size: 36px;
-  width: 337px;
+  width: 237px;
 
   &::placeholder {
     color: gray;
@@ -104,6 +117,9 @@
     line-height: 21px;
     color: rgb(156, 163, 175);
     background-color: transparent;
+    width: auto;
+    padding: 0;
+    border-radius: 0;
 
     &:active {
       left: initial;

@@ -54,6 +54,9 @@
         <div class="markets">
           <div class="list">
             <h2>供应市场</h2>
+            <span style="color: white">
+              <!-- {{ tokenListWithResource[0] }} -->
+            </span>
             <a-table
               :dataSource="tokenListWithResource"
               :columns="TokenColumnDeposit"
@@ -63,41 +66,51 @@
               :loading="tableLoading"
               :customRow="(record) => tableEventHandler('deposit', record)"
             >
+              <!-- 资产 -->
               <template #name="{ record }">
                 <div class="coin">
                   <img :src="CoinIcon(record.name)" class="coin-icon" />
                   {{ record.name }}
                 </div>
               </template>
+              <!-- 存款市场 -->
               <template #collateral_amount="{ record }">
-                {{ record.collateral_amount }}
-              </template>
-
-              <template #collateral="{ record }">
-                {{ record.collateral || 0 }} {{ record.name }}
-              </template>
-
-              <template #supply_rate="{ record }">
                 {{
-                  toPercent(
+                  toHumanReadable({
+                    address: record.address,
+                    amount: record.collateral_amount,
+                  })
+                }}
+              </template>
+              <!-- Supply APY -->
+              <template #supply_rate="{ record }">
+                {{ toPercent(toReadMantissa(record.supply_rate.mantissa)) }}
+              </template>
+              <!-- Supply -->
+              <template #collateral="{ record }">
+                {{
+                  toFixed(
                     toHumanReadable({
                       address: record.address,
-                      amount: record.supply_rate.mantissa,
+                      amount: record.collateral?.collateralAsset?.token_amount || 0,
                     }),
                   )
                 }}
+                {{ record.name }}
               </template>
-
+              <!-- wallet -->
               <template #wallet="{ record }">
                 <div class="num my">
-                  {{ toPrecision(wallet[record.name]?.amount) }}
+                  {{ toFixed(wallet[record.name]?.amount) }}
                   {{ record.name }}
                 </div>
               </template>
             </a-table>
           </div>
           <div class="list">
+            <!-- {{ tokenListWithResource[0] }} -->
             <h2>借贷市场</h2>
+
             <a-table
               :dataSource="tokenListWithResource"
               :columns="TokenColumnBorrow"
@@ -106,23 +119,27 @@
               :loading="tableLoading"
               :customRow="(record) => tableEventHandler('borrow', record)"
             >
+              <!-- 资产 -->
               <template #name="{ record }">
                 <div class="coin">
                   <img :src="CoinIcon(record.name)" class="coin-icon" />
                   {{ record.name }}
                 </div>
               </template>
-              <template #borrow_rate="{ record }">
+              <!-- 借款市场 -->
+              <template #debt_amount="{ record }">
                 {{
-                  toPercent(
-                    toHumanReadable({
-                      address: record.address,
-                      amount: record.borrow_rate.mantissa,
-                    }),
-                  )
+                  toHumanReadable({
+                    address: record.address,
+                    amount: record.debt_amount,
+                  })
                 }}
               </template>
-              <template #debt="{ record }">{{ record.debt || 0 }} {{ record.name }}</template>
+              <!-- 借款利率 -->
+              <template #borrow_rate="{ record }">
+                {{ toPercent(toReadMantissa(record.borrow_rate.mantissa)) }}
+              </template>
+              <!-- 流通性 -->
               <template #liquidity="{ record }">
                 {{
                   numberWithUnit(
@@ -161,6 +178,7 @@
     inject,
     onMounted,
     ref,
+    watch,
     watchEffect,
   } from 'vue';
 
@@ -184,10 +202,18 @@
     setup() {
       const emitter = inject('emitter');
       const { $i18n: i18n } = getCurrentInstance().appContext.config.globalProperties;
-      const { tokenList, toHumanReadable, toPercent, toPrecision, getTokenList } = useToken();
+      const {
+        tokenList,
+        toHumanReadable,
+        toPercent,
+        toFixed,
+        getTokenList,
+        toReadMantissa,
+        getOracleValue,
+      } = useToken();
       const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
       const { startTransactionCheck } = useTransaction();
-      const { collateral, debt, wallet, getPersonalAssets } = useUser();
+      const { accountHash, collateral, debt, wallet, getPersonalAssets } = useUser();
 
       const tableLoading = ref(false);
       const depositModalVisible = ref(false);
@@ -203,14 +229,14 @@
         return require(`../../assets/images/coin/${tokenName.toLowerCase()}.png`);
       };
 
-      const stopEffect = watchEffect(
+      watchEffect(
         () => {
           tokenListWithResource.value = tokenList.value.map((token) => {
             return {
               ...token,
               walletResource: wallet.value[token.name]?.amount || 0,
-              collateral: collateral.value[token.name]?.amount || 0,
-              debt: debt.value[token.name]?.amount || 0,
+              collateral: collateral.value[token.name] || {},
+              debt: debt.value[token.name] || {},
             };
           });
         },
@@ -218,15 +244,22 @@
       );
 
       onMounted(async () => {
+        init();
+      });
+
+      watch(accountHash, () => {
+        init();
+      });
+
+      const init = async () => {
         try {
-          startTransactionCheck();
           getPersonalAssets();
           await getTokenList();
           tableLoading.value = false;
         } catch (e) {
-          console.log(e);
+          console.log('init error', e);
         }
-      });
+      };
 
       const switchLanguage = (locale) => {
         i18n.locale = locale;
@@ -236,7 +269,6 @@
       const tableEventHandler = (type, record) => {
         return {
           onClick: () => {
-            console.log(type);
             modalToken.value = { ...record };
             if (type === 'deposit') {
               depositModalVisible.value = true;
@@ -265,8 +297,10 @@
         tableEventHandler,
         toHumanReadable,
         toPercent,
-        toPrecision,
+        toFixed,
+        toReadMantissa,
         switchLanguage,
+        getOracleValue,
       };
     },
   });
@@ -285,38 +319,5 @@
     height: 24px;
     margin: 5px 0;
     cursor: pointer;
-  }
-
-  .big-number-price {
-    font-size: 24px;
-  }
-
-  .small-title {
-    font-size: 12px;
-    color: rgb(156, 163, 175);
-  }
-
-  .account-status {
-    text-align: center;
-    height: 90px;
-
-    h2 {
-      color: white;
-      font-size: 18px;
-    }
-
-    p {
-      .big-number-price;
-    }
-
-    &.small {
-      h2 {
-        .small-title;
-      }
-
-      p {
-        font-size: 14px;
-      }
-    }
   }
 </style>

@@ -2,66 +2,80 @@
 import BigNumber from 'bignumber.js';
 import { tokenRate } from './common.js';
 
-// amount 
-const gain = (amount, index, user_index) => {
-	let amount_b = new BigNumber(amount);
-	let ret = amount_b.multipliedBy(index).dividedBy(user_index).minus(amount);
+// safeWithdraw = maxWithdraw * health  ??
+// safemaxRepay = maxRepay* health   ??
 
-	return ret.toFixed(0);
+// withdraw / repay 需要算
+// gain + interest = totalInterest
+// totalInterest + supply = maxWithdraw
+// totalInterset + borrow = maxRepay
+
+const gain = (amount, market_index, user_index) => {
+  let amount_b = new BigNumber(amount);
+  let ret = amount_b.multipliedBy(market_index).dividedBy(user_index).minus(amount);
+
+  return ret.toFixed(0);
 };
 
-const interestLinear = (amount, index, user_index, rate, timestamp) => {
-	let amount_b = new BigNumber(amount);
-	let gain = amount_b.multipliedBy(index).dividedBy(user_index).minus(amount);
-	let now = Date.now();
-	const yearSecond = 31536000;
-	const rateSecond = rate / yearSecond;
-	const timeDelta = (now - timestamp) / 1000;
-	if (timeDelta <= 0) {
-		return gain.toFixed(0);
-	}
-	let inc = amount_b.multipliedBy(timeDelta).multipliedBy(rateSecond);
-	let total = inc.plus(gain);
-	return total.toFixed(0);
+const maxWithdrawCalc = (currentSupply, market_index, user_index, interest = 0, health = 0.8) => {
+  return new BigNumber(gain(currentSupply, market_index, user_index))
+    .plus(interest)
+    .plus(currentSupply)
+    .valueOf();
 };
 
-const APYUser = (tokenPrice = {}, tokenList =  {}, tokenBorrowAPY = {}) => {
-	// 币价(对应USDT)，通过 oracle 获得；{'STC': 100, 'MBTC': 10000}; 以该对象进行遍历
-	// 用户持有币的数量；{'STC': 100, 'MBTC': 10000}
-	// 市场借贷率；{'STC': 0.08, 'METH': 0.04}
-	let Rate = tokenRate(tokenPrice, tokenList);
-	console.log(Rate);
-	let APY = 0;
-	Object.keys(Rate).map((token) => {
-		APY = APY + tokenBorrowAPY[token] * Rate[token];
-	})
-	return APY;
-};
+// const interestLinear = (amount, index, user_index, rate, timestamp) => {
+//   let amount_b = new BigNumber(amount);
+//   let gain = amount_b.multipliedBy(index).dividedBy(user_index).minus(amount);
+//   let now = Date.now();
+//   const yearSecond = 31536000;
+//   const rateSecond = rate / yearSecond;
+//   const timeDelta = (now - timestamp) / 1000;
+//   if (timeDelta <= 0) {
+//     return gain.toFixed(0);
+//   }
+//   let inc = amount_b.multipliedBy(timeDelta).multipliedBy(rateSecond);
+//   let total = inc.plus(gain);
+//   return total.toFixed(0);
+// };
 
-const debtValue = (tokenPrice = {}, tokenList = {}) => {
-	let total = 0;
-	Object.keys(tokenPrice).map((token) => {
-		if (token in tokenList) {
-			total = total + tokenPrice[token] * tokenList[token];
-		}
-	})
-	return total;	
-};
+// const APYUser = (tokenPrice = {}, tokenList = {}, tokenBorrowAPY = {}) => {
+//   // 币价(对应USDT)，通过 oracle 获得；{'STC': 100, 'MBTC': 10000}; 以该对象进行遍历
+//   // 用户持有币的数量；{'STC': 100, 'MBTC': 10000}
+//   // 市场借贷率；{'STC': 0.08, 'METH': 0.04}
+//   let Rate = tokenRate(tokenPrice, tokenList);
+//   console.log(Rate);
+//   let APY = 0;
+//   Object.keys(Rate).map((token) => {
+//     APY = APY + tokenBorrowAPY[token] * Rate[token];
+//   });
+//   return APY;
+// };
 
-const ltvAvg = (tokenPrice = {}, tokenList = {}, tokenLtv = {}) => {
-	let Rate = tokenRate(tokenPrice, tokenList);
-	let ltv = 0;
-	Object.keys(Rate).map((token) => {
-		ltv = ltv + tokenLtv[token] * Rate[token];
-	})
-	return ltv;
-};
+// const debtValue = (tokenPrice = {}, tokenList = {}) => {
+//   let total = 0;
+//   Object.keys(tokenPrice).map((token) => {
+//     if (token in tokenList) {
+//       total = total + tokenPrice[token] * tokenList[token];
+//     }
+//   });
+//   return total;
+// };
 
+// const ltvAvg = (tokenPrice = {}, tokenList = {}, tokenLtv = {}) => {
+//   let Rate = tokenRate(tokenPrice, tokenList);
+//   let ltv = 0;
+//   Object.keys(Rate).map((token) => {
+//     ltv = ltv + tokenLtv[token] * Rate[token];
+//   });
+//   return ltv;
+// };
 
 export {
-	gain,
-	interestLinear,
-	APYUser,
-	debtValue,
-	ltvAvg
-}
+  gain,
+  maxWithdrawCalc,
+  // interestLinear,
+  // APYUser,
+  // debtValue,
+  // ltvAvg
+};

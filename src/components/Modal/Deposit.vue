@@ -3,10 +3,14 @@
     v-bind="$attrs"
     :title="token.name"
     :closable="!btnLoading"
+    :maskClosable="!btnLoading"
     centered
     :footer="null"
     width="360px"
   >
+    <!-- <span style="color: white">
+      {{ token }}
+    </span> -->
     <div class="input-box">
       <a-input
         class="amount"
@@ -37,44 +41,69 @@
     </div>
 
     <div class="modal-info">
+      <!-- Supply APY -->
       <div class="info-item">
-        借款APY
-        <span class="right">1.24%</span>
+        存款APY
+        <span class="right">{{ toPercent(toReadMantissa(token.supply_rate.mantissa)) }}</span>
       </div>
-      <div class="info-item">
+
+      <!-- <div class="info-item">
         Distribution APY
         <span class="right">1.24%</span>
-      </div>
+      </div> -->
+
+      <!-- Borrow Limit -->
       <div class="info-item">
         Borrow Limit
-        <span class="right">1.24%</span>
+        <span class="right">
+          $0
+          <span class="arrow-box" v-if="borrowLimit != 0">
+            <ArrowRightOutlined class="arrow" />
+            ${{ borrowLimit }}
+          </span>
+        </span>
       </div>
+
+      <!-- Borrow Limit Used -->
       <div class="info-item">
-        Borrow Limit Used
-        <span class="right highlight">1.24%</span>
+        Borrow Limit Used (Borrowed u / Deposited u + Borrow Limit above )
+        <span class="right highlight">0%</span>
       </div>
+
+      <!-- Submit Btn -->
       <a-button class="btn submit-btn" :disabled="!canSubmit" @click="submit" :loading="btnLoading">
         {{ submitBtnText }}
       </a-button>
-      <div class="info-item" v-if="isDepositMode">
-        Wallet Balance
-        <span class="right highlight">{{ token?.walletResource }} {{ token.name }}</span>
+
+      <!-- Currently withdraw -->
+      <div class="info-item">
+        Currently Supplying
+        <span class="right" :class="{ highlight: isDepositMode }">
+          {{ CurrentlySupplying }} {{ token.name }}
+        </span>
       </div>
-      <div class="info-item" v-if="isWithdrawMode">
-        isWithdrawMode Balance
-        <span class="right highlight">123 {{ token.name }}</span>
+
+      <!-- Wallet Balance -->
+      <div class="info-item">
+        Wallet Balance
+        <span class="right" :class="{ highlight: isWithdrawMode }">
+          {{ token?.walletResource }} {{ token.name }}
+        </span>
       </div>
     </div>
   </a-modal>
 </template>
 
 <script>
+  import BigNumber from 'bignumber.js';
   import { computed, defineComponent, inject, reactive, ref, watch } from 'vue';
   import { numberInput } from 'utils';
-  import { addTxn } from 'utils/Txn';
+  import { maxWithdrawCalc } from 'utils/Calc';
+  import { ArrowRightOutlined } from '@ant-design/icons-vue';
   import { DepositContract, WithdrawContract, InitAssetContract } from 'service/BorrowService';
   import useToken from '../../uses/useToken';
   import useUser from '../../uses/useUser';
+  import useTransaction from '../../uses/useTransaction';
 
   export default defineComponent({
     props: {
@@ -83,28 +112,36 @@
         default: () => {},
       },
     },
+    components: {
+      ArrowRightOutlined,
+    },
     setup(props, { emit, attrs }) {
-      const { toHumanReadable } = useToken();
+      const { toHumanReadable, toReadMantissa, toPercent, getBorrowLimit } = useToken();
+      const { startTransactionCheck } = useTransaction();
       const { assetId, getPersonalAssets } = useUser();
       const ENUMS = inject('ENUMS');
+      const messageModal = inject('$message');
       const mode = ref(ENUMS.TAB_NAME.DEPOSIT.value);
       const amount = ref('');
+      const borrowLimit = ref('');
       const btnLoading = ref(false);
       const { token, visible } = reactive(props);
       const amountInput = ref(null);
 
-      const maxWithdrawAmount = computed(() =>
+      // CurrentlySupplying
+      const CurrentlySupplying = computed(() =>
         toHumanReadable({
           address: token?.address,
-          amount: token?.tokens.value,
+          amount: token.collateral?.collateralAsset?.token_amount || 0,
         }),
       );
+
       const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
       const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);
       const inputLargerThanAmount = computed(() => {
         return isDepositMode.value
-          ? amount.value > ~~token?.walletResource
-          : amount.value > ~~maxWithdrawAmount.value;
+          ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
+          : new BigNumber(amount.value).isGreaterThan(CurrentlySupplying.value);
       });
       const canSubmit = computed(
         () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
@@ -120,13 +157,33 @@
         amountInput.value.focus();
       });
 
+      watch(amount, () => {
+        borrowLimit.value = getBorrowLimit({
+          amount: amount.value || 0,
+          oracle: token.oracle,
+        }).multipliedBy(isDepositMode.value ? 1 : -1);
+      });
+
       const setAllAmount = () => {
         if (isDepositMode.value) {
           amount.value = token?.walletResource;
         }
 
         if (isWithdrawMode.value) {
-          amount.value = maxWithdrawAmount.value;
+          const { mantissa: market_index = 0 } = token?.rate?.vec[0]?.supply_index;
+          const { interest = 0, rate = {} } = token?.collateral?.collateralAsset;
+          const { mantissa: user_index = 0 } = rate?.vec[0]?.index;
+
+          // 要算利息 朋友
+          amount.value = BigNumber.minimum(
+            maxWithdrawCalc(
+              CurrentlySupplying.value,
+              toReadMantissa(market_index),
+              toReadMantissa(user_index),
+              toReadMantissa(interest),
+            ),
+            CurrentlySupplying.value,
+          ).valueOf();
         }
       };
 
@@ -134,54 +191,61 @@
         amount.value = '';
       };
 
-      const submit = () => {
+      const submit = async () => {
         btnLoading.value = true;
 
         // Deposit or Withdraw
         if (isDepositMode.value) {
           if (!assetId.value) {
-            InitAssetContract({
-              token: token,
-              amount: amount.value,
-            })
-              .then((res) => {
-                formInit();
-                getPersonalAssets();
-              })
-              .finally(() => {
-                btnLoading.value = false;
-                emit('update:visible', !attrs.visible);
+            try {
+              const txn = await InitAssetContract({
+                token: token,
+                amount: amount.value,
               });
+              await startTransactionCheck(txn);
+              formInit();
+              messageModal.success('Transaction Success!');
+            } catch (err) {
+              if (err.message) {
+                messageModal.error(err.message);
+              }
+            }
           } else {
-            DepositContract({
-              token: token,
-              nftId: assetId.value,
-              amount: amount.value,
-            })
-              .then((res) => {
-                formInit();
-                getPersonalAssets();
-              })
-              .finally(() => {
-                btnLoading.value = false;
-                emit('update:visible', !attrs.visible);
+            try {
+              const txn = await DepositContract({
+                token: token,
+                nftId: assetId.value,
+                amount: amount.value,
               });
+              await startTransactionCheck(txn);
+              formInit();
+              messageModal.success('Transaction Success!');
+            } catch (err) {
+              if (err.message) {
+                messageModal.error(err.message);
+              }
+            }
           }
         } else {
-          WithdrawContract({
-            token: token,
-            nftId: assetId.value,
-            amount: amount.value === maxWithdrawAmount.value ? 0 : amount.value,
-          })
-            .then((res) => {
-              formInit();
-              getPersonalAssets();
-            })
-            .finally(() => {
-              btnLoading.value = false;
-              emit('update:visible', !attrs.visible);
+          try {
+            const txn = await WithdrawContract({
+              token: token,
+              nftId: assetId.value,
+              amount: new BigNumber(amount.value).isEqualTo(CurrentlySupplying.value)
+                ? 0
+                : amount.value,
             });
+            await startTransactionCheck(txn);
+            formInit();
+            messageModal.success('Transaction Success!');
+          } catch (err) {
+            if (err.message) {
+              messageModal.error(err.message);
+            }
+          }
         }
+
+        btnLoading.value = false;
       };
 
       return {
@@ -191,16 +255,20 @@
         isDepositMode,
         isWithdrawMode,
         inputLargerThanAmount,
-        maxWithdrawAmount,
+        CurrentlySupplying,
         submitBtnText,
         errorText,
         btnLoading,
         amountInput,
+        borrowLimit,
 
         canSubmit,
         setAllAmount,
         submit,
         numberInput,
+
+        toReadMantissa,
+        toPercent,
       };
     },
   });

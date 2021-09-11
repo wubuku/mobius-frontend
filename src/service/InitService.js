@@ -144,15 +144,11 @@ export const GetTokenUSDPrice = (token = 'STC') => {
     default:
       throw 'no such token!';
   }
-  return JsonProvider(TEST_NETWORK)
-    .send('contract.call_v2', [
-      {
-        function_id: '0x1::PriceOracle::read',
-        type_args: [oracleType],
-        args: [`${SOURCE_ADDRESS}`],
-      },
-    ])
-    .then((res) => {
-      console.log(res);
-    });
+  return JsonProvider(TEST_NETWORK).send('contract.call_v2', [
+    {
+      function_id: '0x1::PriceOracle::read',
+      type_args: [oracleType],
+      args: [`${SOURCE_ADDRESS}`],
+    },
+  ]);
 };

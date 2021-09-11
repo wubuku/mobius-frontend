@@ -50,8 +50,9 @@ export default () => {
         if (!res) return;
         // 前面是固定格式
         const vec = res.json?.items?.vec[0] || [];
+
         if (Array.isArray(vec)) {
-          if (vec.length > 1) {
+          if (vec.length >= 1) {
             // choose less id
             const lessIdNft = vec.reduce(
               (prev, current) => (current.id < prev.id ? current : prev),

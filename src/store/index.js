@@ -4,7 +4,7 @@ import Data from './data';
 import Constans from 'utils/Constants';
 
 import { hexToStr, toTokenString } from 'utils';
-import { GetTokenList, TokenStandardPosition } from 'service/InitService';
+import { GetTokenList, TokenStandardPosition, GetTokenUSDPrice } from 'service/InitService';
 
 const UpdateTokenList = async (commit) => {
   // Get Token List First
@@ -19,6 +19,14 @@ const UpdateTokenList = async (commit) => {
           return TokenStandardPosition(toTokenString(token));
         }),
       );
+
+      // Oracel
+      const tokenOracle = await Promise.all(
+        tokens.map((token) => {
+          return GetTokenUSDPrice(toTokenString(token).split('::').pop());
+        }),
+      );
+
       // Merge Detail and Token Basic Name
       commit(
         'SET_TOKEN_LIST',
@@ -26,6 +34,7 @@ const UpdateTokenList = async (commit) => {
           return {
             address: toTokenString(tokens[index]),
             name: hexToStr(tokens[index].name),
+            oracle: tokenOracle[index][0] || 0,
             ...detail,
           };
         }),
