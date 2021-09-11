@@ -6,7 +6,7 @@
     :maskClosable="!btnLoading"
     centered
     :footer="null"
-    width="360px"
+    width="500px"
   >
     <!-- <span style="color: white">
       {{ token }}
@@ -119,13 +119,17 @@
       const { toHumanReadable, toReadMantissa, toPercent, getBorrowLimit } = useToken();
       const { startTransactionCheck } = useTransaction();
       const { assetId, getPersonalAssets } = useUser();
+
       const ENUMS = inject('ENUMS');
+      const emitter = inject('emitter');
       const messageModal = inject('$message');
+
+      const { token } = reactive(props);
+
       const mode = ref(ENUMS.TAB_NAME.DEPOSIT.value);
       const amount = ref('');
       const borrowLimit = ref('');
       const btnLoading = ref(false);
-      const { token, visible } = reactive(props);
       const amountInput = ref(null);
 
       // CurrentlySupplying
@@ -204,6 +208,7 @@
               });
               await startTransactionCheck(txn);
               formInit();
+              emitter.emit('getPersonalAssets');
               messageModal.success('Transaction Success!');
             } catch (err) {
               if (err.message) {
@@ -219,6 +224,7 @@
               });
               await startTransactionCheck(txn);
               formInit();
+              emitter.emit('getPersonalAssets');
               messageModal.success('Transaction Success!');
             } catch (err) {
               if (err.message) {
@@ -237,6 +243,7 @@
             });
             await startTransactionCheck(txn);
             formInit();
+            emitter.emit('getPersonalAssets');
             messageModal.success('Transaction Success!');
           } catch (err) {
             if (err.message) {

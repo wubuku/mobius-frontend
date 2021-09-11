@@ -6,7 +6,7 @@
     :maskClosable="!btnLoading"
     centered
     :footer="null"
-    width="360px"
+    width="500px"
   >
     <!-- <span style="color: white">
       {{ token }}
@@ -126,6 +126,7 @@
       const { assetId } = useUser();
 
       const ENUMS = inject('ENUMS');
+      const emitter = inject('emitter');
       const messageModal = inject('$message');
 
       const { token } = reactive(props);
@@ -212,6 +213,7 @@
             });
             await startTransactionCheck(txn);
             formInit();
+            emitter.emit('getPersonalAssets');
             messageModal.success('Transaction Success!');
           } catch (err) {
             if (err.message) {
@@ -226,6 +228,7 @@
               amount: amount.value,
             });
             await startTransactionCheck(txn);
+            emitter.emit('getPersonalAssets');
             messageModal.success('Transaction Success!');
           } catch (err) {
             if (err.message) {

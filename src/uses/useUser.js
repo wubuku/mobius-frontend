@@ -58,6 +58,7 @@ export default () => {
               (prev, current) => (current.id < prev.id ? current : prev),
               vec[0],
             );
+
             setPersonalAssets(lessIdNft || []);
           } else {
             setPersonalAssets(vec[0] || []);

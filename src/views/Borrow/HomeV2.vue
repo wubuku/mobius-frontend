@@ -108,7 +108,9 @@
             </a-table>
           </div>
           <div class="list">
-            <!-- {{ tokenListWithResource[0] }} -->
+            <!-- <span style="color: white">
+              {{ tokenListWithResource[0] }}
+            </span> -->
             <h2>借贷市场</h2>
 
             <a-table
@@ -126,18 +128,19 @@
                   {{ record.name }}
                 </div>
               </template>
-              <!-- 借款市场 -->
-              <template #debt_amount="{ record }">
-                {{
-                  toHumanReadable({
-                    address: record.address,
-                    amount: record.debt_amount,
-                  })
-                }}
-              </template>
               <!-- 借款利率 -->
               <template #borrow_rate="{ record }">
                 {{ toPercent(toReadMantissa(record.borrow_rate.mantissa)) }}
+              </template>
+              <!-- 当前借款 -->
+              <template #debt="{ record }">
+                {{
+                  toHumanReadable({
+                    address: record.address,
+                    amount: record.debt.debtAsset.token_amount,
+                  })
+                }}
+                {{ record.name }}
               </template>
               <!-- 流通性 -->
               <template #liquidity="{ record }">
@@ -149,6 +152,7 @@
                     }),
                   )
                 }}
+                {{ record.name }}
               </template>
             </a-table>
           </div>
@@ -260,6 +264,10 @@
           console.log('init error', e);
         }
       };
+
+      emitter.on('getPersonalAssets', () => {
+        console.log('ssss');
+      });
 
       const switchLanguage = (locale) => {
         i18n.locale = locale;

@@ -54,15 +54,15 @@ export default () => {
           customRender: 'name',
         },
       },
-      {
-        title: '存款市场',
-        dataIndex: 'collateral_amount',
-        width: '110px',
-        sorter: (prev, next) => prev.collateral_amount - next.collateral_amount,
-        slots: {
-          customRender: 'collateral_amount',
-        },
-      },
+      // {
+      //   title: '存款市场',
+      //   dataIndex: 'collateral_amount',
+      //   width: '110px',
+      //   sorter: (prev, next) => prev.collateral_amount - next.collateral_amount,
+      //   slots: {
+      //     customRender: 'collateral_amount',
+      //   },
+      // },
       {
         title: '存款APY',
         dataIndex: 'supply_rate.mantissa',
@@ -76,7 +76,7 @@ export default () => {
         title: 'Supply',
         dataIndex: 'collateral',
         width: '110px',
-        sorter: (prev, next) => prev.collateral - next.collateral,
+        sorter: true,
         slots: {
           customRender: 'collateral',
         },
@@ -101,21 +101,21 @@ export default () => {
         },
       },
       {
-        title: '借款市场',
-        dataIndex: 'debt_amount',
-        // width: '110px',
-        sorter: (prev, next) => prev.debt_amount - next.debt_amount,
-        slots: {
-          customRender: 'debt_amount',
-        },
-      },
-      {
         title: '借款APY',
         dataIndex: 'borrow_rate.mantissa',
         // width: '110px',
         sorter: (prev, next) => prev.borrow_rate.mantissa - next.borrow_rate.mantissa,
         slots: {
           customRender: 'borrow_rate',
+        },
+      },
+      {
+        title: '当前借款',
+        dataIndex: 'debt.mantissa',
+        // width: '110px',
+        sorter: true,
+        slots: {
+          customRender: 'debt',
         },
       },
       {
@@ -128,90 +128,90 @@ export default () => {
       },
     ],
 
-    CollateralColumn: [
-      {
-        title: '你的存款',
-        dataIndex: 'name',
-      },
-      {
-        title: '当前余额',
-        key: 'amount',
-        slots: {
-          customRender: 'amount',
-        },
-      },
-      {
-        title: '年收益率',
-        dataIndex: 'rate',
-      },
-      {
-        title: '操作',
-        key: 'action',
-        width: '200px',
-        slots: {
-          customRender: 'action',
-        },
-      },
-    ],
+    // CollateralColumn: [
+    //   {
+    //     title: '你的存款',
+    //     dataIndex: 'name',
+    //   },
+    //   {
+    //     title: '当前余额',
+    //     key: 'amount',
+    //     slots: {
+    //       customRender: 'amount',
+    //     },
+    //   },
+    //   {
+    //     title: '年收益率',
+    //     dataIndex: 'rate',
+    //   },
+    //   {
+    //     title: '操作',
+    //     key: 'action',
+    //     width: '200px',
+    //     slots: {
+    //       customRender: 'action',
+    //     },
+    //   },
+    // ],
 
-    DebtColumn: [
-      {
-        title: '资产',
-        dataIndex: 'name',
-      },
-      {
-        title: '借款数量',
-        key: 'amount',
-        slots: {
-          customRender: 'amount',
-        },
-      },
-      {
-        title: '借款APY',
-        dataIndex: 'rate',
-      },
-      {
-        title: '清算价格',
-        dataIndex: 'price',
-      },
-      {
-        title: 'CCR',
-        dataIndex: 'ccr',
-      },
-      {
-        title: '操作',
-        key: 'action',
-        width: '200px',
-        slots: {
-          customRender: 'action',
-        },
-      },
-    ],
+    // DebtColumn: [
+    //   {
+    //     title: '资产',
+    //     dataIndex: 'name',
+    //   },
+    //   {
+    //     title: '借款数量',
+    //     key: 'amount',
+    //     slots: {
+    //       customRender: 'amount',
+    //     },
+    //   },
+    //   {
+    //     title: '借款APY',
+    //     dataIndex: 'rate',
+    //   },
+    //   {
+    //     title: '清算价格',
+    //     dataIndex: 'price',
+    //   },
+    //   {
+    //     title: 'CCR',
+    //     dataIndex: 'ccr',
+    //   },
+    //   {
+    //     title: '操作',
+    //     key: 'action',
+    //     width: '200px',
+    //     slots: {
+    //       customRender: 'action',
+    //     },
+    //   },
+    // ],
 
-    HistoryColumn: [
-      {
-        title: '时间',
-        dataIndex: 'createdAtStr',
-        width: '200px',
-      },
-      {
-        title: '操作',
-        dataIndex: 'oper',
-      },
-      {
-        title: '资产',
-        dataIndex: 'name',
-      },
-      {
-        title: '数量',
-        dataIndex: 'amount',
-      },
-      {
-        title: '查看详情',
-        slots: {
-          customRender: 'detail',
-        },
-      },
-    ],
+    // HistoryColumn: [
+    //   {
+    //     title: '时间',
+    //     dataIndex: 'createdAtStr',
+    //     width: '200px',
+    //   },
+    //   {
+    //     title: '操作',
+    //     dataIndex: 'oper',
+    //   },
+    //   {
+    //     title: '资产',
+    //     dataIndex: 'name',
+    //   },
+    //   {
+    //     title: '数量',
+    //     dataIndex: 'amount',
+    //   },
+    //   {
+    //     title: '查看详情',
+    //     slots: {
+    //       customRender: 'detail',
+    //     },
+    //   },
+    // ],
   };
 };
