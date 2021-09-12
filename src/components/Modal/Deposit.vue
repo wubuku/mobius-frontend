@@ -66,7 +66,7 @@
 
       <!-- Borrow Limit Used -->
       <div class="info-item">
-        Borrow Limit Used (Borrowed u / Deposited u + Borrow Limit above )
+        Borrow Limit Used ((Borrowed u + Borrow Limit above )/ Borrowed Balance u )
         <span class="right highlight">0%</span>
       </div>
 
