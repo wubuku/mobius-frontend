@@ -16,8 +16,8 @@ export const ArrayToEnumParam = (array) => {
 export const SOURCE_ADDRESS = '0xe472F1a11f9E16e84f5Afc717608a0e0';
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
-// export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';
-export const TEST_NETWORK = '';
+export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';
+// export const TEST_NETWORK = '';
 
 export const BROWSER_URL_OF_TRANSACTION = (txn = '') =>
   txn

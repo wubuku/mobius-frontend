@@ -47,7 +47,7 @@
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
 
   import useToken from 'uses/useToken';
-  import { GetPersonalAssets, GetTransactionStatus } from 'service/InitService';
+  import { GetPersonalAssets, GetTransactionStatus, GetRiskAssetsConfig, GetRiskEquivalentsConfig } from 'service/InitService';
 
   import { toTokenString } from 'utils';
 
