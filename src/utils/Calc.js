@@ -11,36 +11,49 @@ import { tokenRate } from './common.js';
 // totalInterset + borrow = maxRepay
 
 const gain = (amount, market_index, user_index) => {
-	let amount_b = new BigNumber(amount);
-	let ret = amount_b.multipliedBy(market_index).dividedBy(user_index).minus(amount);
+  let amount_b = new BigNumber(amount);
+  let ret = amount_b.multipliedBy(market_index).dividedBy(user_index).minus(amount);
 
-	return ret.toFixed(0);
+  return ret.toFixed(0);
 };
 
 const maxWithdrawCalc = (currentSupply, market_index, user_index, interest = 0, health = 0.8) => {
-	return new BigNumber(gain(currentSupply, market_index, user_index))
-		.plus(interest)
-		.plus(currentSupply)
-		.valueOf();
+  return new BigNumber(gain(currentSupply, market_index, user_index))
+    .plus(interest)
+    .plus(currentSupply)
+    .valueOf();
 };
 
-const maxBorrowAmountCalc = (assets = {}, token_price = {}, risk_equivalents_params = {}, risk_assets_params = 0.8, token = 'STC') => {
-	let totalUsdAmount = 0;
-	Object.keys(token_price).map((token) => {
-		totalUsdAmount = totalUsdAmount + assets[token] * token_price[token] * risk_equivalents_params[token]
-	});
-	totalUsdAmount = totalUsdAmount * risk_assets_params;
-	return totalUsdAmount / token_price[token];
-}
+const maxBorrowAmountCalc = (
+  assets = {},
+  token_price = {},
+  risk_equivalents_params = {},
+  risk_assets_params = 0.8,
+  token = 'STC',
+) => {
+  let totalUsdAmount = 0;
+  Object.keys(token_price).map((token) => {
+    totalUsdAmount =
+      totalUsdAmount + assets[token] * token_price[token] * risk_equivalents_params[token];
+  });
+  totalUsdAmount = totalUsdAmount * risk_assets_params;
+  return totalUsdAmount / token_price[token];
+};
 
-const maxBorrowUSDCalc = (assets = {}, token_price = {}, risk_equivalents_params = {}, risk_assets_params = 0.8) => {
-	let totalUsdAmount = 0;
-	Object.keys(token_price).map((token) => {
-		totalUsdAmount = totalUsdAmount + assets[token] * token_price[token] * risk_equivalents_params[token]
-	});
-	totalUsdAmount = totalUsdAmount * risk_assets_params;
-	return totalUsdAmount;
-}
+const maxBorrowUSDCalc = (
+  assets = {},
+  token_price = {},
+  risk_equivalents_params = {},
+  risk_assets_params = 0.8,
+) => {
+  let totalUsdAmount = 0;
+  Object.keys(token_price).map((token) => {
+    totalUsdAmount =
+      totalUsdAmount + assets[token] * token_price[token] * risk_equivalents_params[token];
+  });
+  totalUsdAmount = totalUsdAmount * risk_assets_params;
+  return totalUsdAmount;
+};
 
 // const interestLinear = (amount, index, user_index, rate, timestamp) => {
 //   let amount_b = new BigNumber(amount);
@@ -90,10 +103,12 @@ const maxBorrowUSDCalc = (assets = {}, token_price = {}, risk_equivalents_params
 // };
 
 export {
-	gain,
-	maxWithdrawCalc,
-	// interestLinear,
-	// APYUser,
-	// debtValue,
-	// ltvAvg
+  gain,
+  maxWithdrawCalc,
+  maxBorrowAmountCalc,
+  maxBorrowUSDCalc,
+  // interestLinear,
+  // APYUser,
+  // debtValue,
+  // ltvAvg
 };

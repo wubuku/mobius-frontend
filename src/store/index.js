@@ -3,49 +3,6 @@ import { createStore } from 'vuex';
 import Data from './data';
 import Constans from 'utils/Constants';
 
-import { hexToStr, toTokenString } from 'utils';
-import { GetTokenList, TokenStandardPosition, GetTokenUSDPrice } from 'service/InitService';
-
-const UpdateTokenList = async (commit) => {
-  // Get Token List First
-  try {
-    const res = await GetTokenList();
-    const tokens = res?.json?.payload?.support_token_codes || [];
-
-    if (tokens.length > 0) {
-      // Get Detail of each Token
-      const tokenDetails = await Promise.all(
-        tokens.map((token) => {
-          return TokenStandardPosition(toTokenString(token));
-        }),
-      );
-
-      // Oracel
-      const tokenOracle = await Promise.all(
-        tokens.map((token) => {
-          return GetTokenUSDPrice(toTokenString(token).split('::').pop());
-        }),
-      );
-
-      // Merge Detail and Token Basic Name
-      commit(
-        'SET_TOKEN_LIST',
-        tokenDetails.map((detail, index) => {
-          return {
-            address: toTokenString(tokens[index]),
-            name: hexToStr(tokens[index].name),
-            oracle: tokenOracle[index][0] || 0,
-            ...detail,
-          };
-        }),
-      );
-      return true;
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
-
 export default createStore({
   state: {
     appConfig: {
@@ -98,8 +55,9 @@ export default createStore({
         console.warn(e);
       }
     },
-    async $getTokenList({ commit }) {
-      return await UpdateTokenList(commit);
+
+    $getTokenList({ commit }, payload) {
+      commit('SET_TOKEN_LIST', payload);
     },
   },
   modules: {

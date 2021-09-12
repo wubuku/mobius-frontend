@@ -4,9 +4,10 @@
     :title="token.name"
     :closable="!btnLoading"
     :maskClosable="!btnLoading"
-    centered
     :footer="null"
+    @cancel="emit('update:visible', false)"
     width="500px"
+    centered
   >
     <!-- <span style="color: white">
       {{ token }}
@@ -79,7 +80,7 @@
       <div class="info-item">
         Currently Supplying
         <span class="right" :class="{ highlight: isDepositMode }">
-          {{ CurrentlySupplying }} {{ token.name }}
+          {{ token?.supplyBalance }} {{ token.name }}
         </span>
       </div>
 
@@ -94,9 +95,9 @@
   </a-modal>
 </template>
 
-<script>
+<script setup>
   import BigNumber from 'bignumber.js';
-  import { computed, defineComponent, inject, reactive, ref, watch } from 'vue';
+  import { computed, defineProps, defineEmits, inject, reactive, ref, watch } from 'vue';
   import { numberInput } from 'utils';
   import { maxWithdrawCalc } from 'utils/Calc';
   import { ArrowRightOutlined } from '@ant-design/icons-vue';
@@ -105,182 +106,146 @@
   import useUser from '../../uses/useUser';
   import useTransaction from '../../uses/useTransaction';
 
-  export default defineComponent({
-    props: {
-      token: {
-        type: Object,
-        default: () => {},
-      },
-    },
-    components: {
-      ArrowRightOutlined,
-    },
-    setup(props, { emit, attrs }) {
-      const { toHumanReadable, toReadMantissa, toPercent, getBorrowLimit } = useToken();
-      const { startTransactionCheck } = useTransaction();
-      const { assetId, getPersonalAssets } = useUser();
-
-      const ENUMS = inject('ENUMS');
-      const emitter = inject('emitter');
-      const messageModal = inject('$message');
-
-      const { token } = reactive(props);
-
-      const mode = ref(ENUMS.TAB_NAME.DEPOSIT.value);
-      const amount = ref('');
-      const borrowLimit = ref('');
-      const btnLoading = ref(false);
-      const amountInput = ref(null);
-
-      // CurrentlySupplying
-      const CurrentlySupplying = computed(() =>
-        toHumanReadable({
-          address: token?.address,
-          amount: token.collateral?.collateralAsset?.token_amount || 0,
-        }),
-      );
-
-      const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
-      const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);
-      const inputLargerThanAmount = computed(() => {
-        return isDepositMode.value
-          ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
-          : new BigNumber(amount.value).isGreaterThan(CurrentlySupplying.value);
-      });
-      const canSubmit = computed(
-        () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
-      );
-      const submitBtnText = computed(() => (isDepositMode.value ? 'Deposit' : 'WithDraw'));
-      const errorText = computed(() => {
-        if (inputLargerThanAmount.value) return 'Not enough balance';
-        return '';
-      });
-
-      watch(mode, () => {
-        amount.value = '';
-        amountInput.value.focus();
-      });
-
-      watch(amount, () => {
-        borrowLimit.value = getBorrowLimit({
-          amount: amount.value || 0,
-          oracle: token.oracle,
-        }).multipliedBy(isDepositMode.value ? 1 : -1);
-      });
-
-      const setAllAmount = () => {
-        if (isDepositMode.value) {
-          amount.value = token?.walletResource;
-        }
-
-        if (isWithdrawMode.value) {
-          const { mantissa: market_index = 0 } = token?.rate?.vec[0]?.supply_index;
-          const { interest = 0, rate = {} } = token?.collateral?.collateralAsset;
-          const { mantissa: user_index = 0 } = rate?.vec[0]?.index;
-
-          // 要算利息 朋友
-          amount.value = BigNumber.minimum(
-            maxWithdrawCalc(
-              CurrentlySupplying.value,
-              toReadMantissa(market_index),
-              toReadMantissa(user_index),
-              toReadMantissa(interest),
-            ),
-            CurrentlySupplying.value,
-          ).valueOf();
-        }
-      };
-
-      const formInit = () => {
-        amount.value = '';
-      };
-
-      const submit = async () => {
-        btnLoading.value = true;
-
-        // Deposit or Withdraw
-        if (isDepositMode.value) {
-          if (!assetId.value) {
-            try {
-              const txn = await InitAssetContract({
-                token: token,
-                amount: amount.value,
-              });
-              await startTransactionCheck(txn);
-              formInit();
-              emitter.emit('getPersonalAssets');
-              messageModal.success('Transaction Success!');
-            } catch (err) {
-              if (err.message) {
-                messageModal.error(err.message);
-              }
-            }
-          } else {
-            try {
-              const txn = await DepositContract({
-                token: token,
-                nftId: assetId.value,
-                amount: amount.value,
-              });
-              await startTransactionCheck(txn);
-              formInit();
-              emitter.emit('getPersonalAssets');
-              messageModal.success('Transaction Success!');
-            } catch (err) {
-              if (err.message) {
-                messageModal.error(err.message);
-              }
-            }
-          }
-        } else {
-          try {
-            const txn = await WithdrawContract({
-              token: token,
-              nftId: assetId.value,
-              amount: new BigNumber(amount.value).isEqualTo(CurrentlySupplying.value)
-                ? 0
-                : amount.value,
-            });
-            await startTransactionCheck(txn);
-            formInit();
-            emitter.emit('getPersonalAssets');
-            messageModal.success('Transaction Success!');
-          } catch (err) {
-            if (err.message) {
-              messageModal.error(err.message);
-            }
-          }
-        }
-
-        btnLoading.value = false;
-      };
-
-      return {
-        mode,
-        ENUMS,
-        amount,
-        isDepositMode,
-        isWithdrawMode,
-        inputLargerThanAmount,
-        CurrentlySupplying,
-        submitBtnText,
-        errorText,
-        btnLoading,
-        amountInput,
-        borrowLimit,
-
-        canSubmit,
-        setAllAmount,
-        submit,
-        numberInput,
-
-        toReadMantissa,
-        toPercent,
-      };
+  const props = defineProps({
+    token: {
+      type: Object,
+      default: () => {},
     },
   });
+
+  const emit = defineEmits(['update:visible']);
+
+  const { toHumanReadable, toReadMantissa, toPercent, getBorrowLimit } = useToken();
+  const { startTransactionCheck } = useTransaction();
+  const { assetId } = useUser();
+
+  const ENUMS = inject('ENUMS');
+  const emitter = inject('emitter');
+  const messageModal = inject('$message');
+
+  const { token } = reactive(props);
+
+  const mode = ref(ENUMS.TAB_NAME.DEPOSIT.value);
+  const amount = ref('');
+  const borrowLimit = ref('');
+  const btnLoading = ref(false);
+  const amountInput = ref(null);
+
+  const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
+  const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);
+  const inputLargerThanAmount = computed(() => {
+    return isDepositMode.value
+      ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
+      : new BigNumber(amount.value).isGreaterThan(token?.supplyBalance);
+  });
+  const canSubmit = computed(
+    () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
+  );
+  const submitBtnText = computed(() => (isDepositMode.value ? 'Deposit' : 'WithDraw'));
+  const errorText = computed(() => {
+    if (inputLargerThanAmount.value) return 'Not enough balance';
+    return '';
+  });
+
+  watch(mode, () => {
+    amount.value = '';
+    amountInput.value.focus();
+  });
+
+  watch(amount, () => {
+    borrowLimit.value = getBorrowLimit({
+      amount: amount.value || 0,
+      oracle: token.oracle,
+    }).multipliedBy(isDepositMode.value ? 1 : -1);
+  });
+
+  const setAllAmount = () => {
+    if (isDepositMode.value) {
+      amount.value = token?.walletResource;
+    }
+
+    if (isWithdrawMode.value) {
+      const { mantissa: market_index = 0 } = token?.rate?.vec[0]?.supply_index;
+      const { interest = 0, rate = {} } = token?.personalCollateralAsset;
+      const { mantissa: user_index = 0 } = rate?.vec[0]?.index;
+
+      // 要算利息 朋友
+      amount.value = BigNumber.minimum(
+        maxWithdrawCalc(
+          token?.supplyBalance,
+          toReadMantissa(market_index),
+          toReadMantissa(user_index),
+          toReadMantissa(interest),
+        ),
+        token?.supplyBalance,
+      ).valueOf();
+    }
+  };
+
+  const formInit = () => {
+    amount.value = '';
+  };
+
+  const submit = async () => {
+    btnLoading.value = true;
+
+    // Deposit or Withdraw
+    if (isDepositMode.value) {
+      if (!assetId.value) {
+        try {
+          const txn = await InitAssetContract({
+            token: token,
+            amount: amount.value,
+          });
+          await startTransactionCheck(txn);
+          formInit();
+          emitter.emit('refreshData');
+          messageModal.success('Transaction Success!');
+          emit('update:visible', false);
+        } catch (err) {
+          if (err.message) {
+            messageModal.error(err.message);
+          }
+        }
+      } else {
+        try {
+          const txn = await DepositContract({
+            token: token,
+            nftId: assetId.value,
+            amount: amount.value,
+          });
+          await startTransactionCheck(txn);
+          formInit();
+          emitter.emit('refreshData');
+          messageModal.success('Transaction Success!');
+          emit('update:visible', false);
+        } catch (err) {
+          if (err.message) {
+            messageModal.error(err.message);
+          }
+        }
+      }
+    } else {
+      try {
+        const txn = await WithdrawContract({
+          token: token,
+          nftId: assetId.value,
+          amount: new BigNumber(amount.value).isEqualTo(token?.supplyBalance) ? 0 : amount.value,
+        });
+        await startTransactionCheck(txn);
+        formInit();
+        emitter.emit('refreshData');
+        messageModal.success('Transaction Success!');
+        emit('update:visible', false);
+      } catch (err) {
+        if (err.message) {
+          messageModal.error(err.message);
+        }
+      }
+    }
+
+    btnLoading.value = false;
+  };
 </script>
 
-<style lang="less" scoped>
-  @import './modal.less';
-</style>
+<style lang="less" src="./modal.less" scoped></style>

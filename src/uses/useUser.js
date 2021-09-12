@@ -42,40 +42,11 @@ export default () => {
     setWalletResource(res || []);
   };
 
-  const getPersonalAssets = () => {
-    if (!accountHash.value) return;
-
-    GetPersonalAssets(accountHash.value)
-      .then((res) => {
-        if (!res) return;
-        // 前面是固定格式
-        const vec = res.json?.items?.vec[0] || [];
-
-        if (Array.isArray(vec)) {
-          if (vec.length >= 1) {
-            // choose less id
-            const lessIdNft = vec.reduce(
-              (prev, current) => (current.id < prev.id ? current : prev),
-              vec[0],
-            );
-
-            setPersonalAssets(lessIdNft || []);
-          } else {
-            setPersonalAssets(vec[0] || []);
-          }
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   watchEffect(myAllResource);
 
   return {
     myResource,
     myAllResource,
-    getPersonalAssets,
     currentResource,
     accountHash,
     // Page Data

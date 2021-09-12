@@ -65,20 +65,17 @@ export default () => {
       // },
       {
         title: '存款APY',
-        dataIndex: 'supply_rate.mantissa',
-        width: '110px',
-        sorter: (prev, next) => prev.supply_rate.mantissa - next.supply_rate.mantissa,
-        slots: {
-          customRender: 'supply_rate',
-        },
+        dataIndex: 'supplyAPY',
+        key: 'supplyAPY',
+        sorter: (prev, next) => prev.supplyAPY - next.supplyAPY,
       },
       {
         title: 'Supply',
-        dataIndex: 'collateral',
-        width: '110px',
-        sorter: true,
+        dataIndex: 'supply_balance',
+        key: 'supply_balance',
+        sorter: (prev, next) => prev.supply_balance - next.supply_balance,
         slots: {
-          customRender: 'collateral',
+          customRender: 'supply_balance',
         },
       },
       {
@@ -102,20 +99,17 @@ export default () => {
       },
       {
         title: '借款APY',
-        dataIndex: 'borrow_rate.mantissa',
-        // width: '110px',
-        sorter: (prev, next) => prev.borrow_rate.mantissa - next.borrow_rate.mantissa,
-        slots: {
-          customRender: 'borrow_rate',
-        },
+        dataIndex: 'borrowAPY',
+        key: 'borrowAPY',
+        sorter: (prev, next) => prev.borrowAPY - next.borrowAPY,
       },
       {
         title: '当前借款',
-        dataIndex: 'debt.mantissa',
-        // width: '110px',
-        sorter: true,
+        dataIndex: 'borrowBalance',
+        key: 'borrowBalance',
+        sorter: (prev, next) => prev.borrowBalance - next.borrowBalance,
         slots: {
-          customRender: 'debt',
+          customRender: 'borrowBalance',
         },
       },
       {

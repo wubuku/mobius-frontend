@@ -47,7 +47,12 @@
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
 
   import useToken from 'uses/useToken';
-  import { GetPersonalAssets, GetTransactionStatus, GetRiskAssetsConfig, GetRiskEquivalentsConfig } from 'service/InitService';
+  import {
+    GetPersonalAssets,
+    GetTransactionStatus,
+    GetRiskAssetsConfig,
+    GetRiskEquivalentsConfig,
+  } from 'service/InitService';
 
   import { toTokenString } from 'utils';
 
@@ -68,10 +73,6 @@
       const emptyData = ref(false);
       const ENUMS = inject('ENUMS');
 
-      watch(accountHash, () => {
-        getPersonalAssets();
-      });
-
       watch(theme, () => {
         if (theme.value) {
           window.localStorage.setItem('theme', 'dark');
@@ -89,43 +90,7 @@
         startTransactionCheck();
 
         getTokenList();
-        getPersonalAssets();
       });
-
-      // method
-      const getPersonalAssets = () => {
-        if (!accountHash.value) return;
-
-        GetPersonalAssets(accountHash.value)
-          .then((res) => {
-            if (!res) {
-              emptyData.value = !res;
-            } else {
-              // 前面是固定格式
-
-              const vec = res.json?.items?.vec[0] || [];
-              if (Array.isArray(vec)) {
-                if (vec.length > 1) {
-                  // choose less id
-                  const lessIdNft = vec.reduce(
-                    (prev, current) => (current.id < prev.id ? current : prev),
-                    vec[0],
-                  );
-                  setPersonalAssets(lessIdNft || []);
-                } else {
-                  setPersonalAssets(vec[0] || []);
-                }
-              }
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      };
-
-      // emitter.on('getPersonalAsset', () => {
-      //   getPersonalAssets();
-      // });
 
       return {
         links: BorrowFooterLinks(t),

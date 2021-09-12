@@ -3,7 +3,7 @@ import 'es6-promise';
 import JsonViewer from 'vue3-json-viewer';
 
 import SvgPlugin from 'utils/Svg';
-import ChartPlugin from 'utils/Charts';
+// import ChartPlugin from 'utils/Charts';
 
 import App from './App.vue';
 import router from './router';
@@ -30,4 +30,11 @@ app.provide('emitter', mitt());
 import { ENUMS } from 'config';
 app.provide('ENUMS', ENUMS);
 
-app.use(SvgPlugin).use(ChartPlugin).use(JsonViewer).use(i18n).use(store).use(router).mount('#app');
+app
+  .use(SvgPlugin)
+  // .use(ChartPlugin)
+  .use(JsonViewer)
+  .use(i18n)
+  .use(store)
+  .use(router)
+  .mount('#app');

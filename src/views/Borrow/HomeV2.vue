@@ -54,9 +54,9 @@
         <div class="markets">
           <div class="list">
             <h2>供应市场</h2>
-            <span style="color: white">
-              <!-- {{ tokenListWithResource[0] }} -->
-            </span>
+            <pre style="color: white">
+              {{ tokenListWithResource[0] }}
+            </pre>
             <a-table
               :dataSource="tokenListWithResource"
               :columns="TokenColumnDeposit"
@@ -73,31 +73,13 @@
                   {{ record.name }}
                 </div>
               </template>
-              <!-- 存款市场 -->
-              <template #collateral_amount="{ record }">
-                {{
-                  toHumanReadable({
-                    address: record.address,
-                    amount: record.collateral_amount,
-                  })
-                }}
-              </template>
-              <!-- Supply APY -->
-              <template #supply_rate="{ record }">
-                {{ toPercent(toReadMantissa(record.supply_rate.mantissa)) }}
-              </template>
+
               <!-- Supply -->
-              <template #collateral="{ record }">
-                {{
-                  toFixed(
-                    toHumanReadable({
-                      address: record.address,
-                      amount: record.collateral?.collateralAsset?.token_amount || 0,
-                    }),
-                  )
-                }}
+              <template #supply_balance="{ record }">
+                {{ record.supplyBalance }}
                 {{ record.name }}
               </template>
+
               <!-- wallet -->
               <template #wallet="{ record }">
                 <div class="num my">
@@ -133,13 +115,8 @@
                 {{ toPercent(toReadMantissa(record.borrow_rate.mantissa)) }}
               </template>
               <!-- 当前借款 -->
-              <template #debt="{ record }">
-                {{
-                  toHumanReadable({
-                    address: record.address,
-                    amount: record.debt?.debtAsset?.token_amount || 0,
-                  })
-                }}
+              <template #borrowBalance="{ record }">
+                {{ record.borrowBalance }}
                 {{ record.name }}
               </template>
               <!-- 流通性 -->
@@ -216,8 +193,7 @@
         getOracleValue,
       } = useToken();
       const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
-      const { startTransactionCheck } = useTransaction();
-      const { accountHash, collateral, debt, wallet, getPersonalAssets } = useUser();
+      const { accountHash, wallet } = useUser();
 
       const tableLoading = ref(false);
       const depositModalVisible = ref(false);
@@ -239,8 +215,6 @@
             return {
               ...token,
               walletResource: wallet.value[token.name]?.amount || 0,
-              collateral: collateral.value[token.name] || {},
-              debt: debt.value[token.name] || {},
             };
           });
         },
@@ -257,7 +231,6 @@
 
       const init = async () => {
         try {
-          getPersonalAssets();
           await getTokenList();
           tableLoading.value = false;
         } catch (e) {
@@ -265,8 +238,8 @@
         }
       };
 
-      emitter.on('getPersonalAssets', () => {
-        getPersonalAssets();
+      emitter.on('refreshData', () => {
+        init();
       });
 
       const switchLanguage = (locale) => {
