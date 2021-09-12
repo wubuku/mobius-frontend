@@ -36,24 +36,15 @@ export default () => {
   const toReadMantissa = (value) => (!isNaN(value) ? new BigNumber(value).shiftedBy(SHIFT_BY) : 0);
 
   // Get Current Borrow Limit
-  const getBorrowLimit = ({ amount = 0, oracle = 0, health = 0.8 }) =>
-    new BigNumber(
-      new BigNumber(amount)
-        .multipliedBy(oracle)
-        .multipliedBy(health)
-        .dp(USD_DB_DECIMALS, BigNumber.ROUND_DOWN),
-    );
+  const getBorrowLimit = () => {
+    console.log(tokenList);
+  };
 
   // Get total Borrow Limit
   const getBorrownBalance = () => {
     tokenList.value.forEach((token) => {
       const borrowIndex = toReadMantissa(token.rate.vec[0].borrow_index.mantissa);
-      console.log(
-        token.personalCollateralAsset,
-        token.oracle,
-        token.precision,
-        borrowIndex.valueOf(),
-      );
+      console.log(token, borrowIndex.valueOf());
     });
   };
 
