@@ -190,6 +190,7 @@
   };
 
   onMounted(async () => {
+    console.log('onMounted');
     init();
   });
 

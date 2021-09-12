@@ -57,7 +57,7 @@
       <div class="info-item">
         Borrow Limit
         <span class="right">
-          $0
+          $ {{ borrowBalance }}
           <span class="arrow-box" v-if="borrowLimit != 0">
             <ArrowRightOutlined class="arrow" />
             ${{ borrowLimit }}
@@ -115,7 +115,7 @@
 
   const emit = defineEmits(['update:visible']);
 
-  const { toHumanReadable, toReadMantissa, toPercent, getBorrowLimit } = useToken();
+  const { toReadMantissa, getBorrowLimit, getBorrownBalance } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
 
@@ -130,6 +130,7 @@
   const borrowLimit = ref('');
   const btnLoading = ref(false);
   const amountInput = ref(null);
+  const borrowBalance = getBorrownBalance();
 
   const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
   const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);

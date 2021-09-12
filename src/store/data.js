@@ -9,7 +9,7 @@ export default {
   },
   mutations: {
     UPDATE_ASSETS_DATA(state, payload) {
-      state.assetId = payload.id;
+      state.assetId = payload;
     },
     UPDATE_WALLET_DATA(state, payload = []) {
       if (payload.length === 0) {

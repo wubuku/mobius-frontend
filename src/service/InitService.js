@@ -1,52 +1,19 @@
-import { CurrencyAmount, Star } from '@starcoin/starswap-sdk-core';
 import { JsonProvider } from '@wormhole-stc/txn-wrapper';
 import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount } from 'config';
-import BigNumber from 'bignumber.js';
+import { toTokenString } from 'utils/';
+import axios from 'axios';
 
 // Global Data
-/**
- * Token List
- */
-export const GetTokenList = () => {
-  return JsonProvider(TEST_NETWORK).send('state.get_resource', [
-    SOURCE_ADDRESS,
-    `0x00000000000000000000000000000001::Config::Config<${SOURCE_ADDRESS}::Management::PositionConfig<${SOURCE_ADDRESS}::Management::StandardPosition>>`,
-    { decode: true },
-  ]);
-};
 
-/**
- * Single Token
- */
-export const TokenStandardPosition = (token) => {
-  // Token 的 Overview
-  const overview = JsonProvider(TEST_NETWORK).send('state.get_resource', [
-    SOURCE_ADDRESS,
-    `${SOURCE_ADDRESS}::Treasury::Position<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>`,
-    { decode: true },
-  ]);
-
-  // 精度
-  const precision = JsonProvider(TEST_NETWORK).send('contract.call_v2', [
-    { function_id: '0x1::Token::scaling_factor', type_args: ['0x1::STC::STC'], args: [] },
-  ]);
-
-  return Promise.all([overview, precision]).then(([overview, precision]) => {
-    const base = {
-      precision: precision[0],
-      toChainAmount: (amount) => ToChainAmount(amount, precision[0]),
-      toHumanAmount: (amount) => ToHumanAmount(amount, precision[0]),
-    };
-
-    if (!overview) return base;
-
-    const { json } = overview;
-    return {
-      ...json,
-      ...base,
-    };
-  });
-};
+const requestChain = (method, params) =>
+  axios
+    .post('https://barnard-seed.starcoin.org/', {
+      id: 1,
+      jsonrpc: '2.0',
+      method,
+      params,
+    })
+    .then((res) => res.data.result);
 
 /**
  * Get Transaction Status
@@ -55,156 +22,110 @@ export const GetTransactionStatus = (txHash) => {
   return JsonProvider(TEST_NETWORK).getTransactionInfo(txHash);
 };
 
-/**
- * Personal Voucher
- */
-export const GetPersonalVoucher = ({ account, token }) => {
-  return JsonProvider(TEST_NETWORK).send('state.get_resource', [
-    account,
-    `0x00000000000000000000000000000001::NFTGallery::NFTGallery<${SOURCE_ADDRESS}::Voucher::VMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Voucher::VBody<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>>`,
-    { decode: true },
+// Token List
+const KEY_TokenList = `0x00000000000000000000000000000001::Config::Config<${SOURCE_ADDRESS}::Management::PositionConfig<${SOURCE_ADDRESS}::Management::StandardPosition>>`;
+
+// StandardPosition
+const KEY_StandardPosition = (token) =>
+  `${SOURCE_ADDRESS}::Treasury::Position<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>`;
+
+// Assets
+const KEY_Assets = `${SOURCE_ADDRESS}::AssetsGallery::AssetsGalleryStore<0x00000000000000000000000000000001::NFT::NFT<${SOURCE_ADDRESS}::Assets::AMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Assets::ABody<${SOURCE_ADDRESS}::Treasury::Assets<${SOURCE_ADDRESS}::Management::StandardPosition>>>>`;
+
+// Personal Balance
+const KEY_Balance = (token) => `0x00000000000000000000000000000001::Account::Balance<${token}>`;
+
+const KEY_Risk_Asset_Config = `${SOURCE_ADDRESS}::Risk::AssetsConfig<${SOURCE_ADDRESS}::Management::StandardPosition>`;
+
+const KEY_Risk_Equivalents_Config = (token) =>
+  `${SOURCE_ADDRESS}::Risk::EquivalentsConfig<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>`;
+
+const Get_Precision = async (token) =>
+  requestChain('contract.call_v2', [
+    { function_id: '0x1::Token::scaling_factor', type_args: [token], args: [] },
   ]);
-};
+
+const Get_Oracle = async (tokenName) =>
+  tokenName == 'MUSDT'
+    ? 1
+    : requestChain('contract.call_v2', [
+        {
+          function_id: '0x1::PriceOracle::read',
+          type_args: [
+            `${
+              tokenName === 'STC' ? '0x1' : SOURCE_ADDRESS
+            }::${tokenName}USDOracle::${tokenName}USD`,
+          ],
+          args: [SOURCE_ADDRESS],
+        },
+      ]);
 
 /**
- * Personal Assets
+ * Very Important function
+ * 获取基本所有的资源数据
+ * @param {string} accountHash
+ * @returns
  */
-export const GetPersonalAssets = (account = '') => {
-  return JsonProvider(TEST_NETWORK).send('state.get_resource', [
-    account,
-    `${SOURCE_ADDRESS}::AssetsGallery::AssetsGalleryStore<0x00000000000000000000000000000001::NFT::NFT<${SOURCE_ADDRESS}::Assets::AMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Assets::ABody<${SOURCE_ADDRESS}::Treasury::Assets<${SOURCE_ADDRESS}::Management::StandardPosition>>>>`,
-    { decode: true },
-  ]);
-};
+export const GetStateListResource = async (accountHash) => {
+  if (!accountHash) return;
 
-/**
- * Get Personal Assets Id
- */
-export const GetTokenAssetId = (account = '') => {
-  return JsonProvider(TEST_NETWORK)
-    .send('contract.call_v2', [
-      {
-        function_id: `${SOURCE_ADDRESS}::AssetsGallery::get_single_assets_id`,
-        type_args: ['0xf8af03dd08de49d81e4efd9e24c039cc::Management::StandardPosition'],
-        args: [account],
-      },
-    ])
-    .then((res) => res[0].vec.length);
-};
-
-/**
- * Personal Resource
- */
-export const GetPersonalResource = async (account = '') => {
   try {
-    if (!window.starcoin) return;
+    const account = accountHash.toLowerCase();
+    const { resources } = await requestChain('state.list_resource', [
+      SOURCE_ADDRESS,
+      { decode: true },
+    ]);
 
-    const resources = await JsonProvider().getBalances(account);
+    const { resources: MyResource } = await requestChain('state.list_resource', [
+      account,
+      { decode: true },
+    ]);
 
-    return typeof resources == 'object'
-      ? Promise.all(
-          Object.keys(resources).map(async (resource) => {
-            const [address, module, token] = resource.split('::');
+    const { body = {}, id = '' } = MyResource[KEY_Assets]?.json.items.vec[0][0] || {};
+    const { collateral = [], debt = [] } = body?.assets || {};
 
-            const amount = await CurrencyAmount.fromRawAmount(
-              Star.onChain(parseInt(window.starcoin.networkVersion)),
-              new BigNumber(resources[resource]),
-            );
+    // Get All tokens
+    const tokenList = await Promise.all(
+      (resources[KEY_TokenList]?.json?.payload?.support_token_codes || []).map(async (codes) => {
+        const address = toTokenString(codes);
+        const name = address.split('::')[2];
+        // Get All StandardPosition
+        const standardPosition = resources[KEY_StandardPosition(address)]?.json || {};
 
-            return {
-              address: resource,
-              name: token,
-              amount: amount.toSignificant(9),
-            };
-          }),
-        )
-      : Promise.resolve([]);
+        // Personal Asset
+        const personalCollateralAsset =
+          collateral.filter((item) => toTokenString(item.token_code) === address)[0] || {};
+        const personalDebtAsset =
+          debt.filter((item) => toTokenString(item.token_code) === address)[0] || {};
+
+        const percision = (await Get_Precision(address)[0]) || 1e9;
+        // Wallet Resource
+        const walletResource = MyResource[KEY_Balance(address)]?.json?.token?.value || 0;
+
+        const riskAssetConfig = resources[KEY_Risk_Asset_Config]?.json || {};
+        const riskEquivalentsConfig = resources[KEY_Risk_Equivalents_Config(address)]?.json || {};
+
+        const oracle = (await Get_Oracle(name)[0]) || 1;
+
+        return {
+          address,
+          name,
+          percision,
+          oracle,
+          personalCollateralAsset,
+          personalDebtAsset,
+          walletResource,
+          riskAssetConfig,
+          riskEquivalentsConfig,
+          toChainAmount: (amount) => ToChainAmount(amount, percision),
+          toHumanAmount: (amount) => ToHumanAmount(amount, percision),
+          ...standardPosition,
+        };
+      }),
+    );
+
+    return { tokenList, assetId: id };
   } catch (err) {
     console.log(err);
   }
-};
-
-/**
- * USDT Oracle
- */
-export const GetTokenUSDPrice = (token = 'STC') => {
-  let oracleType;
-  switch (token) {
-    case 'STC':
-      oracleType = '0x1::STCUSDOracle::STCUSD';
-      break;
-    case 'MBTC':
-      oracleType = `${SOURCE_ADDRESS}::MBTCUSDOracle::MBTCUSD`;
-      break;
-    case 'METH':
-      oracleType = `${SOURCE_ADDRESS}::METHUSDOracle::METHUSD`;
-      break;
-    case 'MUSDT':
-      return [1];
-    default:
-      throw 'no such token!';
-  }
-  return JsonProvider(TEST_NETWORK).send('contract.call_v2', [
-    {
-      function_id: '0x1::PriceOracle::read',
-      type_args: [oracleType],
-      args: [`${SOURCE_ADDRESS}`],
-    },
-  ]);
-};
-
-/**
- * Risk Equivalents params
- */
-export const GetRiskEquivalentsConfig = (token = 'STC') => {
-  let tokenType;
-  switch (token) {
-    case 'STC':
-      tokenType = '0x1::STC::STC';
-      break;
-    case 'MBTC':
-      tokenType = `${SOURCE_ADDRESS}::MBT::MBT`;
-      break;
-    case 'METH':
-      tokenType = `${SOURCE_ADDRESS}::METH::METH`;
-      break;
-    case 'MUSDT':
-      tokenType = `${SOURCE_ADDRESS}::MUSDT::MUSDT`;
-      break;
-    default:
-      throw 'no such token!';
-  }
-  return JsonProvider(TEST_NETWORK).send('state.get_resource', [
-    SOURCE_ADDRESS,
-    `${SOURCE_ADDRESS}::Risk::EquivalentsConfig<${SOURCE_ADDRESS}::Management::StandardPosition, ${tokenType}>`,
-    { decode: true },
-  ]);
-};
-
-/**
- * Risk Assets params
- */
-export const GetRiskAssetsConfig = (token = 'STC') => {
-  let tokenType;
-  switch (token) {
-    case 'STC':
-      tokenType = '0x1::STC::STC';
-      break;
-    case 'MBTC':
-      tokenType = `${SOURCE_ADDRESS}::MBT::MBT`;
-      break;
-    case 'METH':
-      tokenType = `${SOURCE_ADDRESS}::METH::METH`;
-      break;
-    case 'MUSDT':
-      tokenType = `${SOURCE_ADDRESS}::MUSDT::MUSDT`;
-      break;
-    default:
-      throw 'no such token!';
-  }
-  return JsonProvider(TEST_NETWORK).send('state.get_resource', [
-    SOURCE_ADDRESS,
-    `${SOURCE_ADDRESS}::Risk::AssetsConfig<${SOURCE_ADDRESS}::Management::StandardPosition>`,
-    { decode: true },
-  ]);
 };

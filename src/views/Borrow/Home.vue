@@ -96,12 +96,7 @@
   import useTable from 'uses/useTable';
   import useUser from 'uses/useUser';
 
-  import {
-    GetPersonalAssets,
-    GetPersonalVoucher,
-    GetTokenAssetId,
-    GetTokenUSDPrice,
-  } from 'service/InitService';
+  import { GetTokenUSDPrice } from 'service/InitService';
   import { numberWithUnit } from 'utils';
   import { useRouter } from 'vue-router';
   import { ENUMS } from 'config';
