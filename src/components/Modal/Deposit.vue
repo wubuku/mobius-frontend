@@ -160,7 +160,9 @@
     return inputLargerThanAmount.value ? 'Not enough balance' : '';
   });
   const NotEnoughLiquidtyErrorTextt = computed(() => {
-    return new BigNumber(amount.value).isGreaterThan(token.liquidity) ? 'Not enough liquidity' : '';
+    return isWithdrawMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
+      ? 'Not enough liquidity'
+      : '';
   });
 
   watch(mode, () => {
