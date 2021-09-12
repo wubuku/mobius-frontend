@@ -26,6 +26,8 @@ body {
 
   .num {
     color: #c4c6cb;
+    display: flex;
+    align-items: center;
 
     &.up {
       color: var(--upColor);
@@ -43,12 +45,29 @@ body {
       font-family: D-DINCondensed-bold;
     }
   }
+
+  .benifit-btn {
+    background-color: #16409c;
+    width: 105px;
+    height: 32px;
+    font-size: 18px;
+    line-height: 32px;
+    border: 1px solid #16409c;
+    border-radius: 16px;
+    font-weight: 400;
+    color: #c4c6cb;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 60px;
+  }
 }
 
 .app-home {
   min-width: 100%;
   min-height: 100vh;
+  height: 100%;
   background: url(../images/borrow/bg-top.png) center 0 / contain no-repeat;
+  background-attachment: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -56,7 +75,7 @@ body {
   &::before,
   &::after {
     content: '';
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 50%;
     top: 0;
@@ -115,14 +134,15 @@ body {
     flex-direction: column;
     margin: 0 auto;
     gap: 13px;
-
     min-width: 100%;
-    margin-top: 270px;
+    margin-top: 230px;
+    align-items: flex-end;
 
     .line {
       display: flex;
       align-items: center;
       gap: 13px;
+      width: 100%;
     }
 
     .my-info-box {
@@ -140,6 +160,10 @@ body {
         flex: 1;
       }
 
+      &.large {
+        width: 510px;
+      }
+
       .label {
         font-family: Source Han Sans CN;
         font-weight: 400;
@@ -147,6 +171,19 @@ body {
         line-height: 1;
         font-size: 18px;
         margin-right: auto;
+
+        &.benifit {
+          display: flex;
+          align-items: center;
+          &::before {
+            content: '';
+            width: 43px;
+            height: 43px;
+            display: block;
+            background: url(../images/borrow/icon/benifit.png) center 0 / contain no-repeat;
+            margin-right: 5px;
+          }
+        }
       }
     }
 
