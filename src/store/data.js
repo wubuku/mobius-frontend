@@ -4,31 +4,12 @@ export default {
   namespaced: true,
   state: {
     assetId: '',
-    collateral: {},
-    debt: {},
     wallet: {},
     walletArray: [],
   },
   mutations: {
     UPDATE_ASSETS_DATA(state, payload) {
-      const { collateral = [], debt = [] } = payload.body.assets;
       state.assetId = payload.id;
-
-      collateral.forEach((asset) => {
-        const address = toTokenString(asset.token_code);
-        const name = address.split('::')[2];
-        state.collateral[name] = {
-          ...asset,
-        };
-      });
-
-      debt.forEach((asset) => {
-        const address = toTokenString(asset.token_code);
-        const name = address.split('::')[2];
-        state.debt[name] = {
-          ...asset,
-        };
-      });
     },
     UPDATE_WALLET_DATA(state, payload = []) {
       if (payload.length === 0) {

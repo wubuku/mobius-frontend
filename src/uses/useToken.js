@@ -52,9 +52,12 @@ export default () => {
 
     try {
       const ret = await GetPersonalAssets(accountHash);
-      const { collateral = [], debt = [] } = ret.json?.items?.vec[0][0]?.body?.assets || {};
+      const { collateral = [], debt = [], id } = ret.json?.items?.vec[0][0]?.body?.assets || {};
       const collateralList = [];
       const debtList = [];
+
+      // Save Asset Id
+      store.dispatch('data/$updateAssetsData', ret.json?.items?.vec[0][0]);
 
       collateral.forEach((asset) => {
         const address = toTokenString(asset.token_code);
