@@ -9,9 +9,9 @@
     width="500px"
     centered
   >
-    <!-- <span style="color: white">
+    <span style="color: white">
       {{ token }}
-    </span> -->
+    </span>
     <div class="input-box">
       <a-input
         class="amount"
@@ -45,7 +45,7 @@
       <!-- Supply APY -->
       <div class="info-item">
         存款APY
-        <span class="right">{{ toPercent(toReadMantissa(token.supply_rate.mantissa)) }}</span>
+        <span class="right">{{ token.supplyAPY }}</span>
       </div>
 
       <!-- <div class="info-item">
@@ -165,9 +165,9 @@
     }
 
     if (isWithdrawMode.value) {
-      const { mantissa: market_index = 0 } = token?.rate?.vec[0]?.supply_index;
-      const { interest = 0, rate = {} } = token?.personalCollateralAsset;
-      const { mantissa: user_index = 0 } = rate?.vec[0]?.index;
+      const { mantissa: market_index = 0 } = token?.rate?.vec[0]?.supply_index || {};
+      const { interest = 0, rate = {} } = token?.personalCollateralAsset || {};
+      const { mantissa: user_index = 0 } = rate?.vec[0]?.index || {};
 
       // 要算利息 朋友
       amount.value = BigNumber.minimum(
@@ -182,8 +182,10 @@
     }
   };
 
-  const formInit = () => {
+  const onCancel = () => {
     amount.value = '';
+    btnLoading.value = false;
+    emit('update:visible', false);
   };
 
   const submit = async () => {
@@ -198,10 +200,9 @@
             amount: amount.value,
           });
           await startTransactionCheck(txn);
-          formInit();
+          onCancel();
           emitter.emit('refreshData');
           messageModal.success('Transaction Success!');
-          emit('update:visible', false);
         } catch (err) {
           if (err.message) {
             messageModal.error(err.message);
@@ -215,10 +216,9 @@
             amount: amount.value,
           });
           await startTransactionCheck(txn);
-          formInit();
+          onCancel();
           emitter.emit('refreshData');
           messageModal.success('Transaction Success!');
-          emit('update:visible', false);
         } catch (err) {
           if (err.message) {
             messageModal.error(err.message);
@@ -233,10 +233,9 @@
           amount: new BigNumber(amount.value).isEqualTo(token?.supplyBalance) ? 0 : amount.value,
         });
         await startTransactionCheck(txn);
-        formInit();
+        onCancel();
         emitter.emit('refreshData');
         messageModal.success('Transaction Success!');
-        emit('update:visible', false);
       } catch (err) {
         if (err.message) {
           messageModal.error(err.message);

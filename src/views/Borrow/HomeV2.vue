@@ -54,9 +54,9 @@
         <div class="markets">
           <div class="list">
             <h2>供应市场</h2>
-            <pre style="color: white">
+            <!-- <pre style="color: white">
               {{ tokenListWithResource[0] }}
-            </pre>
+            </pre> -->
             <a-table
               :dataSource="tokenListWithResource"
               :columns="TokenColumnDeposit"
@@ -138,17 +138,9 @@
     </div>
   </div>
 
-  <deposit-modal
-    v-model:visible="depositModalVisible"
-    :token="modalToken"
-    v-if="depositModalVisible"
-  ></deposit-modal>
+  <deposit-modal v-model:visible="depositModalVisible" :token="modalToken"></deposit-modal>
 
-  <borrow-modal
-    v-model:visible="borrowModalVisible"
-    :token="modalToken"
-    v-if="borrowModalVisible"
-  ></borrow-modal>
+  <borrow-modal v-model:visible="borrowModalVisible" :token="modalToken"></borrow-modal>
 </template>
 
 <script>

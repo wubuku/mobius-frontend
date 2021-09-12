@@ -5,13 +5,13 @@
     :closable="!btnLoading"
     :maskClosable="!btnLoading"
     :footer="null"
-    @cancel="emit('update:visible', false)"
+    @cancel="onCancel"
     width="500px"
     centered
   >
-    <span style="color: white; font-size: 24px">
+    <!-- <span style="color: white; font-size: 24px">
       {{ token }}
-    </span>
+    </span> -->
     <div class="input-box">
       <a-input
         class="amount"
@@ -45,7 +45,7 @@
       <!--  -->
       <div class="info-item">
         借款APY
-        <span class="right">{{ toPercent(toReadMantissa(token.borrow_rate.mantissa)) }}</span>
+        <span class="right">{{ token.borrowAPY }}</span>
       </div>
       <!-- <div class="info-item">
         Distribution APY
@@ -187,14 +187,16 @@
     }
   };
 
-  const formInit = () => {
+  const onCancel = () => {
     amount.value = '';
+    btnLoading.value = false;
+    emit('update:visible', false);
   };
 
   const submit = async () => {
     btnLoading.value = true;
 
-    // Borrow or Withdraw
+    // Borrow or epay
     if (isBorrowMode.value) {
       try {
         const txn = await BorrowContract({
@@ -203,10 +205,9 @@
           amount: amount.value,
         });
         await startTransactionCheck(txn);
-        formInit();
+        // onCancel();
         emitter.emit('refreshData');
         messageModal.success('Transaction Success!');
-        emit('update:visible', false);
       } catch (err) {
         if (err.message) {
           messageModal.error(err.message);
@@ -220,9 +221,9 @@
           amount: amount.value,
         });
         await startTransactionCheck(txn);
+        // onCancel();
         emitter.emit('refreshData');
         messageModal.success('Transaction Success!');
-        emit('update:visible', false);
       } catch (err) {
         if (err.message) {
           messageModal.error(err.message);

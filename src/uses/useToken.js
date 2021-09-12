@@ -85,9 +85,8 @@ export default () => {
     // Get Token List First
     try {
       // update collateral / debt
-      const { collateralList = [], debtList = [] } = await getPersonalAssets(
-        store.state.accountHash,
-      );
+      const { collateralList = [], debtList = [] } =
+        (await getPersonalAssets(store.state.accountHash)) || {};
 
       const res = await GetTokenList();
       const tokens = res?.json?.payload?.support_token_codes || [];
