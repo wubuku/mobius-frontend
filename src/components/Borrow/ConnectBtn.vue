@@ -67,7 +67,6 @@
 
       // method
       const handleAccountChanged = (accounts = []) => {
-        console.log(accounts);
         if (accounts.length > 0) {
           store.dispatch('$updateAccountHash', accounts[0] || '');
           btnText.value = shortCutOfAccountHash(accountHash.value || '');

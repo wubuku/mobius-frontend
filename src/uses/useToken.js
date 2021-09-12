@@ -8,6 +8,7 @@ import {
   GetTokenUSDPrice,
   GetRiskEquivalentsConfig,
   GetRiskAssetsConfig,
+  GetPersonalResource,
 } from 'service/InitService';
 import { hexToStr, toTokenString } from 'utils';
 
@@ -84,29 +85,46 @@ export default () => {
   const getTokenList = async () => {
     // Get Token List First
     try {
+      // TokenList
+      const res = (await GetTokenList()) || [];
+      const tokens = res?.json?.payload?.support_token_codes || [];
+
       // update collateral / debt
       const { collateralList = [], debtList = [] } =
         (await getPersonalAssets(store.state.accountHash)) || {};
 
-      const res = await GetTokenList();
-      const tokens = res?.json?.payload?.support_token_codes || [];
+      // Resource in wallet
+      const resources = (await GetPersonalResource(store.state.accountHash)) || [];
 
       if (tokens.length > 0) {
         // Get Detail of each Token
         const tokenDetails = await Promise.all(
           tokens.map(async (token) => {
+            // Address of current token
             const address = toTokenString(token);
+
+            // Wallet Resource about current token
+            const currentWalletResource =
+              resources.filter((resource) => resource.address === address)[0] || {};
+
+            // Token Name
             const tokenName = address.split('::').pop();
-            const oracle = await GetTokenUSDPrice(tokenName);
+            // Token Oracle
+            const oracle = (await GetTokenUSDPrice(tokenName)[0]) || 0;
+
+            // Risk Pararms
             if (tokenName === 'STC') {
               const { json: riskParams } = await GetRiskEquivalentsConfig(tokenName);
               const { json: riskAssets } = await GetRiskAssetsConfig(tokenName);
               console.log(riskParams, riskAssets);
             }
+
+            // The Market infomation of current Token
             const detail = await TokenStandardPosition(address);
 
             // console.log(riskParams, riskAssets);
 
+            // The balance about supply and borrow of current address
             const tokenCollateral = collateralList[tokenName] || {};
             const tokenDebt = debtList[tokenName] || {};
 
@@ -122,10 +140,11 @@ export default () => {
               // pack use asset to token
               personalCollateralAsset: collateralList[tokenName] || {},
               personalDebtAsset: debtList[tokenName] || {},
+              walletResource: currentWalletResource.amount || 0,
               // Basic Data
               name: tokenName,
               address,
-              oracle: oracle[0] || 0,
+              oracle,
               ...detail,
             };
           }),

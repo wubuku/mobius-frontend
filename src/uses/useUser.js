@@ -35,18 +35,8 @@ export default () => {
     });
   };
 
-  const myAllResource = async () => {
-    if (!accountHash.value) return '';
-    const res = await GetPersonalResource(accountHash.value);
-
-    setWalletResource(res || []);
-  };
-
-  watchEffect(myAllResource);
-
   return {
     myResource,
-    myAllResource,
     currentResource,
     accountHash,
     // Page Data

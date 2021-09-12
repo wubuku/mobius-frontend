@@ -202,7 +202,6 @@ export const GetRiskAssetsConfig = (token = 'STC') => {
     default:
       throw 'no such token!';
   }
-  console.log(token);
   return JsonProvider(TEST_NETWORK).send('state.get_resource', [
     SOURCE_ADDRESS,
     `${SOURCE_ADDRESS}::Risk::AssetsConfig<${SOURCE_ADDRESS}::Management::StandardPosition>`,

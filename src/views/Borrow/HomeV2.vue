@@ -55,10 +55,10 @@
           <div class="list">
             <h2>供应市场</h2>
             <!-- <pre style="color: white">
-              {{ tokenListWithResource[0] }}
+              {{ tokenList[0] }}
             </pre> -->
             <a-table
-              :dataSource="tokenListWithResource"
+              :dataSource="tokenList"
               :columns="TokenColumnDeposit"
               :pagination="false"
               :rowKey="(record) => record.dataIndex"
@@ -83,7 +83,7 @@
               <!-- wallet -->
               <template #wallet="{ record }">
                 <div class="num my">
-                  {{ toFixed(wallet[record.name]?.amount) }}
+                  {{ record.walletResource }}
                   {{ record.name }}
                 </div>
               </template>
@@ -91,12 +91,12 @@
           </div>
           <div class="list">
             <!-- <span style="color: white">
-              {{ tokenListWithResource[0] }}
+              {{ tokenList[0] }}
             </span> -->
             <h2>借贷市场</h2>
 
             <a-table
-              :dataSource="tokenListWithResource"
+              :dataSource="tokenList"
               :columns="TokenColumnBorrow"
               :pagination="false"
               :rowKey="(record) => record.dataIndex"
@@ -138,12 +138,19 @@
     </div>
   </div>
 
-  <deposit-modal v-model:visible="depositModalVisible" :token="modalToken"></deposit-modal>
-
-  <borrow-modal v-model:visible="borrowModalVisible" :token="modalToken"></borrow-modal>
+  <deposit-modal
+    v-model:visible="depositModalVisible"
+    :token="modalToken"
+    v-if="depositModalVisible"
+  ></deposit-modal>
+  <borrow-modal
+    v-model:visible="borrowModalVisible"
+    :token="modalToken"
+    v-if="borrowModalVisible"
+  ></borrow-modal>
 </template>
 
-<script>
+<script setup>
   import {
     computed,
     defineComponent,
@@ -154,129 +161,80 @@
     watch,
     watchEffect,
   } from 'vue';
-
   import ConnectBtn from 'comp/Borrow/ConnectBtn';
   import DepositModal from 'comp/Modal/Deposit';
   import BorrowModal from 'comp/Modal/Borrow';
-
   import { numberWithUnit } from 'utils';
   import useToken from 'uses/useToken';
   import useTable from 'uses/useTable';
   import useTransaction from 'uses/useTransaction';
   import useUser from 'uses/useUser';
 
-  export default defineComponent({
-    props: {},
-    components: {
-      ConnectBtn,
-      DepositModal,
-      BorrowModal,
-    },
-    setup() {
-      const emitter = inject('emitter');
-      const { $i18n: i18n } = getCurrentInstance().appContext.config.globalProperties;
-      const {
-        tokenList,
-        toHumanReadable,
-        toPercent,
-        toFixed,
-        getTokenList,
-        toReadMantissa,
-        getOracleValue,
-      } = useToken();
-      const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
-      const { accountHash, wallet } = useUser();
+  const emitter = inject('emitter');
+  const { $i18n: i18n } = getCurrentInstance().appContext.config.globalProperties;
+  const {
+    tokenList,
+    toHumanReadable,
+    toPercent,
+    toFixed,
+    getTokenList,
+    toReadMantissa,
+    getOracleValue,
+  } = useToken();
+  const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
+  const { accountHash, wallet } = useUser();
 
-      const tableLoading = ref(false);
-      const depositModalVisible = ref(false);
-      const borrowModalVisible = ref(false);
+  const tableLoading = ref(false);
+  const depositModalVisible = ref(false);
+  const borrowModalVisible = ref(false);
 
-      const modalToken = ref({});
-      const tokenListWithResource = ref([]);
-      const dropdownFlag = computed(() => {
-        const lang = i18n.locale;
-        return require(`../../assets/locales/${lang}.svg`);
-      });
-      const CoinIcon = (tokenName) => {
-        return require(`../../assets/images/coin/${tokenName.toLowerCase()}.png`);
-      };
-
-      watchEffect(
-        () => {
-          tokenListWithResource.value = tokenList.value.map((token) => {
-            return {
-              ...token,
-              walletResource: wallet.value[token.name]?.amount || 0,
-            };
-          });
-        },
-        { flush: 'sync' },
-      );
-
-      onMounted(async () => {
-        init();
-      });
-
-      watch(accountHash, () => {
-        init();
-      });
-
-      const init = async () => {
-        try {
-          await getTokenList();
-          tableLoading.value = false;
-        } catch (e) {
-          console.log('init error', e);
-        }
-      };
-
-      emitter.on('refreshData', () => {
-        init();
-      });
-
-      const switchLanguage = (locale) => {
-        i18n.locale = locale;
-        window.localStorage.setItem('locale', i18n.locale);
-      };
-
-      const tableEventHandler = (type, record) => {
-        return {
-          onClick: () => {
-            modalToken.value = { ...record };
-            if (type === 'deposit') {
-              depositModalVisible.value = true;
-            } else if (type === 'borrow') {
-              borrowModalVisible.value = true;
-            }
-          },
-        };
-      };
-
-      return {
-        tableLoading,
-        tokenList,
-        tokenListWithResource,
-        wallet,
-        TokenColumnDeposit,
-        TokenColumnBorrow,
-        dropdownFlag,
-
-        depositModalVisible,
-        borrowModalVisible,
-        modalToken,
-
-        CoinIcon,
-        numberWithUnit,
-        tableEventHandler,
-        toHumanReadable,
-        toPercent,
-        toFixed,
-        toReadMantissa,
-        switchLanguage,
-        getOracleValue,
-      };
-    },
+  const modalToken = ref({});
+  const dropdownFlag = computed(() => {
+    const lang = i18n.locale;
+    return require(`../../assets/locales/${lang}.svg`);
   });
+  const CoinIcon = (tokenName) => {
+    return require(`../../assets/images/coin/${tokenName.toLowerCase()}.png`);
+  };
+
+  onMounted(async () => {
+    init();
+  });
+
+  watch(accountHash, () => {
+    init();
+  });
+
+  const init = async () => {
+    try {
+      await getTokenList();
+      tableLoading.value = false;
+    } catch (e) {
+      console.log('init error', e);
+    }
+  };
+
+  emitter.on('refreshData', () => {
+    init();
+  });
+
+  const switchLanguage = (locale) => {
+    i18n.locale = locale;
+    window.localStorage.setItem('locale', i18n.locale);
+  };
+
+  const tableEventHandler = (type, record) => {
+    return {
+      onClick: () => {
+        modalToken.value = { ...record };
+        if (type === 'deposit') {
+          depositModalVisible.value = true;
+        } else if (type === 'borrow') {
+          borrowModalVisible.value = true;
+        }
+      },
+    };
+  };
 </script>
 
 <style lang="less">
