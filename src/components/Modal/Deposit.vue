@@ -9,9 +9,9 @@
     width="500px"
     centered
   >
-    <span style="color: white">
+    <!-- <span style="color: white">
       {{ token }}
-    </span>
+    </span> -->
     <div class="input-box">
       <a-input
         class="amount"
