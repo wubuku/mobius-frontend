@@ -54,7 +54,7 @@
 
       <!--  -->
       <div class="info-item">
-        Borrow Balance
+        Borrow Balance (borrowBalance +- amount)
         <span class="right">
           $
           {{
@@ -74,7 +74,7 @@
       </div>
       <!--  -->
       <div class="info-item">
-        Borrow Limit Used
+        已用比例((new Borrowed u + amount * oracle / Borrowed Limit u )
         <span class="right highlight">0%</span>
       </div>
       <!--  -->
@@ -171,6 +171,8 @@
   });
 
   watch(amount, () => {
+    // amount * oracle
+
     borrowBalance.value = getOracleValue({
       amount: totalBalance.value,
       oracle: token.oracle,

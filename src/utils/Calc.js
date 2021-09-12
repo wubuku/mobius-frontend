@@ -10,18 +10,15 @@ import { tokenRate } from './common.js';
 // totalInterest + supply = maxWithdraw
 // totalInterset + borrow = maxRepay
 
-const gain = (amount, market_index, user_index) => {
-  let amount_b = new BigNumber(amount);
-  let ret = amount_b.multipliedBy(market_index).dividedBy(user_index).minus(amount);
+const gain = (balance, market_index, user_index) => {
+  let amount_b = new BigNumber(balance);
+  let ret = amount_b.multipliedBy(market_index).dividedBy(user_index).minus(balance);
 
   return ret.toFixed(0);
 };
 
-const maxWithdrawCalc = (currentSupply, market_index, user_index, interest = 0, health = 0.8) => {
-  return new BigNumber(gain(currentSupply, market_index, user_index))
-    .plus(interest)
-    .plus(currentSupply)
-    .valueOf();
+const maxWithdrawCalc = (balance, market_index, user_index, interest = 0) => {
+  return new BigNumber(gain(balance, market_index, user_index)).plus(interest).plus(balance);
 };
 
 const maxBorrowAmountCalc = (

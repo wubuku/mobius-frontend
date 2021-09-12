@@ -121,14 +121,7 @@
               </template>
               <!-- 流通性 -->
               <template #liquidity="{ record }">
-                {{
-                  numberWithUnit(
-                    toHumanReadable({
-                      address: record.address,
-                      amount: record.tokens.value,
-                    }),
-                  )
-                }}
+                {{ record.liquidity }}
                 {{ record.name }}
               </template>
             </a-table>

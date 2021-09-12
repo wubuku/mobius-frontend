@@ -9,9 +9,9 @@
     width="500px"
     centered
   >
-    <!-- <span style="color: white">
+    <span style="color: white">
       {{ token }}
-    </span> -->
+    </span>
     <div class="input-box">
       <a-input
         class="amount"
@@ -23,7 +23,8 @@
       ></a-input>
       <a-button class="btn input-box-btn" @click="setAllAmount">MAX</a-button>
     </div>
-    <p class="error" v-if="errorText">{{ errorText }}</p>
+    <p class="error" v-if="NotEnoughErrorTextt">{{ NotEnoughErrorTextt }}</p>
+    <p class="error" v-if="NotEnoughLiquidtyErrorTextt">{{ NotEnoughLiquidtyErrorTextt }}</p>
     <div class="modal-tab">
       <div
         class="modal-tab-item"
@@ -55,9 +56,9 @@
 
       <!-- Borrow Limit -->
       <div class="info-item">
-        Borrow Limit
+        最多可借
         <span class="right">
-          $ {{ borrowBalance }}
+          $ {{ token.totalBorrowedBalanceOnReal }}
           <span class="arrow-box" v-if="borrowLimit != 0">
             <ArrowRightOutlined class="arrow" />
             ${{ borrowLimit }}
@@ -67,8 +68,17 @@
 
       <!-- Borrow Limit Used -->
       <div class="info-item">
-        Borrow Limit Used ((Borrowed u + Borrow Limit above )/ Borrowed Balance u )
-        <span class="right highlight">0%</span>
+        已用比例
+        <span class="right highlight">
+          {{ token.borrowedLimitUsed }}
+          <span
+            class="arrow-box"
+            v-if="token.borrowedLimitUsedUpdate((isDepositMode ? 1 : -1) * amount) != 0"
+          >
+            <ArrowRightOutlined class="arrow" />
+            {{ token.borrowedLimitUsedUpdate((isDepositMode ? 1 : -1) * amount) }}
+          </span>
+        </span>
       </div>
 
       <!-- Submit Btn -->
@@ -98,13 +108,14 @@
 <script setup>
   import BigNumber from 'bignumber.js';
   import { computed, defineProps, defineEmits, inject, reactive, ref, watch } from 'vue';
-  import { numberInput } from 'utils';
-  import { maxWithdrawCalc } from 'utils/Calc';
   import { ArrowRightOutlined } from '@ant-design/icons-vue';
   import { DepositContract, WithdrawContract, InitAssetContract } from 'service/BorrowService';
-  import useToken from '../../uses/useToken';
-  import useUser from '../../uses/useUser';
-  import useTransaction from '../../uses/useTransaction';
+
+  import { numberInput } from 'utils';
+  import { maxWithdrawCalc } from 'utils/Calc';
+  import useToken from 'uses/useToken';
+  import useUser from 'uses/useUser';
+  import useTransaction from 'uses/useTransaction';
 
   const props = defineProps({
     token: {
@@ -115,7 +126,7 @@
 
   const emit = defineEmits(['update:visible']);
 
-  const { toReadMantissa, getBorrowLimit, getBorrownBalance } = useToken();
+  const { toReadMantissa, additionBorrowLimitCalc, nano } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
 
@@ -130,22 +141,26 @@
   const borrowLimit = ref('');
   const btnLoading = ref(false);
   const amountInput = ref(null);
-  const borrowBalance = getBorrownBalance();
 
   const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
   const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);
+
   const inputLargerThanAmount = computed(() => {
     return isDepositMode.value
       ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
-      : new BigNumber(amount.value).isGreaterThan(token?.supplyBalance);
+      : new BigNumber(amount.value).isGreaterThan(token?.supplyBalance) ||
+          parseFloat(token.borrowedLimitUsedUpdate(-1 * amount.value)) >=
+            toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100);
   });
   const canSubmit = computed(
     () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
   );
   const submitBtnText = computed(() => (isDepositMode.value ? 'Deposit' : 'WithDraw'));
-  const errorText = computed(() => {
-    if (inputLargerThanAmount.value) return 'Not enough balance';
-    return '';
+  const NotEnoughErrorTextt = computed(() => {
+    return inputLargerThanAmount.value ? 'Not enough balance' : '';
+  });
+  const NotEnoughLiquidtyErrorTextt = computed(() => {
+    return new BigNumber(amount.value).isGreaterThan(token.liquidity) ? 'Not enough liquidity' : '';
   });
 
   watch(mode, () => {
@@ -154,32 +169,25 @@
   });
 
   watch(amount, () => {
-    borrowLimit.value = getBorrowLimit({
-      amount: amount.value || 0,
-      oracle: token.oracle,
-    }).multipliedBy(isDepositMode.value ? 1 : -1);
+    borrowLimit.value = amount.value
+      ? additionBorrowLimitCalc({
+          amount: amount.value || 0,
+          oracle: token.oracle,
+          risk_equivalents_threshold: token?.riskAssetConfig?.liquidation_threshold?.mantissa,
+          risk_assets_pthreshold: token?.riskEquivalentsConfig?.liquidation_threshold?.mantissa,
+        })
+          .multipliedBy(isDepositMode.value ? 1 : -1)
+          .plus(token.totalBorrowedBalanceOnReal)
+      : 0;
   });
 
   const setAllAmount = () => {
     if (isDepositMode.value) {
-      amount.value = token?.walletResource;
+      amount.value = token?.walletResource.valueOf();
     }
 
     if (isWithdrawMode.value) {
-      const { mantissa: market_index = 0 } = token?.rate?.vec[0]?.supply_index || {};
-      const { interest = 0, rate = {} } = token?.personalCollateralAsset || {};
-      const { mantissa: user_index = 0 } = rate?.vec[0]?.index || {};
-
-      // 要算利息 朋友
-      amount.value = BigNumber.minimum(
-        maxWithdrawCalc(
-          token?.supplyBalance,
-          toReadMantissa(market_index),
-          toReadMantissa(user_index),
-          toReadMantissa(interest),
-        ),
-        token?.supplyBalance,
-      ).valueOf();
+      amount.value = token?.maxWithdrawAmount();
     }
   };
 
@@ -231,7 +239,7 @@
         const txn = await WithdrawContract({
           token: token,
           nftId: assetId.value,
-          amount: new BigNumber(amount.value).isEqualTo(token?.supplyBalance) ? 0 : amount.value,
+          amount: amount.value === token?.maxWithdrawAmount() ? 0 : amount.value,
         });
         await startTransactionCheck(txn);
         onCancel();

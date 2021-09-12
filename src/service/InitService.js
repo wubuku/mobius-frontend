@@ -102,7 +102,9 @@ export const GetStateListResource = async (accountHash) => {
         // Wallet Resource
         const walletResource = MyResource[KEY_Balance(address)]?.json?.token?.value || 0;
 
+        // 清算预置
         const riskAssetConfig = resources[KEY_Risk_Asset_Config]?.json || {};
+        // 抵押系数
         const riskEquivalentsConfig = resources[KEY_Risk_Equivalents_Config(address)]?.json || {};
 
         const oracle = (await Get_Oracle(name)[0]) || 1;
