@@ -90,9 +90,9 @@
             </a-table>
           </div>
           <div class="list">
-            <!-- <span style="color: white">
-              {{ tokenList[0] }}
-            </span> -->
+            <!-- <pre style="color: white">
+              {{ tokenList }}
+            </pre> -->
             <h2>借贷市场</h2>
 
             <a-table
@@ -172,15 +172,7 @@
 
   const emitter = inject('emitter');
   const { $i18n: i18n } = getCurrentInstance().appContext.config.globalProperties;
-  const {
-    tokenList,
-    toHumanReadable,
-    toPercent,
-    toFixed,
-    getTokenList,
-    toReadMantissa,
-    getOracleValue,
-  } = useToken();
+  const { tokenList, toHumanReadable, toPercent, getTokenList, toReadMantissa } = useToken();
   const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
   const { accountHash, wallet } = useUser();
 

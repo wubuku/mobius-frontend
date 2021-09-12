@@ -205,7 +205,7 @@
           amount: amount.value,
         });
         await startTransactionCheck(txn);
-        // onCancel();
+        onCancel();
         emitter.emit('refreshData');
         messageModal.success('Transaction Success!');
       } catch (err) {
@@ -221,7 +221,7 @@
           amount: amount.value,
         });
         await startTransactionCheck(txn);
-        // onCancel();
+        onCancel();
         emitter.emit('refreshData');
         messageModal.success('Transaction Success!');
       } catch (err) {

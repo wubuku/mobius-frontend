@@ -26,10 +26,8 @@ export const BROWSER_URL_OF_TRANSACTION = (txn = '') =>
       }/transactions/detail/${txn}`
     : '';
 
-export const ToChainAmount = (amount, precision) =>
-  new BigNumber(amount).multipliedBy(precision).toString();
-export const ToHumanAmount = (amount, precision) =>
-  new BigNumber(amount).dividedBy(precision).toString();
+export const ToChainAmount = (amount, precision) => new BigNumber(amount).multipliedBy(precision);
+export const ToHumanAmount = (amount, precision) => new BigNumber(amount).dividedBy(precision);
 
 export const ENUMS = {
   // Tab Name Enum

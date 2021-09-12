@@ -10,11 +10,16 @@ import {
   GetRiskAssetsConfig,
   GetPersonalResource,
 } from 'service/InitService';
-import { hexToStr, toTokenString } from 'utils';
+import { toTokenString } from 'utils';
 
 export default () => {
   const store = useStore();
   const tokenList = computed(() => store.state.tokenList);
+
+  // 币保留小数位数
+  const COIN_DB_DECIMALS = 4;
+  // 币转换成USDT保留的小数位数
+  const USD_DB_DECIMALS = 2;
 
   const toHumanReadable = ({ address, amount }) => {
     const token = tokenList.value.find((token) => token.address === address);
@@ -30,17 +35,24 @@ export default () => {
     return new BigNumber(value).multipliedBy(100).toFixed(3) + '%';
   };
 
-  const toFixed = (value, precision = 2) => {
-    return !isNaN(value) ? new BigNumber(value).toFixed(precision) : 0;
+  const toDP = (value, precision = COIN_DB_DECIMALS) => {
+    return !isNaN(value) ? new BigNumber(value).dp(precision, BigNumber.ROUND_DOWN) : 0;
   };
 
   const toReadMantissa = (value) => (!isNaN(value) ? new BigNumber(value).shiftedBy(-18) : 0);
 
   const getBorrowLimit = ({ amount = 0, oracle = 0, health = 0.8 }) =>
-    new BigNumber(new BigNumber(amount).multipliedBy(oracle).multipliedBy(health).toFixed(2));
+    new BigNumber(
+      new BigNumber(amount)
+        .multipliedBy(oracle)
+        .multipliedBy(health)
+        .dp(USD_DB_DECIMALS, BigNumber.ROUND_DOWN),
+    );
 
   const getOracleValue = ({ amount = 0, oracle = 0 }) =>
-    new BigNumber(new BigNumber(amount).multipliedBy(oracle).toFixed(2));
+    new BigNumber(
+      new BigNumber(amount).multipliedBy(oracle).dp(USD_DB_DECIMALS, BigNumber.ROUND_DOWN),
+    );
 
   /**
    * Get user's Assets
@@ -113,19 +125,14 @@ export default () => {
             // Token Name
             const tokenName = address.split('::').pop();
             // Token Oracle
-            const oracle = (await GetTokenUSDPrice(tokenName)[0]) || 0;
+            const oracle = (await GetTokenUSDPrice(tokenName))[0] || 0;
 
             // Risk Pararms
-            if (tokenName === 'STC') {
-              const { json: riskParams } = await GetRiskEquivalentsConfig(tokenName);
-              const { json: riskAssets } = await GetRiskAssetsConfig(tokenName);
-              console.log(riskParams, riskAssets);
-            }
+            const { json: riskParams = {} } = (await GetRiskEquivalentsConfig(tokenName)) || {};
+            const { json: riskAssets = {} } = (await GetRiskAssetsConfig(tokenName)) || {};
 
             // The Market infomation of current Token
             const detail = await TokenStandardPosition(address);
-
-            // console.log(riskParams, riskAssets);
 
             // The balance about supply and borrow of current address
             const tokenCollateral = collateralList[tokenName] || {};
@@ -133,17 +140,17 @@ export default () => {
 
             return {
               // Table Data
-              // riskParams,
-              // riskAssets,
+              riskParams,
+              riskAssets,
               supplyAPY: toPercent(toReadMantissa(detail.supply_rate.mantissa)),
-              supplyBalance: toFixed(detail.toHumanAmount(tokenCollateral?.token_amount || 0)),
+              supplyBalance: toDP(detail.toHumanAmount(tokenCollateral?.token_amount || 0)),
               borrowAPY: toPercent(toReadMantissa(detail.borrow_rate.mantissa)),
-              borrowBalance: toFixed(detail.toHumanAmount(tokenDebt?.token_amount || 0)),
+              borrowBalance: toDP(detail.toHumanAmount(tokenDebt?.token_amount || 0)),
               // Asset Data
               // pack use asset to token
               personalCollateralAsset: collateralList[tokenName] || {},
               personalDebtAsset: debtList[tokenName] || {},
-              walletResource: currentWalletResource.amount || 0,
+              walletResource: toDP(currentWalletResource.amount || 0, COIN_DB_DECIMALS),
               // Basic Data
               name: tokenName,
               address,
@@ -168,7 +175,7 @@ export default () => {
     toHumanReadable,
     toChainReadable,
     toPercent,
-    toFixed,
+    toDP,
     toReadMantissa,
     getTokenList,
 

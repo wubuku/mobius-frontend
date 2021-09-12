@@ -163,13 +163,13 @@ export const GetRiskEquivalentsConfig = (token = 'STC') => {
       tokenType = '0x1::STC::STC';
       break;
     case 'MBTC':
-      tokenType = `${SOURCE_ADDRESS}::MBTC`;
+      tokenType = `${SOURCE_ADDRESS}::MBT::MBT`;
       break;
     case 'METH':
-      tokenType = `${SOURCE_ADDRESS}::METH`;
+      tokenType = `${SOURCE_ADDRESS}::METH::METH`;
       break;
     case 'MUSDT':
-      tokenType = `${SOURCE_ADDRESS}::MUSDT`;
+      tokenType = `${SOURCE_ADDRESS}::MUSDT::MUSDT`;
       break;
     default:
       throw 'no such token!';
@@ -188,16 +188,16 @@ export const GetRiskAssetsConfig = (token = 'STC') => {
   let tokenType;
   switch (token) {
     case 'STC':
-      tokenType = '0x1::STC';
+      tokenType = '0x1::STC::STC';
       break;
     case 'MBTC':
-      tokenType = `${SOURCE_ADDRESS}::MBT`;
+      tokenType = `${SOURCE_ADDRESS}::MBT::MBT`;
       break;
     case 'METH':
-      tokenType = `${SOURCE_ADDRESS}::METH`;
+      tokenType = `${SOURCE_ADDRESS}::METH::METH`;
       break;
     case 'MUSDT':
-      tokenType = `${SOURCE_ADDRESS}::MUSDT`;
+      tokenType = `${SOURCE_ADDRESS}::MUSDT::MUSDT`;
       break;
     default:
       throw 'no such token!';
