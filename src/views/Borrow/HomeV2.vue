@@ -27,10 +27,8 @@
         <div class="dashboard-box">
           <div class="my-info-box large">
             <div class="label benifit">预估当日收益</div>
-            <div class="num large up blod">
-              $12.32
-              <div class="btn benifit-btn">点击领取</div>
-            </div>
+            <div class="num large up blod">$12.32</div>
+            <div class="btn benifit-btn">点击领取</div>
           </div>
           <div class="line">
             <div class="my-info-box">
