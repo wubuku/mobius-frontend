@@ -67,16 +67,21 @@ export default () => {
 
   // 排除当前币之外所有币的总抵押价值
   const getDepositValueExcept = (address) => {
-    return tokenList.value
-      .filter((token) => token.address !== address)
-      .reduce((prev, current) => {
-        return new BigNumber(prev).plus(
-          // 币的数量
-          new BigNumber(current.toHumanAmount(current?.personalCollateralAsset?.token_amount || 0))
-            // 币的价格
-            .multipliedBy(current.oracle),
-        );
-      }, 0);
+    return toDP(
+      tokenList.value
+        .filter((token) => token.address !== address)
+        .reduce((prev, current) => {
+          return new BigNumber(prev).plus(
+            // 币的数量
+            new BigNumber(
+              current.toHumanAmount(current?.personalCollateralAsset?.token_amount || 0),
+            )
+              // 币的价格
+              .multipliedBy(current.oracle),
+          );
+        }, 0),
+      USD_DB_DECIMALS,
+    );
   };
 
   // 理论可借额度
@@ -175,14 +180,15 @@ export default () => {
           // 以下数据均为 共享数据, 可以考虑将其独立出一个单独的数据结构,但是其实这样挺好用的
 
           // 真实可借
-          totalBorrowingValueOnReal,
+          totalBorrowingValueOnReal: toDP(totalBorrowingValueOnReal, USD_DB_DECIMALS),
           // 理论
-          totalBorrowingValueOnTheroy,
+          totalBorrowingValueOnTheroy: toDP(totalBorrowingValueOnTheroy, USD_DB_DECIMALS),
           // 实际真实已借价值
-          totalBorrowedValueOnReal,
+          totalBorrowedValueOnReal: toDP(totalBorrowedValueOnReal, USD_DB_DECIMALS),
           // 剩余可借
-          restBorrowingValueOnReal: new BigNumber(totalBorrowingValueOnReal).minus(
-            totalBorrowedValueOnReal,
+          restBorrowingValueOnReal: toDP(
+            new BigNumber(totalBorrowingValueOnReal).minus(totalBorrowedValueOnReal),
+            USD_DB_DECIMALS,
           ),
           // 获取其他币的价值
           getDepositValueExcept,
