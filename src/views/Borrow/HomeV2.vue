@@ -23,9 +23,9 @@
         </div>
       </div>
 
-      <pre style="color: white">
+      <!-- <pre style="color: white">
         {{ tokenList[0] }}
-      </pre>
+      </pre> -->
 
       <div class="main">
         <div class="dashboard-box">
