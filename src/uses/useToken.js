@@ -6,35 +6,41 @@ import { toTokenString } from 'utils';
 
 export default () => {
   const store = useStore();
+  // 从store里面获得 tokenList
   const tokenList = computed(() => store.state.tokenList);
 
-  // 币保留小数位数
-  const COIN_DB_DECIMALS = 4;
-  // 币转换成USDT保留的小数位数
-  const USD_DB_DECIMALS = 2;
-
-  const SHIFT_BY = -18;
-
+  // 人可以读的数字
   const toHumanReadable = ({ address, amount }) => {
     const token = tokenList.value.find((token) => token.address === address);
     return token ? token.toHumanAmount(amount) : '';
   };
 
+  // 链可以读的数字
   const toChainReadable = ({ address, amount }) => {
     const token = tokenList.value.find((token) => token.address === address);
     return token ? token.toChainAmount(amount) : '';
   };
 
-  const toPercent = (value) => {
-    return new BigNumber(value).multipliedBy(100).toFixed(3) + '%';
+  // 换成百分比
+  const toPercent = (value, fixed = 3) => {
+    return new BigNumber(value).multipliedBy(100).toFixed(fixed) + '%';
   };
 
+  // 币保留小数位数
+  const COIN_DB_DECIMALS = 4;
+  // 币转换成USDT保留的小数位数
+  const USD_DB_DECIMALS = 2;
+  // 保留小数位数
   const toDP = (value, precision = COIN_DB_DECIMALS) => {
     return !isNaN(value) ? new BigNumber(value).dp(precision, BigNumber.ROUND_DOWN) : 0;
   };
 
+  // Mantissa要位移的位数
+  const SHIFT_BY = -18;
+  // 将Mantissa转换成可读可运算的方法
   const toReadMantissa = (value) => (!isNaN(value) ? new BigNumber(value).shiftedBy(SHIFT_BY) : 0);
 
+  // 一个Nano计算方法, 根据不同币的精度不同
   const nano = (percision) => new BigNumber(1).dividedBy(percision);
 
   /**
@@ -74,7 +80,7 @@ export default () => {
   };
 
   // 理论可借额度
-  const getBorrowedValueOnTheroy = (tokenList) => {
+  const getBorrowingValueOnTheroy = (tokenList) => {
     return [...tokenList].reduce((prev, current) => {
       return new BigNumber(prev).plus(
         // 币的数量
@@ -90,8 +96,8 @@ export default () => {
   };
 
   // 真实可借额度
-  const getBorrowValueOnReal = (tokenList) => {
-    return new BigNumber(getBorrowedValueOnTheroy(tokenList)).multipliedBy(
+  const getBorrowingValueOnReal = (tokenList) => {
+    return new BigNumber(getBorrowingValueOnTheroy(tokenList)).multipliedBy(
       // 风险系数
       toReadMantissa(tokenList[0]?.riskAssetConfig.liquidation_threshold.mantissa) || 1,
     );
@@ -99,15 +105,18 @@ export default () => {
 
   // 实际真实已借价值 on usdt
   // 每个币的价值 * 数量 = 已借价值
-  const getTotalRealBorrowValue = (tokenList) => {
-    return tokenList.reduce((prev, current) => {
-      return new BigNumber(prev).plus(
-        // 币的数量
-        new BigNumber(current.toHumanAmount(current?.personalDebtAsset?.token_amount || 0))
-          // 币的价格
-          .multipliedBy(current.oracle),
-      );
-    }, 0);
+  const getTotalBorrowedValueOnReal = (tokenList) => {
+    return toDP(
+      tokenList.reduce((prev, current) => {
+        return new BigNumber(prev).plus(
+          // 币的数量
+          new BigNumber(current.toHumanAmount(current?.personalDebtAsset?.token_amount || 0))
+            // 币的价格
+            .multipliedBy(current.oracle),
+        );
+      }, 0),
+      USD_DB_DECIMALS,
+    );
   };
 
   const getOracleValue = ({ amount = 0, oracle = 0 }) =>
@@ -153,9 +162,9 @@ export default () => {
     try {
       // TokenList
       const { tokenList, assetId } = await GetStateListResource(store.state.accountHash);
-      const totalBorrowedValueOnReal = getBorrowValueOnReal(tokenList);
-      const totalBorrowedValueOnTheroy = getBorrowedValueOnTheroy(tokenList);
-      const totalRealBorrowedValue = getTotalRealBorrowValue(tokenList);
+      const totalBorrowingValueOnReal = getBorrowingValueOnReal(tokenList);
+      const totalBorrowingValueOnTheroy = getBorrowingValueOnTheroy(tokenList);
+      const totalBorrowedValueOnReal = getTotalBorrowedValueOnReal(tokenList);
 
       const tokenDetails = tokenList.map((item) => {
         return {
@@ -163,21 +172,28 @@ export default () => {
 
           reserverUnit,
           // =======================  Borrow ===================
+          // 以下数据均为 共享数据, 可以考虑将其独立出一个单独的数据结构,但是其实这样挺好用的
+
           // 真实可借
-          totalBorrowedValueOnReal,
+          totalBorrowingValueOnReal,
           // 理论
-          totalBorrowedValueOnTheroy,
+          totalBorrowingValueOnTheroy,
           // 实际真实已借价值
-          totalRealBorrowedValue,
+          totalBorrowedValueOnReal,
+          // 剩余可借
+          restBorrowingValueOnReal: new BigNumber(totalBorrowingValueOnReal).minus(
+            totalBorrowedValueOnReal,
+          ),
           // 获取其他币的价值
           getDepositValueExcept,
 
           borrowedLimitUsed: toPercent(
-            new BigNumber(totalRealBorrowedValue).dividedBy(totalBorrowedValueOnTheroy),
+            new BigNumber(totalBorrowedValueOnReal).dividedBy(totalBorrowingValueOnTheroy),
           ),
+          // 以上数据均为 共享数据, 可以考虑将其独立出一个单独的数据结构,但是其实这样挺好用的
 
-          // 百分比更新
-          borrowedLimitUsedUpdate: (amount) => {
+          // 存取款可用比例更新
+          borrowedLimitUsedUpdated: (amount) => {
             if (!amount) return 0;
 
             // 当前输入数量的抵押价值
@@ -189,16 +205,17 @@ export default () => {
 
             return toPercent(
               // 总借贷价值
-              new BigNumber(totalRealBorrowedValue).dividedBy(
+              new BigNumber(totalBorrowedValueOnReal).dividedBy(
                 // 理解可借 + 新增的抵押价值
-                getBorrowedValueOnTheroy(tokenList).plus(
+                getBorrowingValueOnTheroy(tokenList).plus(
                   new BigNumber(equivalentAmount).multipliedBy(item.oracle),
                 ),
               ),
             );
           },
 
-          borrowedLimitUsedUpdateOnBorrow: (amount) => {
+          // 借还款可用比例更新
+          borrowedLimitUsedUpdatedOnBorrow: (amount) => {
             if (!amount) return 0;
 
             // 当前输入数量的抵押价值
@@ -210,19 +227,19 @@ export default () => {
 
             return toPercent(
               // 原有的总借贷的价值
-              new BigNumber(totalRealBorrowedValue)
+              new BigNumber(totalBorrowedValueOnReal)
                 // 加上变化的价值
                 .plus(new BigNumber(equivalentAmount).multipliedBy(item.oracle))
                 .dividedBy(
                   // 理论可借
-                  getBorrowedValueOnTheroy(tokenList),
+                  getBorrowingValueOnTheroy(tokenList),
                 ),
             );
           },
 
           // 最大可取数量
           maxWithdrawBalance: () => {
-            const asLeastUSD = totalRealBorrowedValue.dividedBy(
+            const asLeastUSD = totalBorrowedValueOnReal.dividedBy(
               toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa),
             );
             // 其他币是否有足够的价值
@@ -234,7 +251,7 @@ export default () => {
             } else {
               // 返回可取的最大值
               return (
-                totalBorrowedValueOnTheroy
+                totalBorrowingValueOnTheroy
                   // 获得最少的币数
                   .minus(asLeastUSD)
                   // 去掉一个保留比例
@@ -248,14 +265,13 @@ export default () => {
             }
           },
 
+          // 最大可借数量
           maxBorrowBalance: () => {
-            // realBorrow * 0.8 - totalBorrowedValueOnTheroy
-
             // 剩余多少可借
             // 真实总可借
-            const remainBalance = totalBorrowedValueOnReal
+            const remainBalance = totalBorrowingValueOnReal
               // 减去 已借的
-              .minus(totalRealBorrowedValue)
+              .minus(totalBorrowedValueOnReal)
               .minus(reserverUnit)
               .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
               // 除以价格 得到币的数量
@@ -263,6 +279,7 @@ export default () => {
 
             return BigNumber.minimum(remainBalance, liquidity(item));
           },
+          // =======================  Borrow ===================
 
           // Table Data
           supplyAPY: toPercent(toReadMantissa(item.supply_rate.mantissa)),
@@ -288,13 +305,13 @@ export default () => {
   return {
     tokenList,
 
+    toDP,
+    nano,
+    toPercent,
+    getTokenList,
     toHumanReadable,
     toChainReadable,
-    toPercent,
-    toDP,
     toReadMantissa,
-    getTokenList,
-    nano,
 
     additionBorrowLimitBalance,
     getOracleValue,

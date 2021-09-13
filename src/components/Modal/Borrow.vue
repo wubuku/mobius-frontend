@@ -21,7 +21,7 @@
         :bordered="false"
         ref="amountInput"
       ></a-input>
-      <a-button class="btn input-box-btn" @click="setAllAmount">MAX</a-button>
+      <a-button class="btn input-box-btn" @click="setMaxAmount">MAX</a-button>
     </div>
     <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
     <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
@@ -72,10 +72,10 @@
           {{ token.borrowedLimitUsed }}
           <span
             class="arrow-box"
-            v-if="token.borrowedLimitUsedUpdateOnBorrow((isBorrowMode ? 1 : -1) * amount) != 0"
+            v-if="token.borrowedLimitUsedUpdatedOnBorrow((isBorrowMode ? 1 : -1) * amount) != 0"
           >
             <ArrowRightOutlined class="arrow" />
-            {{ token.borrowedLimitUsedUpdateOnBorrow((isBorrowMode ? 1 : -1) * amount) }}
+            {{ token.borrowedLimitUsedUpdatedOnBorrow((isBorrowMode ? 1 : -1) * amount) }}
           </span>
         </span>
       </div>
@@ -140,7 +140,7 @@
   const isBorrowMode = computed(() => mode.value === ENUMS.TAB_NAME.BORROW.value);
   const isRepayMode = computed(() => mode.value === ENUMS.TAB_NAME.REPAY.value);
 
-  const inputLargerThanAmount = computed(() => {
+  const amountGreatThanBalance = computed(() => {
     if (isRepayMode.value) {
       return (
         // 钱包小于输入值
@@ -162,7 +162,7 @@
   );
   const submitBtnText = computed(() => (isBorrowMode.value ? 'Borrow' : 'Repay'));
   const NotEnoughErrorText = computed(() => {
-    if (inputLargerThanAmount.value) return 'Not enough balance';
+    if (amountGreatThanBalance.value) return 'Not enough balance';
     return '';
   });
 
@@ -174,8 +174,9 @@
 
   const OverRiskAssetConfigErrorText = computed(() => {
     return isBorrowMode.value &&
-      parseFloat(token.borrowedLimitUsedUpdateOnBorrow(amount.value)) >=
-        toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
+      parseFloat(
+        token.borrowedLimitUsedUpdatedOnBorrow((isBorrowMode.value ? 1 : -1) * amount.value),
+      ) >= toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
       ? 'Over risk Asset'
       : '';
   });
@@ -205,7 +206,7 @@
     amountInput.value.focus();
   });
 
-  const setAllAmount = () => {
+  const setMaxAmount = () => {
     if (isBorrowMode.value) {
       amount.value = token?.maxBorrowBalance().valueOf();
     }

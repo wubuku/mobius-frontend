@@ -23,31 +23,35 @@
         </div>
       </div>
 
+      <pre style="color: white">
+        {{ tokenList[0] }}
+      </pre>
+
       <div class="main">
         <div class="dashboard-box">
           <div class="my-info-box large">
-            <div class="label benifit">预估当日收益</div>
+            <div class="label benifit">XXXXXX</div>
             <div class="num large up blod">$12.32</div>
-            <div class="btn benifit-btn">点击领取</div>
+            <a-button disabled class="btn benifit-btn disabled">点击领取</a-button>
           </div>
           <div class="line">
             <div class="my-info-box">
-              <div class="label">供应余额</div>
-              <div class="num large my blod">$12.32</div>
+              <div class="label">供应价值</div>
+              <div class="num large my blod">${{ tokenList[0]?.totalBorrowingValueOnReal }}</div>
             </div>
             <div class="my-info-box">
-              <div class="label">借贷余额</div>
-              <div class="num large my blod">$12.32</div>
+              <div class="label">已借价值</div>
+              <div class="num large my blod">${{ tokenList[0]?.totalBorrowedValueOnReal }}</div>
             </div>
             <div class="my-info-box flex credit-balance">
               <div class="label">
-                <span>可用信用额度</span>
+                <span>可用信用价值</span>
                 <span class="progress">
-                  <span class="title">借贷限额</span>
-                  <a-progress :percent="30" />
+                  <span class="title">借贷使用比例</span>
+                  <a-progress :percent="parseFloat(tokenList[0]?.borrowedLimitUsed)" />
                 </span>
               </div>
-              <div class="num large my blod">$12.32</div>
+              <div class="num large my blod">${{ tokenList[0]?.restBorrowingValueOnReal }}</div>
             </div>
           </div>
         </div>
@@ -184,7 +188,6 @@
   };
 
   onMounted(async () => {
-    console.log('onMounted');
     init();
   });
 

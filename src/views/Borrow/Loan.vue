@@ -53,7 +53,7 @@
             :bordered="false"
             :disabled="!selectedToken.address"
           ></a-input>
-          <a-button class="btn input-box-btn" @click="setAllAmount">全部</a-button>
+          <a-button class="btn input-box-btn" @click="setMaxAmount">全部</a-button>
         </div>
 
         <p v-if="isBorrowMode && currentResource.name">
@@ -163,7 +163,7 @@
 
       const canSubmit = computed(() => !!selectedToken.value.name && amount.value > 0);
 
-      const inputLargerThanAmount = computed(() => {
+      const amountGreatThanBalance = computed(() => {
         return mode.value == ENUMS.TAB_NAME.BORROW.value
           ? amount.value > currentResource.value.amount
           : amount.value >
@@ -179,12 +179,12 @@
 
       const submitBtnText = computed(() => {
         if (isBorrowMode.value) {
-          if (amount.value > 0 && inputLargerThanAmount.value) {
+          if (amount.value > 0 && amountGreatThanBalance.value) {
             return '余额不足';
           }
           return '马上借';
         } else {
-          // if (amount.value > 0 && inputLargerThanAmount.value) {
+          // if (amount.value > 0 && amountGreatThanBalance.value) {
           //   return '余额不足';
           // }
           return '马上还';
@@ -260,7 +260,7 @@
         }
       };
 
-      const setAllAmount = () => {
+      const setMaxAmount = () => {
         if (currentResource.value.name) {
           if (isBorrowMode.value) {
             amount.value = currentResource.value.amount;
@@ -281,7 +281,7 @@
         amount,
         canSubmit,
         currentResource,
-        inputLargerThanAmount,
+        amountGreatThanBalance,
         submitBtnText,
         defaultSelectValue,
         debtList,
@@ -292,7 +292,7 @@
         ENUMS,
 
         submit,
-        setAllAmount,
+        setMaxAmount,
         numberInput,
         toHumanReadable,
         ToHumanAmount,

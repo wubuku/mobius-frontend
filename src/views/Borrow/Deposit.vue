@@ -56,7 +56,7 @@
             :bordered="false"
             :disabled="!selectedToken.address"
           ></a-input>
-          <a-button class="btn input-box-btn" @click="setAllAmount">全部</a-button>
+          <a-button class="btn input-box-btn" @click="setMaxAmount">全部</a-button>
         </div>
 
         <p v-if="isDepositMode && currentResource.name">
@@ -169,7 +169,7 @@
 
       // computed
       const canSubmit = computed(
-        () => !!selectedToken.value.name && amount.value > 0 && !inputLargerThanAmount.value,
+        () => !!selectedToken.value.name && amount.value > 0 && !amountGreatThanBalance.value,
       );
 
       const maxWithdrawBalance = computed(() =>
@@ -179,7 +179,7 @@
         }),
       );
 
-      const inputLargerThanAmount = computed(() => {
+      const amountGreatThanBalance = computed(() => {
         return isDepositMode.value
           ? amount.value > currentResource.value.amount
           : amount.value > maxWithdrawBalance.value;
@@ -188,7 +188,7 @@
       const submitBtnText = computed(() => {
         if (amount.value == '' && amount.value == 0) {
           return '提交';
-        } else if (amount.value > 0 && inputLargerThanAmount.value) {
+        } else if (amount.value > 0 && amountGreatThanBalance.value) {
           return '余额不足';
         }
         return '提交';
@@ -305,7 +305,7 @@
         }
       };
 
-      const setAllAmount = () => {
+      const setMaxAmount = () => {
         if (currentResource.value.name) {
           if (isDepositMode.value) {
             amount.value = currentResource.value.amount;
@@ -335,10 +335,10 @@
         canSubmit,
         submitBtnText,
         maxWithdrawBalance,
-        inputLargerThanAmount,
+        amountGreatThanBalance,
 
         submit,
-        setAllAmount,
+        setMaxAmount,
         numberInput,
         toHumanReadable,
         ToHumanAmount,

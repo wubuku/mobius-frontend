@@ -21,10 +21,11 @@
         :bordered="false"
         ref="amountInput"
       ></a-input>
-      <a-button class="btn input-box-btn" @click="setAllAmount">MAX</a-button>
+      <a-button class="btn input-box-btn" @click="setMaxAmount">MAX</a-button>
     </div>
     <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
     <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
+    <p class="error" v-if="OverRiskAssetConfigErrorText">{{ OverRiskAssetConfigErrorText }}</p>
     <div class="modal-tab">
       <div
         class="modal-tab-item"
@@ -58,7 +59,7 @@
       <div class="info-item">
         最多可借
         <span class="right">
-          $ {{ token.totalBorrowedValueOnReal }}
+          $ {{ token.totalBorrowingValueOnReal }}
           <span class="arrow-box" v-if="borrowLimit != 0">
             <ArrowRightOutlined class="arrow" />
             ${{ borrowLimit }}
@@ -73,10 +74,10 @@
           {{ token.borrowedLimitUsed }}
           <span
             class="arrow-box"
-            v-if="token.borrowedLimitUsedUpdate((isDepositMode ? 1 : -1) * amount) != 0"
+            v-if="token.borrowedLimitUsedUpdated((isDepositMode ? 1 : -1) * amount) != 0"
           >
             <ArrowRightOutlined class="arrow" />
-            {{ token.borrowedLimitUsedUpdate((isDepositMode ? 1 : -1) * amount) }}
+            {{ token.borrowedLimitUsedUpdated((isDepositMode ? 1 : -1) * amount) }}
           </span>
         </span>
       </div>
@@ -145,28 +146,36 @@
   const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
   const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);
 
-  const inputLargerThanAmount = computed(() => {
+  const amountGreatThanBalance = computed(() => {
     return isDepositMode.value
       ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
-      : new BigNumber(amount.value).isGreaterThan(token?.supplyBalance) ||
-          parseFloat(token.borrowedLimitUsedUpdate(-1 * amount.value)) >=
-            toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100);
+      : new BigNumber(amount.value).isGreaterThan(token?.supplyBalance);
   });
   const canSubmit = computed(
     () =>
       amount.value != '' &&
       amount.value > 0 &&
-      !inputLargerThanAmount.value &&
+      !amountGreatThanBalance.value &&
       !NotEnoughErrorText.value &&
-      !NotEnoughLiquidtyErrorText.value,
+      !NotEnoughLiquidtyErrorText.value &&
+      !OverRiskAssetConfigErrorText.value,
   );
   const submitBtnText = computed(() => (isDepositMode.value ? 'Deposit' : 'WithDraw'));
+
   const NotEnoughErrorText = computed(() => {
-    return inputLargerThanAmount.value ? 'Not enough balance' : '';
+    return amountGreatThanBalance.value ? 'Not enough balance' : '';
   });
   const NotEnoughLiquidtyErrorText = computed(() => {
     return isWithdrawMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
       ? 'Not enough liquidity'
+      : '';
+  });
+
+  const OverRiskAssetConfigErrorText = computed(() => {
+    return isWithdrawMode.value &&
+      parseFloat(token.borrowedLimitUsedUpdated(-1 * amount.value)) >=
+        toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
+      ? 'Over risk Asset'
       : '';
   });
 
@@ -184,11 +193,11 @@
           risk_assets_pthreshold: token?.riskEquivalentsConfig?.liquidation_threshold?.mantissa,
         })
           .multipliedBy(isDepositMode.value ? 1 : -1)
-          .plus(token.totalBorrowedValueOnReal)
+          .plus(token.totalBorrowingValueOnReal)
       : 0;
   });
 
-  const setAllAmount = () => {
+  const setMaxAmount = () => {
     if (isDepositMode.value) {
       amount.value = token?.walletResource.valueOf();
     }
