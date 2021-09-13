@@ -267,7 +267,7 @@
           }
 
           if (isRepayMode.value) {
-            // amount.value = maxWithdrawAmount.value;
+            // amount.value = maxWithdrawBalance.value;
           }
         }
       };

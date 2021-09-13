@@ -67,7 +67,7 @@
           <p v-if="currentWithdraw.address">
             当前可取:
             <!-- 这里是要计算出来的 -->
-            {{ maxWithdrawAmount }}
+            {{ maxWithdrawBalance }}
             {{ currentWithdraw.name }}
           </p>
           <p v-else>当前无可取</p>
@@ -172,7 +172,7 @@
         () => !!selectedToken.value.name && amount.value > 0 && !inputLargerThanAmount.value,
       );
 
-      const maxWithdrawAmount = computed(() =>
+      const maxWithdrawBalance = computed(() =>
         toHumanReadable({
           address: currentWithdraw.value.address,
           amount: currentWithdraw.value.token_amount,
@@ -182,7 +182,7 @@
       const inputLargerThanAmount = computed(() => {
         return isDepositMode.value
           ? amount.value > currentResource.value.amount
-          : amount.value > maxWithdrawAmount.value;
+          : amount.value > maxWithdrawBalance.value;
       });
 
       const submitBtnText = computed(() => {
@@ -286,7 +286,7 @@
           WithdrawContract({
             token: selectedToken.value,
             nftId: assetId.value,
-            amount: amount.value === maxWithdrawAmount.value ? 0 : amount.value,
+            amount: amount.value === maxWithdrawBalance.value ? 0 : amount.value,
           })
             .then((res) => {
               addTxn({
@@ -312,7 +312,7 @@
           }
 
           if (isWithdrawMode.value) {
-            amount.value = maxWithdrawAmount.value;
+            amount.value = maxWithdrawBalance.value;
           }
         }
       };
@@ -334,7 +334,7 @@
         // computed data
         canSubmit,
         submitBtnText,
-        maxWithdrawAmount,
+        maxWithdrawBalance,
         inputLargerThanAmount,
 
         submit,

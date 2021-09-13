@@ -23,8 +23,8 @@
       ></a-input>
       <a-button class="btn input-box-btn" @click="setAllAmount">MAX</a-button>
     </div>
-    <p class="error" v-if="NotEnoughErrorTextt">{{ NotEnoughErrorTextt }}</p>
-    <p class="error" v-if="NotEnoughLiquidtyErrorTextt">{{ NotEnoughLiquidtyErrorTextt }}</p>
+    <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
+    <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
     <div class="modal-tab">
       <div
         class="modal-tab-item"
@@ -58,7 +58,7 @@
       <div class="info-item">
         最多可借
         <span class="right">
-          $ {{ token.totalBorrowedBalanceOnReal }}
+          $ {{ token.totalBorrowedValueOnReal }}
           <span class="arrow-box" v-if="borrowLimit != 0">
             <ArrowRightOutlined class="arrow" />
             ${{ borrowLimit }}
@@ -126,7 +126,7 @@
 
   const emit = defineEmits(['update:visible']);
 
-  const { toReadMantissa, additionBorrowLimitCalc, nano } = useToken();
+  const { toReadMantissa, additionBorrowLimitBalance, nano } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
 
@@ -153,13 +153,18 @@
             toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100);
   });
   const canSubmit = computed(
-    () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
+    () =>
+      amount.value != '' &&
+      amount.value > 0 &&
+      !inputLargerThanAmount.value &&
+      !NotEnoughErrorText.value &&
+      !NotEnoughLiquidtyErrorText.value,
   );
   const submitBtnText = computed(() => (isDepositMode.value ? 'Deposit' : 'WithDraw'));
-  const NotEnoughErrorTextt = computed(() => {
+  const NotEnoughErrorText = computed(() => {
     return inputLargerThanAmount.value ? 'Not enough balance' : '';
   });
-  const NotEnoughLiquidtyErrorTextt = computed(() => {
+  const NotEnoughLiquidtyErrorText = computed(() => {
     return isWithdrawMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
       ? 'Not enough liquidity'
       : '';
@@ -172,14 +177,14 @@
 
   watch(amount, () => {
     borrowLimit.value = amount.value
-      ? additionBorrowLimitCalc({
+      ? additionBorrowLimitBalance({
           amount: amount.value || 0,
           oracle: token.oracle,
           risk_equivalents_threshold: token?.riskAssetConfig?.liquidation_threshold?.mantissa,
           risk_assets_pthreshold: token?.riskEquivalentsConfig?.liquidation_threshold?.mantissa,
         })
           .multipliedBy(isDepositMode.value ? 1 : -1)
-          .plus(token.totalBorrowedBalanceOnReal)
+          .plus(token.totalBorrowedValueOnReal)
       : 0;
   });
 
@@ -189,7 +194,7 @@
     }
 
     if (isWithdrawMode.value) {
-      amount.value = token?.maxWithdrawAmount();
+      amount.value = token?.maxWithdrawBalance().valueOf();
     }
   };
 
@@ -241,7 +246,7 @@
         const txn = await WithdrawContract({
           token: token,
           nftId: assetId.value,
-          amount: amount.value === token?.maxWithdrawAmount() ? 0 : amount.value,
+          amount: amount.value === token?.maxWithdrawBalance() ? 0 : amount.value,
         });
         await startTransactionCheck(txn);
         onCancel();

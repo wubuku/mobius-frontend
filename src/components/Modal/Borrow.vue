@@ -23,7 +23,9 @@
       ></a-input>
       <a-button class="btn input-box-btn" @click="setAllAmount">MAX</a-button>
     </div>
-    <p class="error" v-if="errorText">{{ errorText }}</p>
+    <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
+    <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
+    <p class="error" v-if="OverRiskAssetConfigErrorText">{{ OverRiskAssetConfigErrorText }}</p>
     <div class="modal-tab">
       <div
         class="modal-tab-item"
@@ -54,28 +56,28 @@
 
       <!--  -->
       <div class="info-item">
-        Borrow Balance (borrowBalance +- amount)
+        Borrow Balance
         <span class="right">
-          $
-          {{
-            getOracleValue({
-              amount: toHumanReadable({
-                amount: token.debt?.debtAsset?.token_amount || 0,
-                address: token.address,
-              }),
-              oracle: token.oracle,
-            })
-          }}
-          <span class="arrow-box" v-if="amount > 0">
+          {{ token.borrowBalance }}
+          <span class="arrow-box" v-if="borrowBalanceUpdate != 0">
             <ArrowRightOutlined class="arrow" />
-            ${{ borrowBalance }}
+            {{ borrowBalanceUpdate }}
           </span>
         </span>
       </div>
       <!--  -->
       <div class="info-item">
-        已用比例((new Borrowed u + amount * oracle / Borrowed Limit u )
-        <span class="right highlight">0%</span>
+        已用比例
+        <span class="right highlight">
+          {{ token.borrowedLimitUsed }}
+          <span
+            class="arrow-box"
+            v-if="token.borrowedLimitUsedUpdateOnBorrow((isBorrowMode ? 1 : -1) * amount) != 0"
+          >
+            <ArrowRightOutlined class="arrow" />
+            {{ token.borrowedLimitUsedUpdateOnBorrow((isBorrowMode ? 1 : -1) * amount) }}
+          </span>
+        </span>
       </div>
       <!--  -->
       <a-button class="btn submit-btn" :disabled="!canSubmit" @click="submit" :loading="btnLoading">
@@ -132,25 +134,58 @@
 
   const mode = ref(ENUMS.TAB_NAME.BORROW.value);
   const amount = ref('');
-  const borrowBalance = ref('');
   const btnLoading = ref(false);
   const amountInput = ref(null);
 
   const isBorrowMode = computed(() => mode.value === ENUMS.TAB_NAME.BORROW.value);
   const isRepayMode = computed(() => mode.value === ENUMS.TAB_NAME.REPAY.value);
+
   const inputLargerThanAmount = computed(() => {
-    return isBorrowMode.value
-      ? new BigNumber(amount.value).isGreaterThan(token?.walletResource)
-      : new BigNumber(amount.value).isGreaterThan(token?.borrowBalance);
+    if (isRepayMode.value) {
+      return (
+        // 钱包小于输入值
+        token?.walletResource.minus(amount.value).isLessThan(0) ||
+        // 已借的小于输入值
+        token.borrowBalance.minus(amount.value).isLessThan(0)
+      );
+    }
+    return false;
   });
+
   const canSubmit = computed(
-    () => amount.value != '' && amount.value > 0 && !inputLargerThanAmount.value,
+    () =>
+      amount.value != '' &&
+      amount.value > 0 &&
+      !NotEnoughErrorText.value &&
+      !NotEnoughLiquidtyErrorText.value &&
+      !OverRiskAssetConfigErrorText.value,
   );
   const submitBtnText = computed(() => (isBorrowMode.value ? 'Borrow' : 'Repay'));
-  const errorText = computed(() => {
+  const NotEnoughErrorText = computed(() => {
     if (inputLargerThanAmount.value) return 'Not enough balance';
     return '';
   });
+
+  const NotEnoughLiquidtyErrorText = computed(() => {
+    return isBorrowMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
+      ? 'Not enough liquidity'
+      : '';
+  });
+
+  const OverRiskAssetConfigErrorText = computed(() => {
+    return isBorrowMode.value &&
+      parseFloat(token.borrowedLimitUsedUpdateOnBorrow(amount.value)) >=
+        toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
+      ? 'Over risk Asset'
+      : '';
+  });
+
+  const borrowBalanceUpdate = computed(() =>
+    amount.value
+      ? new BigNumber(token.borrowBalance).plus((isBorrowMode.value ? 1 : -1) * amount.value)
+      : 0,
+  );
+
   const totalBalance = computed(() => {
     if (amount.value == 0) return 0;
     const currentBalance = new BigNumber(
@@ -170,22 +205,13 @@
     amountInput.value.focus();
   });
 
-  watch(amount, () => {
-    // amount * oracle
-
-    borrowBalance.value = getOracleValue({
-      amount: totalBalance.value,
-      oracle: token.oracle,
-    });
-  });
-
   const setAllAmount = () => {
     if (isBorrowMode.value) {
-      amount.value = token?.walletResource;
+      amount.value = token?.maxBorrowBalance().valueOf();
     }
 
     if (isRepayMode.value) {
-      amount.value = token?.borrowBalance;
+      amount.value = token?.borrowBalance.valueOf();
     }
   };
 
@@ -220,7 +246,7 @@
         const txn = await RepayContract({
           token: token,
           nftId: assetId.value,
-          amount: amount.value,
+          amount: new BigNumber(amount.value).isEqualTo(token.borrowBalance) ? 0 : amount.value,
         });
         await startTransactionCheck(txn);
         onCancel();
