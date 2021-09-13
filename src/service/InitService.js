@@ -2,6 +2,7 @@ import { JsonProvider } from '@wormhole-stc/txn-wrapper';
 import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount } from 'config';
 import { toTokenString } from 'utils/';
 import axios from 'axios';
+import BigNumber from 'bignumber.js';
 
 // Global Data
 
@@ -45,20 +46,27 @@ const Get_Precision = async (token) =>
     { function_id: '0x1::Token::scaling_factor', type_args: [token], args: [] },
   ]);
 
-const Get_Oracle = async (tokenName) =>
-  tokenName == 'MUSDT'
-    ? 1
-    : requestChain('contract.call_v2', [
-        {
-          function_id: '0x1::PriceOracle::read',
-          type_args: [
-            `${
-              tokenName === 'STC' ? '0x1' : SOURCE_ADDRESS
-            }::${tokenName}USDOracle::${tokenName}USD`,
-          ],
-          args: [SOURCE_ADDRESS],
-        },
-      ]);
+const Get_Oracle = async () => {
+  return axios
+    .get(
+      'http://ac5e9dd967389445e809defadcba5242-1908387560.ap-northeast-1.elb.amazonaws.com/barnard/v1/priceFeeds',
+    )
+    .then((res) => {
+      const ret = {};
+      res.data
+        .filter((oracle) => ['BTC / USD', 'ETH / USD', 'STC / USD'].includes(oracle.pairName))
+        .forEach((oracle) => {
+          const name = oracle.pairName.split(' ')[0];
+          ret[name === 'STC' ? name : `M${name}`] = new BigNumber(oracle.latestPrice)
+            .shiftedBy(-1 * oracle.decimals)
+            .valueOf();
+        });
+
+      ret['MUSDT'] = 1;
+
+      return ret;
+    });
+};
 
 /**
  * Very Important function
@@ -75,6 +83,8 @@ export const GetStateListResource = async (accountHash) => {
       SOURCE_ADDRESS,
       { decode: true },
     ]);
+
+    const oracles = await Get_Oracle();
 
     const { resources: MyResource } = await requestChain('state.list_resource', [
       account,
@@ -107,7 +117,7 @@ export const GetStateListResource = async (accountHash) => {
         // 抵押系数
         const riskEquivalentsConfig = resources[KEY_Risk_Equivalents_Config(address)]?.json || {};
 
-        const oracle = (await Get_Oracle(name)[0]) || 1;
+        const oracle = oracles[name];
 
         return {
           address,

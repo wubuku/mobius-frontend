@@ -134,7 +134,7 @@ export default () => {
   /**
    * 获取某个币供应的值
    */
-  const supplyBalance = (item) =>
+  const getSupplyBalance = (item) =>
     toDP(
       item.toHumanAmount(
         // 存的数量
@@ -144,7 +144,7 @@ export default () => {
       ),
     );
 
-  const borrowBalance = (item) =>
+  const getBorrowBalance = (item) =>
     toDP(
       item.toHumanAmount(
         new BigNumber(item?.personalDebtAsset.token_amount || 0).plus(
@@ -157,7 +157,7 @@ export default () => {
   const liquidity = (item) =>
     toDP(item.toHumanAmount(new BigNumber(item.collateral_amount).minus(item.debt_amount)));
 
-  const reserverUnit = 0.1;
+  const reserverUnit = 0.01;
 
   /**
    * Get Token List
@@ -174,6 +174,10 @@ export default () => {
       const totalBorrowedValueOnReal = getTotalBorrowedValueOnReal(tokenList);
 
       const tokenDetails = tokenList.map((item) => {
+        const borrowBalance = getBorrowBalance(item);
+        const supplyBalance = getSupplyBalance(item);
+        const walletResource = toDP(item.toHumanAmount(item.walletResource) || 0);
+
         return {
           ...item,
 
@@ -261,20 +265,19 @@ export default () => {
 
             if (hasEnoughValue) {
               // 返回当前币的全部
-              return toDP(supplyBalance(item).valueOf(), COIN_INPUT_DECIMALS);
+              return toDP(supplyBalance, COIN_INPUT_DECIMALS);
             } else {
               // 返回可取的最大值
               return toDP(
                 totalBorrowingValueOnTheroy
                   // 获得最少的币数
                   .minus(asLeastUSD)
-                  // 去掉一个保留比例
-                  .minus(reserverUnit)
                   // 除以清算系数 (放大)
                   .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
                   // 除以当前币的价格
                   .dividedBy(item.oracle)
-                  .valueOf(),
+                  // 去掉一个保留比例
+                  .minus(reserverUnit),
                 COIN_INPUT_DECIMALS,
               );
             }
@@ -282,29 +285,40 @@ export default () => {
 
           // 最大可借数量
           maxBorrowBalance: () => {
+            // 1. 真实可借上限usd - sum(已经借的币的USD量)=剩余可借usd
+            // 2. 剩余可借usd/币价 = 剩余可借币数量
+            // 3. min(剩余可借币数量,国库可用币数量)
+
             // 剩余多少可借
             // 真实总可借
             const remainBalance = totalBorrowingValueOnReal
               // 减去 已借的
               .minus(totalBorrowedValueOnReal)
-              .minus(reserverUnit)
-              .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
+
+              // .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
               // 除以价格 得到币的数量
-              .dividedBy(item.oracle);
+              .dividedBy(item.oracle)
+              .minus(reserverUnit);
 
             return toDP(BigNumber.minimum(remainBalance, liquidity(item)), COIN_INPUT_DECIMALS);
           },
+
+          // 最大可还
+          maxRepayBalance: toDP(
+            BigNumber.minimum(borrowBalance, walletResource),
+            COIN_INPUT_DECIMALS,
+          ),
           // =======================  Borrow ===================
 
           // Table Data
           supplyAPY: toPercent(toReadMantissa(item.supply_rate.mantissa)),
-          supplyBalance: supplyBalance(item),
+          supplyBalance,
 
           borrowAPY: toPercent(toReadMantissa(item.borrow_rate.mantissa)),
-          borrowBalance: borrowBalance(item),
+          borrowBalance,
 
           // pack use asset to token
-          walletResource: toDP(item.toHumanAmount(item.walletResource) || 0),
+          walletResource,
           liquidity: liquidity(item),
         };
       });
@@ -319,6 +333,7 @@ export default () => {
 
   return {
     tokenList,
+    COIN_DB_DECIMALS,
 
     toDP,
     nano,

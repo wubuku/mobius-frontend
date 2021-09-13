@@ -127,7 +127,7 @@
 
   const emit = defineEmits(['update:visible']);
 
-  const { toReadMantissa, additionBorrowLimitBalance, nano } = useToken();
+  const { toReadMantissa, additionBorrowLimitBalance, nano, COIN_DB_DECIMALS, toDP } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
 
@@ -186,14 +186,16 @@
 
   watch(amount, () => {
     borrowLimit.value = amount.value
-      ? additionBorrowLimitBalance({
-          amount: amount.value || 0,
-          oracle: token.oracle,
-          risk_equivalents_threshold: token?.riskAssetConfig?.liquidation_threshold?.mantissa,
-          risk_assets_pthreshold: token?.riskEquivalentsConfig?.liquidation_threshold?.mantissa,
-        })
-          .multipliedBy(isDepositMode.value ? 1 : -1)
-          .plus(token.totalBorrowingValueOnReal)
+      ? toDP(
+          additionBorrowLimitBalance({
+            amount: amount.value || 0,
+            oracle: token.oracle,
+            risk_equivalents_threshold: token?.riskAssetConfig?.liquidation_threshold?.mantissa,
+            risk_assets_pthreshold: token?.riskEquivalentsConfig?.liquidation_threshold?.mantissa,
+          })
+            .multipliedBy(isDepositMode.value ? 1 : -1)
+            .plus(token.totalBorrowingValueOnReal),
+        )
       : 0;
   });
 

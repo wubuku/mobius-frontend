@@ -212,7 +212,7 @@
     }
 
     if (isRepayMode.value) {
-      amount.value = token?.borrowBalance.valueOf();
+      amount.value = token.maxRepayBalance.valueOf();
     }
   };
 
@@ -247,7 +247,7 @@
         const txn = await RepayContract({
           token: token,
           nftId: assetId.value,
-          amount: new BigNumber(amount.value).isEqualTo(token.borrowBalance) ? 0 : amount.value,
+          amount: new BigNumber(amount.value).isEqualTo(token.maxRepayBalance) ? 0 : amount.value,
         });
         await startTransactionCheck(txn);
         onCancel();
