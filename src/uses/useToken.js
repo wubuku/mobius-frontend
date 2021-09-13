@@ -28,6 +28,8 @@ export default () => {
 
   // 币保留小数位数
   const COIN_DB_DECIMALS = 4;
+  // 输入框里面放9位
+  const COIN_INPUT_DECIMALS = 9;
   // 币转换成USDT保留的小数位数
   const USD_DB_DECIMALS = 2;
   // 保留小数位数
@@ -187,15 +189,19 @@ export default () => {
           totalBorrowedValueOnReal: toDP(totalBorrowedValueOnReal, USD_DB_DECIMALS),
           // 剩余可借
           restBorrowingValueOnReal: toDP(
-            new BigNumber(totalBorrowingValueOnReal).minus(totalBorrowedValueOnReal),
+            new BigNumber(totalBorrowingValueOnTheroy).minus(totalBorrowedValueOnReal),
             USD_DB_DECIMALS,
           ),
           // 获取其他币的价值
           getDepositValueExcept,
 
-          borrowedLimitUsed: toPercent(
-            new BigNumber(totalBorrowedValueOnReal).dividedBy(totalBorrowingValueOnTheroy),
-          ),
+          borrowedLimitUsed: (() => {
+            return toPercent(
+              totalBorrowingValueOnTheroy.valueOf() == 0
+                ? 0
+                : new BigNumber(totalBorrowedValueOnReal).dividedBy(totalBorrowingValueOnTheroy),
+            );
+          })(),
           // 以上数据均为 共享数据, 可以考虑将其独立出一个单独的数据结构,但是其实这样挺好用的
 
           // 存取款可用比例更新
@@ -231,15 +237,17 @@ export default () => {
               )
               .valueOf();
 
+            const bvot = getBorrowingValueOnTheroy(tokenList);
+
             return toPercent(
-              // 原有的总借贷的价值
-              new BigNumber(totalBorrowedValueOnReal)
-                // 加上变化的价值
-                .plus(new BigNumber(equivalentAmount).multipliedBy(item.oracle))
-                .dividedBy(
-                  // 理论可借
-                  getBorrowingValueOnTheroy(tokenList),
-                ),
+              bvot.valueOf() == 0
+                ? 0
+                : // 原有的总借贷的价值
+                  new BigNumber(totalBorrowedValueOnReal)
+                    // 加上变化的价值
+                    .plus(new BigNumber(equivalentAmount).multipliedBy(item.oracle))
+                    // 理论可借
+                    .dividedBy(bvot),
             );
           },
 
@@ -253,10 +261,10 @@ export default () => {
 
             if (hasEnoughValue) {
               // 返回当前币的全部
-              return supplyBalance(item).valueOf();
+              return toDP(supplyBalance(item).valueOf(), COIN_INPUT_DECIMALS);
             } else {
               // 返回可取的最大值
-              return (
+              return toDP(
                 totalBorrowingValueOnTheroy
                   // 获得最少的币数
                   .minus(asLeastUSD)
@@ -266,7 +274,8 @@ export default () => {
                   .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
                   // 除以当前币的价格
                   .dividedBy(item.oracle)
-                  .valueOf()
+                  .valueOf(),
+                COIN_INPUT_DECIMALS,
               );
             }
           },
@@ -283,7 +292,7 @@ export default () => {
               // 除以价格 得到币的数量
               .dividedBy(item.oracle);
 
-            return BigNumber.minimum(remainBalance, liquidity(item));
+            return toDP(BigNumber.minimum(remainBalance, liquidity(item)), COIN_INPUT_DECIMALS);
           },
           // =======================  Borrow ===================
 

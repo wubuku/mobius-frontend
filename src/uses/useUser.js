@@ -1,6 +1,5 @@
 import { computed, ref, onMounted, watchEffect } from 'vue';
 import { useStore } from 'vuex';
-import { GetPersonalResource, GetPersonalAssets } from 'service/InitService';
 
 export default () => {
   const store = useStore();
@@ -22,17 +21,6 @@ export default () => {
   // 获取当前用户的个人资源
   const myResource = ({ account = '', address = '' }) => {
     if (!account) return;
-
-    GetPersonalResource(account).then((tokens) => {
-      if (Array.isArray(tokens)) {
-        const name = address.split('::')[2];
-        currentResource.value = tokens.filter((token) => token['address'] === address)[0] || {
-          amount: 0,
-          name,
-          address,
-        };
-      }
-    });
   };
 
   return {

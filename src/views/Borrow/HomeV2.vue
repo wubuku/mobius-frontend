@@ -37,7 +37,7 @@
           <div class="line">
             <div class="my-info-box">
               <div class="label">供应价值</div>
-              <div class="num large my blod">${{ tokenList[0]?.totalBorrowingValueOnReal }}</div>
+              <div class="num large my blod">${{ tokenList[0]?.totalBorrowingValueOnTheroy }}</div>
             </div>
             <div class="my-info-box">
               <div class="label">已借价值</div>
