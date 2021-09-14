@@ -1,5 +1,7 @@
 <template>
   <div class="app-home">
+    <img src="../../assets/images/borrow/liuxing.png" class="liuxing" />
+
     <div class="app-container">
       <div class="app-header">
         <div class="logo">BFLY.FINANCE</div>
