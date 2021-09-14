@@ -45,7 +45,7 @@
             </div>
             <div class="my-info-box flex credit-balance">
               <div class="label">
-                <span>可用信用价值</span>
+                <span class="text">可用信用价值</span>
                 <span class="progress">
                   <span class="title">借贷使用比例</span>
                   <a-progress :percent="parseFloat(tokenList[0]?.borrowedLimitUsed)" />

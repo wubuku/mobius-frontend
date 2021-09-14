@@ -93,6 +93,7 @@
   padding: 16px 0;
   text-align: right;
   font-size: 24px;
+  min-width: 120px;
 
   &:first-child {
     padding-left: 36px;
@@ -203,10 +204,12 @@
 //  ================ Progress =================
 
 .ant-progress-line {
-  width: 260px;
+  max-width: 260px;
+  width: 100%;
 
   .ant-progress-outer {
-    width: 220px;
+    width: 100%;
+    max-width: 170px
   }
 
   .ant-progress-text {

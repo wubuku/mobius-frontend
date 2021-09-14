@@ -247,7 +247,7 @@ body {
   }
 }
 
-@media (max-width: 750px) {
+@media (max-width: 1110px) {
   .app-home {
     padding-bottom: 20px;
     background: url(../images/borrow/bg-top.png) center 0 / 100% no-repeat;
@@ -282,7 +282,7 @@ body {
       .credit-balance {
         .label {
           gap: 0;
-          span {
+          .text{
             margin-bottom: 5px;
           }
         }
@@ -293,9 +293,10 @@ body {
       }
 
       .ant-progress-line {
-        width: 180px;
+        width: 100%;
         .ant-progress-outer {
-          width: 140px;
+          width: 90%;
+          max-width: 90%;
         }
       }
     }
@@ -311,10 +312,6 @@ body {
     }
   }
 
-  .ant-table-body {
-    overflow-x: scroll;
-  }
-
   .ant-table-thead > tr > th,
   .ant-table-tbody > tr > td {
     padding: 16px 10px;
@@ -322,6 +319,17 @@ body {
     &:last-child {
       min-width: 120px;
       padding-right: 16px;
+    }
+  }
+}
+
+
+@media (max-width: 600px) {
+  .ant-table-body {
+    overflow-x: scroll;
+
+    &::-webkit-scrollbar {
+      background-color: transparent;
     }
   }
 }
