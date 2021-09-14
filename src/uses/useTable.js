@@ -9,15 +9,6 @@ export default () => {
           customRender: 'name',
         },
       },
-      // {
-      //   title: '存款市场',
-      //   dataIndex: 'collateral_amount',
-      //   width: '110px',
-      //   sorter: (prev, next) => prev.collateral_amount - next.collateral_amount,
-      //   slots: {
-      //     customRender: 'collateral_amount',
-      //   },
-      // },
       {
         title: '存款APY',
         dataIndex: 'supplyAPY',
@@ -28,7 +19,7 @@ export default () => {
         title: 'Supply',
         dataIndex: 'supply_balance',
         key: 'supply_balance',
-        sorter: (prev, next) => prev.supply_balance - next.supply_balance,
+        sorter: (prev, next) => prev.supplyBalance - next.supplyBalance,
         slots: {
           customRender: 'supply_balance',
         },
