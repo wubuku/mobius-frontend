@@ -1,6 +1,8 @@
 <template>
   <div class="home">
     <div class="container">
+      <img src="../assets/images/index/c2.png" alt="" class="c2" />
+
       <!-- Header -->
       <header>
         <div class="logo">BFLY.FINANCE</div>
@@ -51,7 +53,7 @@
                 <span>STC</span>
               </div>
               <div class="apy">
-                <span class="vlaue">2.66%</span>
+                <span class="value">2.66%</span>
                 <span>APY</span>
               </div>
             </div>
@@ -66,7 +68,7 @@
                 <span>ETH</span>
               </div>
               <div class="apy">
-                <span class="vlaue">2.66%</span>
+                <span class="value">2.66%</span>
                 <span>APY</span>
               </div>
             </div>
@@ -81,7 +83,7 @@
                 <span>BTC</span>
               </div>
               <div class="apy">
-                <span class="vlaue">2.66%</span>
+                <span class="value">2.66%</span>
                 <span>APY</span>
               </div>
             </div>
@@ -96,7 +98,7 @@
                 <span>USDT</span>
               </div>
               <div class="apy">
-                <span class="vlaue">2.66%</span>
+                <span class="value">2.66%</span>
                 <span>APY</span>
               </div>
             </div>
@@ -119,6 +121,7 @@
         <h2 class="feature-title">Key Features</h2>
         <div class="bottom">
           <div class="card">
+            <img src="../assets/images/index/nft.png" alt="" />
             <div class="title">NFT + DeFi</div>
             <div class="desc">
               A single deployed contract on B-Fly protocol can include any combination of fungible
@@ -126,12 +129,14 @@
             </div>
           </div>
           <div class="card">
+            <img src="../assets/images/index/multi.png" alt="" />
             <div class="title">Multi-Chain Operability</div>
             <div class="desc">
               With B-Fly protocol, you can borrow and lend across most blockchains with ease.
             </div>
           </div>
           <div class="card">
+            <img src="../assets/images/index/batch.png" alt="" />
             <div class="title">Batch Transfer</div>
             <div class="desc">
               With B-Fly protocol, you can transfer your assets and debts together, saving up to 90%
@@ -142,6 +147,8 @@
       </div>
       <!-- Roadmap -->
       <div class="roadmap">
+        <img src="../assets/images/index/c1.png" alt="" class="c1" />
+        <img src="../assets/images/index/c3.png" alt="" class="c3" />
         <h2>Roadmap</h2>
       </div>
       <!-- Security -->
@@ -232,6 +239,7 @@
     .container {
       width: 100%;
       max-width: 1440px;
+      background: url(../assets/images/index/index-top-bg.png) center 220px / contain no-repeat;
 
       header {
         width: 100%;
@@ -239,7 +247,7 @@
         background: rgba(#000000);
         // box-shadow: 0px 0px 18px 3px rgba(255, 255, 255, 0.03);
         border-radius: 16px;
-        padding: 27px 62px;
+        padding: 25px 60px;
         font-size: 22px;
         color: white;
         display: flex;
@@ -262,8 +270,19 @@
             cursor: pointer;
             user-select: none;
             font-weight: bolder;
+
+            &:last-child {
+              margin-right: 0;
+            }
           }
         }
+      }
+
+      .c2 {
+        position: absolute;
+        top: 1310px;
+        right: 50%;
+        margin-right: -780px;
       }
 
       .banner {
@@ -297,6 +316,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
+        z-index: 1;
 
         .top,
         .bottom {
@@ -345,6 +366,16 @@
 
               .apy {
                 margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+
+                .value {
+                  font-size: 24px;
+                  font-weight: 600;
+                  color: #59aa83;
+                  line-height: 33px;
+                }
               }
             }
 
@@ -372,8 +403,8 @@
           justify-content: space-between;
 
           .card {
-            max-width: 360px;
-            width: 30%;
+            max-width: 380px;
+            width: 31%;
             height: 360px;
             background: linear-gradient(136deg, #2d3143 0%, #1c1e2a 100%);
             box-shadow: 0px 4px 8px 6px rgba(0, 0, 0, 0.15);
@@ -386,6 +417,11 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+
+            img {
+              margin-top: -50px;
+              margin-left: -25px;
+            }
 
             .title {
               font-size: 24px;
@@ -411,6 +447,21 @@
         flex-direction: column;
         align-items: center;
         padding: 75px 80px;
+        position: relative;
+
+        .c1 {
+          position: absolute;
+          top: -20px;
+          left: 165px;
+          z-index: 1;
+        }
+
+        .c3 {
+          position: absolute;
+          bottom: -73px;
+          right: 235px;
+          z-index: 1;
+        }
 
         h2 {
           height: 67px;
@@ -508,6 +559,86 @@
       border-radius: 8px;
       color: #ffffff;
       font-size: 24px;
+    }
+  }
+
+  @media screen and (max-width: 1439px) {
+    .home {
+      .container {
+        header {
+          width: auto;
+          margin: 0 20px;
+          padding: 25px 30px;
+
+          .menu {
+            span {
+              display: none;
+            }
+          }
+        }
+
+        .money-market {
+          min-height: 1390px;
+          height: auto;
+          margin: 0 20px;
+          width: auto;
+
+          .top {
+            flex-direction: column;
+
+            .coin-list {
+              width: 100%;
+
+              .coin-list-item {
+                width: 100%;
+              }
+            }
+          }
+          .bottom {
+            flex-direction: column;
+
+            .card {
+              width: 100%;
+              max-width: max-content;
+              height: auto;
+              min-height: 360px;
+              margin-bottom: 20px;
+            }
+          }
+        }
+
+        .roadmap {
+          width: auto;
+          margin: 0 20px;
+
+          .c1 {
+            top: -60px;
+          }
+        }
+
+        .security {
+          min-height: 725px;
+          height: auto;
+          flex-direction: column;
+          padding: 125px 60px;
+          width: auto;
+          margin: 0 20px;
+
+          .security-banner {
+            width: 100%;
+            max-width: 595px;
+          }
+
+          .right-part {
+            margin-left: 0;
+          }
+        }
+
+        .right-part {
+          margin-top: 50px;
+          margin-left: 0;
+        }
+      }
     }
   }
 </style>
