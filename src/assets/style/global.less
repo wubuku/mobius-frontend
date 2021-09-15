@@ -90,6 +90,10 @@ body {
 .btn {
   cursor: pointer;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &:active {
     position: relative;
     left: 2px;
@@ -124,24 +128,23 @@ body {
   font-size: 20px;
   font-weight: 200;
 
-  @icons: wallet, faq, whitepaper, resource, forum, borrow;
-  each(@icons, {
-      &.@{value} {
-        background: white;
-        color: #4b4d51;
-        
-    
-        &:before {
-          width: 25px;
-          height: 25px;
-          content: '';
-          display: block;
-          margin-right: 15px;
-          background: url('../images/icon/@{value}.png') 0 0 / contain no-repeat;
-        }
-      }
-    }
-  );
+  // @icons: wallet, faq, whitepaper, resource, forum, borrow;
+  // each(@icons, {
+  //     &.@{value} {
+  //       background: white;
+  //       color: #4b4d51;
+
+  //       &:before {
+  //         width: 25px;
+  //         height: 25px;
+  //         content: '';
+  //         display: block;
+  //         margin-right: 15px;
+  //         background: url('../images/icon/@{value}.png') 0 0 / contain no-repeat;
+  //       }
+  //     }
+  //   }
+  // );
 
   &.wallet,
   &.vote {
@@ -165,26 +168,26 @@ body {
     cursor: pointer;
     width: 25px;
     height: 25px;
-    background: url('../../assets/images/icon/tele.png') 0 0 / cover no-repeat;
+    // background: url('../../assets/images/icon/tele.png') 0 0 / cover no-repeat;
     margin-bottom: 20px;
 
     &.twitter {
-      background-image: url('../../assets/images/icon/twitter.png');
+      // background-image: url('../../assets/images/icon/twitter.png');
     }
 
     &.github {
-      background-image: url('../../assets/images/icon/github.png');
+      // background-image: url('../../assets/images/icon/github.png');
     }
 
     &.gray {
-      background-image: url('../../assets/images/icon/tele-gray.png');
+      // background-image: url('../../assets/images/icon/tele-gray.png');
 
       &.twitter {
-        background-image: url('../../assets/images/icon/twitter-gray.png');
+        // background-image: url('../../assets/images/icon/twitter-gray.png');
       }
 
       &.github {
-        background-image: url('../../assets/images/icon/github-gray.png');
+        // background-image: url('../../assets/images/icon/github-gray.png');
       }
     }
   }

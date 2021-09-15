@@ -64,7 +64,8 @@ body {
   min-width: 100%;
   min-height: 100vh;
   height: 100%;
-  background:  url(../images/borrow/liuxing.png) center 0 / 1920px auto no-repeat, url(../images/borrow/bg-top.png) center 0 / 100% auto no-repeat,;
+  background: url(../images/borrow/liuxing.png) center 0 / 1920px auto no-repeat,
+    url(../images/borrow/bg-top.png) center 0 / 100% auto no-repeat;
   background-attachment: fixed;
   display: flex;
   flex-direction: column;
@@ -108,10 +109,14 @@ body {
       width: 200px;
       font-size: 42px;
       font-weight: bold;
-      color: #16409c;
+
       line-height: 1;
       font-weight: bolder;
       font-family: 'D-DINCondensed-bold';
+
+      a {
+        color: #16409c;
+      }
     }
 
     .collect-box {
@@ -247,7 +252,7 @@ body {
   }
 }
 
-@media (max-width: 1110px) {
+@media (max-width: 1200px) {
   .app-home {
     padding-bottom: 20px;
     background: url(../images/borrow/bg-top.png) center 0 / 100% no-repeat;
@@ -282,7 +287,7 @@ body {
       .credit-balance {
         .label {
           gap: 0;
-          .text{
+          .text {
             margin-bottom: 5px;
           }
         }
@@ -322,7 +327,6 @@ body {
     }
   }
 }
-
 
 @media (max-width: 600px) {
   .ant-table-body {
