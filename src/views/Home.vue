@@ -112,7 +112,7 @@
           </div>
           <div class="right-part">
             <h1>
-              <img src="../assets/images/index/MoneyMarkets.png" alt="" />
+              <img src="../assets/images/index/MoneyMarkets.png" style="max-width: 599px" />
             </h1>
             <div class="market-desc">
               A Decentralized Market to deposit and borrow assets whilst earning interest. With
@@ -125,7 +125,7 @@
           </div>
         </div>
         <h2 class="feature-title">
-          <img src="../assets/images/index/KeyFeatures.png" alt="" />
+          <img src="../assets/images/index/KeyFeatures.png" style="max-width: 296px" />
         </h2>
         <div class="bottom">
           <div class="card">
@@ -190,7 +190,7 @@
       <div class="security">
         <img src="../assets/images/index/security-banner.png" class="security-banner" />
         <div class="right-part">
-          <h1><img src="../assets/images/index/Security.png" alt="" /></h1>
+          <h1><img src="../assets/images/index/Security.png" style="max-width: 185px" /></h1>
           <div class="market-desc">
             The B-Fly protocol is one of the most secure DeFi project in the crypto world. With
             innate nature of “move” language, the protocol is more robust in preventing certain
@@ -333,8 +333,8 @@
       header {
         width: 100%;
         height: 120px;
-        background: rgba(#000000);
-        // box-shadow: 0px 0px 18px 3px rgba(255, 255, 255, 0.03);
+        background: rgba(#000000, 0.4);
+        box-shadow: 0px 0px 18px 3px rgba(255, 255, 255, 0.03);
         border-radius: 16px;
         padding: 25px 60px;
         font-size: 22px;
@@ -385,6 +385,10 @@
           line-height: 84px;
           text-shadow: 0px 6px 6px rgba(0, 0, 0, 0.5);
           margin-bottom: 40px;
+
+          img {
+            max-width: 529px;
+          }
         }
 
         .desc {
@@ -841,6 +845,11 @@
 
               .coin-list-item {
                 width: 100%;
+                margin-bottom: 10px;
+              }
+
+              .view-more {
+                margin-top: 20px;
               }
             }
           }
@@ -864,7 +873,7 @@
           padding-right: 0;
 
           .c1 {
-            top: -70px;
+            top: -30px;
             left: 215px;
             width: 65px;
           }
@@ -892,6 +901,7 @@
         .right-part {
           margin-top: 50px;
           margin-left: 0;
+          padding: 0 20px;
 
           h1 {
             img {
