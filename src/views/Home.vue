@@ -797,9 +797,9 @@
         }
 
         header {
-          width: auto;
-          margin: 0 20px;
-          padding: 10px;
+          width: 90%;
+          margin: 0 auto;
+          padding: 10px 20px;
 
           .menu {
             .menu-item {
@@ -815,9 +815,9 @@
         }
 
         .banner {
-          padding-left: 20px;
-          padding-right: 20px;
-          padding-top: 50px;
+          width: 90%;
+          margin: 0 auto;
+          padding: 50px 0 130px;
 
           .title {
             img {
@@ -833,9 +833,9 @@
         .money-market {
           min-height: 1390px;
           height: auto;
-          margin: 0 20px;
-          padding: 20px 10px 20px;
-          width: auto;
+          margin: 0 auto;
+          padding: 20px;
+          width: 90%;
 
           .top {
             flex-direction: column;
@@ -867,8 +867,8 @@
         }
 
         .roadmap {
-          width: auto;
-          margin: 0 20px;
+          width: 90%;
+          margin: 0 auto;
           padding-left: 0;
           padding-right: 0;
 
@@ -884,8 +884,8 @@
           height: auto;
           flex-direction: column;
           padding: 125px 0px;
-          width: auto;
-          margin: 0 20px;
+          width: 90%;
+          margin: 0 auto;
           align-items: center;
 
           .security-banner {
@@ -911,6 +911,8 @@
         }
 
         footer {
+          width: 90%;
+          margin: 0 auto;
           flex-wrap: wrap;
           justify-content: space-between;
           padding: 60px 20px;
