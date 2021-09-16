@@ -169,12 +169,14 @@
   import useTable from 'uses/useTable';
   import useTransaction from 'uses/useTransaction';
   import useUser from 'uses/useUser';
+  import { useRoute } from 'vue-router';
 
   const emitter = inject('emitter');
   const { $i18n: i18n } = getCurrentInstance().appContext.config.globalProperties;
   const { tokenList, toHumanReadable, toPercent, getTokenList, toReadMantissa } = useToken();
   const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
   const { accountHash, wallet } = useUser();
+  const route = useRoute();
 
   const tableLoading = ref(false);
   const depositModalVisible = ref(false);
@@ -200,6 +202,8 @@
   const init = async () => {
     try {
       await getTokenList();
+
+      openQueryToken();
       tableLoading.value = false;
     } catch (e) {
       console.log('init error', e);
@@ -226,6 +230,17 @@
         }
       },
     };
+  };
+
+  const openQueryToken = () => {
+    if (depositModalVisible.value) return;
+    if (!route.query.token || tokenList.value.length == 0) return;
+
+    const queryToken = tokenList.value.filter((record) => record.name === route.query.token);
+    if (queryToken.length === 0) return;
+
+    modalToken.value = queryToken[0];
+    depositModalVisible.value = true;
   };
 </script>
 

@@ -1,13 +1,15 @@
 <template>
   <div class="home">
     <div class="container">
-      <img src="../assets/images/index/c2.png" alt="" class="c2" />
+      <img src="../assets/images/index/c2.png" class="c2" />
 
       <!-- Header -->
       <header>
         <div class="logo">BFLY.FINANCE</div>
         <div class="menu">
-          <span class="menu-item">Market</span>
+          <span class="menu-item">
+            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">Market</router-link>
+          </span>
           <span class="menu-item">
             <a href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-whitepaper" target="_blank">
               Docs
@@ -24,7 +26,9 @@
       </header>
       <!-- Banner -->
       <div class="banner">
-        <div class="title">B-FLY Protocol</div>
+        <div class="title">
+          <img src="../assets/images/index/B-FLYProtocol.png" alt="" />
+        </div>
         <div class="desc">
           Borrow, earn and build on the very first lending protocol on Starcoin Chain.
         </div>
@@ -53,14 +57,14 @@
                 <span>STC</span>
               </div>
               <div class="apy">
-                <span class="value">2.66%</span>
+                <span class="value">{{ apys['STC'] }}</span>
                 <span>APY</span>
               </div>
             </div>
             <!-- ETH -->
             <div
               class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'ETH' } })"
+              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'METH' } })"
             >
               <img src="../assets/images/coin/meth.png" class="token-icon" />
               <div class="name">
@@ -68,14 +72,14 @@
                 <span>ETH</span>
               </div>
               <div class="apy">
-                <span class="value">2.66%</span>
+                <span class="value">{{ apys['METH'] }}</span>
                 <span>APY</span>
               </div>
             </div>
             <!-- BTC-->
             <div
               class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'BTC' } })"
+              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'MBTC' } })"
             >
               <img src="../assets/images/coin/mbtc.png" class="token-icon" />
               <div class="name">
@@ -83,14 +87,14 @@
                 <span>BTC</span>
               </div>
               <div class="apy">
-                <span class="value">2.66%</span>
+                <span class="value">{{ apys['MBTC'] }}</span>
                 <span>APY</span>
               </div>
             </div>
             <!-- USDT -->
             <div
               class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'USDT' } })"
+              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'MUSDT' } })"
             >
               <img src="../assets/images/coin/musdt.png" class="token-icon" />
               <div class="name">
@@ -98,7 +102,7 @@
                 <span>USDT</span>
               </div>
               <div class="apy">
-                <span class="value">2.66%</span>
+                <span class="value">{{ apys['MUSDT'] }}</span>
                 <span>APY</span>
               </div>
             </div>
@@ -107,7 +111,9 @@
             </div>
           </div>
           <div class="right-part">
-            <h1>Money Markets</h1>
+            <h1>
+              <img src="../assets/images/index/MoneyMarkets.png" alt="" />
+            </h1>
             <div class="market-desc">
               A Decentralized Market to deposit and borrow assets whilst earning interest. With
               B-Fly protocol, you can not only use fungible tokens as collateral, but also
@@ -118,7 +124,9 @@
             </div>
           </div>
         </div>
-        <h2 class="feature-title">Key Features</h2>
+        <h2 class="feature-title">
+          <img src="../assets/images/index/KeyFeatures.png" alt="" />
+        </h2>
         <div class="bottom">
           <div class="card">
             <img src="../assets/images/index/nft.png" alt="" />
@@ -150,12 +158,39 @@
         <img src="../assets/images/index/c1.png" alt="" class="c1" />
         <img src="../assets/images/index/c3.png" alt="" class="c3" />
         <h2>Roadmap</h2>
+
+        <div class="r-container">
+          <img
+            src="../assets/images/index/roadmap-arrow.png"
+            class="roadmap-arrow"
+            @click="roadmapLeft"
+          />
+          <img
+            src="../assets/images/index/roadmap-arrow.png"
+            class="roadmap-arrow right"
+            @click="roadmapRight"
+          />
+          <div class="r-wrapper-box">
+            <div
+              class="r-wrapper"
+              :style="{ width: `${8 * 210 + 290 + 200}px` }"
+              ref="roadmapWrapper"
+            >
+              <div class="r-item" :class="{ bottom: n % 2 == 0 }" v-for="n in 9" :key="n">
+                <div class="panel">
+                  <p class="r-title">Sep. 2021</p>
+                  <p class="r-content">Launch with Starcoin testnet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Security -->
       <div class="security">
         <img src="../assets/images/index/security-banner.png" class="security-banner" />
         <div class="right-part">
-          <h1>Security</h1>
+          <h1><img src="../assets/images/index/Security.png" alt="" /></h1>
           <div class="market-desc">
             The B-Fly protocol is one of the most secure DeFi project in the crypto world. With
             innate nature of “move” language, the protocol is more robust in preventing certain
@@ -214,11 +249,65 @@
 </template>
 
 <script setup>
+  import { onMounted, ref } from 'vue';
   import { ENUMS } from 'config';
   import { useRouter } from 'vue-router';
+  import anime from 'animejs/lib/anime.es.js';
+  import useToken from 'uses/useToken';
 
   const { ROUTE_NAME } = ENUMS;
+  const { getHomeAPY } = useToken();
   const router = useRouter();
+  const roadmapWrapper = ref('');
+  const apys = ref({});
+  const wrapperLeft = ref(0);
+
+  let wrapperStepper = 240;
+  let wrapperLeftMax = 0;
+
+  onMounted(async () => {
+    wrapperLeftMax =
+      -1 *
+      (document.querySelector('.r-wrapper').getBoundingClientRect().width -
+        document.querySelector('.r-container').getBoundingClientRect().width);
+    wrapperStepper = Math.ceil(
+      document.querySelector('.r-wrapper').getBoundingClientRect().width / 9,
+    );
+
+    apys.value = await getHomeAPY();
+  });
+
+  const roadmapLeft = () => {
+    if (wrapperLeftMax == 0) return;
+
+    wrapperLeft.value -= wrapperStepper;
+    if (wrapperLeft.value < wrapperLeftMax) {
+      wrapperLeft.value = wrapperLeftMax;
+    }
+
+    anime({
+      targets: '.r-wrapper',
+      translateX: `${wrapperLeft.value}px`,
+      duration: 400,
+      easing: 'linear',
+    });
+  };
+
+  const roadmapRight = () => {
+    if (wrapperLeftMax == 0) return;
+
+    wrapperLeft.value += wrapperStepper;
+    if (wrapperLeft.value > 0) {
+      wrapperLeft.value = 0;
+    }
+
+    anime({
+      targets: '.r-wrapper',
+      translateX: `${wrapperLeft.value}px`,
+      duration: 400,
+      easing: 'linear',
+    });
+  };
 </script>
 
 <style lang="less" scoped>
@@ -409,7 +498,7 @@
             background: linear-gradient(136deg, #2d3143 0%, #1c1e2a 100%);
             box-shadow: 0px 4px 8px 6px rgba(0, 0, 0, 0.15);
             border-radius: 8px;
-            padding: 35px 25px;
+            padding: 35px 20px;
             font-size: 18px;
             font-weight: 400;
             color: #d5d5d5;
@@ -417,11 +506,6 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-
-            img {
-              margin-top: -50px;
-              margin-left: -25px;
-            }
 
             .title {
               font-size: 24px;
@@ -441,7 +525,7 @@
 
       .roadmap {
         width: 100%;
-        height: 590px;
+        // height: 590px;
         background: linear-gradient(180deg, #02131f 0%, #000631 100%);
         display: flex;
         flex-direction: column;
@@ -469,6 +553,143 @@
           font-weight: 600;
           color: #ffffff;
           line-height: 67px;
+        }
+
+        .r-container {
+          width: 100%;
+          max-width: 1200px;
+          position: relative;
+          margin-top: 50px;
+
+          padding: 0 30px;
+
+          .roadmap-arrow {
+            position: absolute;
+            top: 107px;
+            left: 0;
+            cursor: pointer;
+
+            &.right {
+              left: initial;
+              right: 0;
+              transform: rotate(180deg);
+            }
+          }
+
+          .r-wrapper-box {
+            overflow-x: scroll;
+            position: relative;
+            &::before {
+              content: '';
+              width: 100%;
+              height: 8px;
+              top: 50%;
+              margin-top: -4px;
+              display: block;
+              position: absolute;
+              background: #ce4166;
+            }
+            &::-webkit-scrollbar {
+              display: none;
+            }
+          }
+
+          .r-wrapper {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 100px;
+
+            .r-item {
+              width: 290px;
+              height: 240px;
+              position: relative;
+              margin-left: -80px;
+              flex-shrink: 0;
+
+              &:first-child {
+                margin-left: 0;
+              }
+
+              &:before {
+                content: '';
+                display: block;
+                width: 30px;
+                height: 30px;
+                background: #f5f5f5;
+                box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                border-radius: 50%;
+                margin-top: -15px;
+                margin-left: -15px;
+              }
+
+              .panel {
+                background: linear-gradient(136deg, #2d3143 0%, #1c1e2a 100%);
+                box-shadow: 0px 4px 8px 6px rgba(0, 0, 0, 0.1);
+                padding: 10px;
+                min-height: 80px;
+                position: absolute;
+                width: 100%;
+
+                &:after {
+                  content: '';
+                  display: block;
+                  width: 0;
+                  height: 0;
+                  border: 10px solid transparent;
+                  border-top-color: #646467;
+                  position: absolute;
+                  left: 50%;
+                  bottom: -20px;
+                  margin-left: -10px;
+                }
+
+                p {
+                  margin-bottom: 0;
+                }
+
+                .r-title {
+                  font-size: 21px;
+                  font-weight: 600;
+                  color: #ffffff;
+                  line-height: 29px;
+                }
+
+                .r-content {
+                  font-size: 18px;
+                  font-weight: 400;
+                  color: #ffffff;
+                  line-height: 25px;
+                }
+              }
+
+              &.bottom {
+                .panel {
+                  position: absolute;
+                  bottom: 0;
+                  top: initial;
+
+                  &:after {
+                    content: '';
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    border: 10px solid transparent;
+                    border-bottom-color: #646467;
+                    position: absolute;
+                    left: 50%;
+                    top: 0;
+                    margin-left: -10px;
+                    margin-top: -20px;
+                  }
+                }
+              }
+            }
+          }
         }
       }
 
@@ -564,16 +785,44 @@
 
   @media screen and (max-width: 1439px) {
     .home {
+      padding-top: 10px;
+
       .container {
+        .c2 {
+          display: none;
+        }
+
         header {
           width: auto;
           margin: 0 20px;
-          padding: 25px 30px;
+          padding: 10px;
 
           .menu {
-            span {
+            .menu-item {
               display: none;
+
+              &:last-child {
+                display: flex;
+                width: auto;
+                padding: 0 20px;
+              }
             }
+          }
+        }
+
+        .banner {
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-top: 50px;
+
+          .title {
+            img {
+              width: 100%;
+            }
+          }
+
+          .desc {
+            width: 100%;
           }
         }
 
@@ -581,6 +830,7 @@
           min-height: 1390px;
           height: auto;
           margin: 0 20px;
+          padding: 20px 10px 20px;
           width: auto;
 
           .top {
@@ -599,7 +849,7 @@
 
             .card {
               width: 100%;
-              max-width: max-content;
+              max-width: none;
               height: auto;
               min-height: 360px;
               margin-bottom: 20px;
@@ -610,9 +860,13 @@
         .roadmap {
           width: auto;
           margin: 0 20px;
+          padding-left: 0;
+          padding-right: 0;
 
           .c1 {
-            top: -60px;
+            top: -70px;
+            left: 215px;
+            width: 65px;
           }
         }
 
@@ -620,9 +874,10 @@
           min-height: 725px;
           height: auto;
           flex-direction: column;
-          padding: 125px 60px;
+          padding: 125px 0px;
           width: auto;
           margin: 0 20px;
+          align-items: center;
 
           .security-banner {
             width: 100%;
@@ -637,6 +892,18 @@
         .right-part {
           margin-top: 50px;
           margin-left: 0;
+
+          h1 {
+            img {
+              width: 100%;
+            }
+          }
+        }
+
+        footer {
+          flex-wrap: wrap;
+          justify-content: space-between;
+          padding: 60px 20px;
         }
       }
     }

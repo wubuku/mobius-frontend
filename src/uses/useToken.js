@@ -1,8 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { GetPersonalAssets, GetStateListResource } from 'service/InitService';
-import { toTokenString } from 'utils';
+import { GetStateListResource, GetHomeAPY } from 'service/InitService';
 
 export default () => {
   const store = useStore();
@@ -158,6 +157,15 @@ export default () => {
     toDP(item.toHumanAmount(new BigNumber(item.collateral_amount).minus(item.debt_amount)));
 
   const reserverUnit = 0.01;
+
+  const getHomeAPY = async () => {
+    const apys = await GetHomeAPY();
+    const ret = {};
+    apys.forEach((apy) => {
+      ret[apy.name] = toPercent(toReadMantissa(apy.supply_rate), 2);
+    });
+    return ret;
+  };
 
   /**
    * Get Token List
@@ -339,6 +347,7 @@ export default () => {
     nano,
     toPercent,
     getTokenList,
+    getHomeAPY,
     toHumanReadable,
     toChainReadable,
     toReadMantissa,

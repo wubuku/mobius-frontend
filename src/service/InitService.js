@@ -68,6 +68,26 @@ const Get_Oracle = async () => {
     });
 };
 
+export const GetHomeAPY = async () => {
+  const { resources } = await requestChain('state.list_resource', [
+    SOURCE_ADDRESS,
+    { decode: true },
+  ]);
+
+  return (resources[KEY_TokenList]?.json?.payload?.support_token_codes || []).map((codes) => {
+    const address = toTokenString(codes);
+    const name = address.split('::')[2];
+
+    // Get All StandardPosition
+    const standardPosition = resources[KEY_StandardPosition(address)]?.json || {};
+
+    return {
+      name,
+      supply_rate: standardPosition.supply_rate.mantissa,
+    };
+  });
+};
+
 /**
  * Very Important function
  * 获取基本所有的资源数据
