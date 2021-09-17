@@ -257,7 +257,7 @@
         const txn = await WithdrawContract({
           token: token,
           nftId: assetId.value,
-          amount: amount.value === token?.maxWithdrawBalance() ? 0 : amount.value,
+          amount: amount.value == token?.maxWithdrawBalance().valueOf() ? 0 : amount.value,
         });
         await startTransactionCheck(txn);
         onCancel();

@@ -156,7 +156,7 @@ export default () => {
   const liquidity = (item) =>
     toDP(item.toHumanAmount(new BigNumber(item.collateral_amount).minus(item.debt_amount)));
 
-  const reserverUnit = 0.01;
+  const reserverUnit = 0.00001;
 
   const getHomeAPY = async () => {
     const apys = await GetHomeAPY();
@@ -276,16 +276,19 @@ export default () => {
               return toDP(supplyBalance, COIN_INPUT_DECIMALS);
             } else {
               // 返回可取的最大值
+              // TODO: 这里的返回值要测试
               return toDP(
                 totalBorrowingValueOnTheroy
                   // 获得最少的币数
                   .minus(asLeastUSD)
                   // 除以清算系数 (放大)
-                  .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
+                  .dividedBy(
+                    toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa).plus(
+                      reserverUnit,
+                    ),
+                  )
                   // 除以当前币的价格
-                  .dividedBy(item.oracle)
-                  // 去掉一个保留比例
-                  .minus(reserverUnit),
+                  .dividedBy(item.oracle),
                 COIN_INPUT_DECIMALS,
               );
             }
@@ -299,14 +302,19 @@ export default () => {
 
             // 剩余多少可借
             // 真实总可借
-            const remainBalance = totalBorrowingValueOnReal
+            let remainBalance = totalBorrowingValueOnReal
               // 减去 已借的
               .minus(totalBorrowedValueOnReal)
 
-              // .dividedBy(toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa))
+              .dividedBy(
+                toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa).plus(
+                  reserverUnit,
+                ),
+              )
               // 除以价格 得到币的数量
-              .dividedBy(item.oracle)
-              .minus(reserverUnit);
+              .dividedBy(item.oracle);
+
+            remainBalance = BigNumber.maximum(remainBalance, 0);
 
             return toDP(BigNumber.minimum(remainBalance, liquidity(item)), COIN_INPUT_DECIMALS);
           },
