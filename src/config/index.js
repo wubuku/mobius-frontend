@@ -13,7 +13,7 @@ export const ArrayToEnumParam = (array) => {
 };
 
 // Dapp Contract Address
-export const SOURCE_ADDRESS = '0xe472f1a11f9e16e84f5afc717608a0e0'.toLocaleLowerCase();
+export const SOURCE_ADDRESS = '0x5f1288f6687eb8ba746081641bc4342e'.toLocaleLowerCase();
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 // export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';
