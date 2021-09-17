@@ -39,7 +39,13 @@ export default () => {
   // Mantissa要位移的位数
   const SHIFT_BY = -18;
   // 将Mantissa转换成可读可运算的方法
-  const toReadMantissa = (value) => (!isNaN(value) ? new BigNumber(value).shiftedBy(SHIFT_BY) : 0);
+  const toReadableMantissa = (value) =>
+    !isNaN(value) ? new BigNumber(value).shiftedBy(SHIFT_BY) : 0;
+
+  const RISK_SHIFT_BY = -4;
+  // Risk的偏移量不一样
+  const toReadableRiskMantissa = (value) =>
+    !isNaN(value) ? new BigNumber(value).shiftedBy(RISK_SHIFT_BY) : 0;
 
   // 一个Nano计算方法, 根据不同币的精度不同
   const nano = (percision) => new BigNumber(1).dividedBy(percision);
@@ -62,8 +68,8 @@ export default () => {
   }) => {
     return new BigNumber(amount)
       .multipliedBy(oracle)
-      .multipliedBy(toReadMantissa(risk_equivalents_threshold))
-      .multipliedBy(toReadMantissa(risk_assets_pthreshold));
+      .multipliedBy(toReadableRiskMantissa(risk_equivalents_threshold))
+      .multipliedBy(toReadableRiskMantissa(risk_assets_pthreshold));
   };
 
   // 排除当前币之外所有币的总抵押价值
@@ -95,7 +101,8 @@ export default () => {
           .multipliedBy(current.oracle)
           // 抵押系数
           .multipliedBy(
-            toReadMantissa(current.riskEquivalentsConfig.liquidation_threshold.mantissa) || 1,
+            toReadableRiskMantissa(current.riskEquivalentsConfig.liquidation_threshold.mantissa) ||
+              1,
           ),
       );
     }, 0);
@@ -105,7 +112,7 @@ export default () => {
   const getBorrowingValueOnReal = (tokenList) => {
     return new BigNumber(getBorrowingValueOnTheroy(tokenList)).multipliedBy(
       // 风险系数
-      toReadMantissa(tokenList[0]?.riskAssetConfig.liquidation_threshold.mantissa) || 1,
+      toReadableRiskMantissa(tokenList[0]?.riskAssetConfig.liquidation_threshold.mantissa) || 1,
     );
   };
 
@@ -162,7 +169,7 @@ export default () => {
     const apys = await GetHomeAPY();
     const ret = {};
     apys.forEach((apy) => {
-      ret[apy.name] = toPercent(toReadMantissa(apy.supply_rate), 2);
+      ret[apy.name] = toPercent(toReadableMantissa(apy.supply_rate), 2);
     });
     return ret;
   };
@@ -223,7 +230,7 @@ export default () => {
             // 当前输入数量的抵押价值
             const equivalentAmount = new BigNumber(amount)
               .multipliedBy(
-                toReadMantissa(item.riskEquivalentsConfig.liquidation_threshold.mantissa),
+                toReadableRiskMantissa(item.riskEquivalentsConfig.liquidation_threshold.mantissa),
               )
               .valueOf();
 
@@ -242,13 +249,6 @@ export default () => {
           borrowedLimitUsedUpdatedOnBorrow: (amount) => {
             if (!amount) return 0;
 
-            // 当前输入数量的抵押价值
-            const equivalentAmount = new BigNumber(amount)
-              .multipliedBy(
-                toReadMantissa(item.riskEquivalentsConfig.liquidation_threshold.mantissa),
-              )
-              .valueOf();
-
             const bvot = getBorrowingValueOnTheroy(tokenList);
 
             return toPercent(
@@ -257,7 +257,7 @@ export default () => {
                 : // 原有的总借贷的价值
                   new BigNumber(totalBorrowedValueOnReal)
                     // 加上变化的价值
-                    .plus(new BigNumber(equivalentAmount).multipliedBy(item.oracle))
+                    .plus(new BigNumber(amount).multipliedBy(item.oracle))
                     // 理论可借
                     .dividedBy(bvot),
             );
@@ -266,7 +266,7 @@ export default () => {
           // 最大可取数量
           maxWithdrawBalance: () => {
             const asLeastUSD = totalBorrowedValueOnReal.dividedBy(
-              toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa),
+              toReadableRiskMantissa(item.riskAssetConfig.liquidation_threshold.mantissa),
             );
             // 其他币是否有足够的价值
             const hasEnoughValue = getDepositValueExcept(item.address).isGreaterThan(asLeastUSD);
@@ -283,9 +283,9 @@ export default () => {
                   .minus(asLeastUSD)
                   // 除以清算系数 (放大)
                   .dividedBy(
-                    toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa).plus(
-                      reserverUnit,
-                    ),
+                    toReadableRiskMantissa(
+                      item.riskAssetConfig.liquidation_threshold.mantissa,
+                    ).plus(reserverUnit),
                   )
                   // 除以当前币的价格
                   .dividedBy(item.oracle),
@@ -302,15 +302,13 @@ export default () => {
 
             // 剩余多少可借
             // 真实总可借
+            // 真实可借是已经包含了mantissa, 所以下面要比真实可借要小一点点
             let remainBalance = totalBorrowingValueOnReal
               // 减去 已借的
               .minus(totalBorrowedValueOnReal)
+              // 为了防止超过mantissa的情况
+              .minus(1)
 
-              .dividedBy(
-                toReadMantissa(item.riskAssetConfig.liquidation_threshold.mantissa).plus(
-                  reserverUnit,
-                ),
-              )
               // 除以价格 得到币的数量
               .dividedBy(item.oracle);
 
@@ -327,10 +325,10 @@ export default () => {
           // =======================  Borrow ===================
 
           // Table Data
-          supplyAPY: toPercent(toReadMantissa(item.supply_rate.mantissa)),
+          supplyAPY: toPercent(toReadableMantissa(item.supply_rate.mantissa)),
           supplyBalance,
 
-          borrowAPY: toPercent(toReadMantissa(item.borrow_rate.mantissa)),
+          borrowAPY: toPercent(toReadableMantissa(item.borrow_rate.mantissa)),
           borrowBalance,
 
           // pack use asset to token
@@ -358,7 +356,8 @@ export default () => {
     getHomeAPY,
     toHumanReadable,
     toChainReadable,
-    toReadMantissa,
+    toReadableMantissa,
+    toReadableRiskMantissa,
 
     additionBorrowLimitBalance,
     getOracleValue,

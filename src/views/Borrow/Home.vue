@@ -7,21 +7,7 @@
         </div>
         <div class="collect-box">
           <connect-btn></connect-btn>
-          <a-dropdown placement="bottomRight" trigger="hover">
-            <div class="dropdown-placeholder">
-              <img :src="dropdownFlag" class="flag" />
-            </div>
-            <template #overlay>
-              <a-menu @click="({ key }) => switchLanguage(key)">
-                <a-menu-item key="en">
-                  <img src="../../assets/locales/en.svg" class="flag" />
-                </a-menu-item>
-                <a-menu-item key="zh">
-                  <img src="../../assets/locales/zh.svg" class="flag" />
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
+          <locale-switch></locale-switch>
         </div>
       </div>
 
@@ -119,7 +105,7 @@
               </template>
               <!-- 借款利率 -->
               <template #borrow_rate="{ record }">
-                {{ toPercent(toReadMantissa(record.borrow_rate.mantissa)) }}
+                {{ toPercent(toReadableMantissa(record.borrow_rate.mantissa)) }}
               </template>
               <!-- 当前借款 -->
               <template #borrowBalance="{ record }">
@@ -171,9 +157,10 @@
   import useUser from 'uses/useUser';
   import { useRoute } from 'vue-router';
 
+  import LocaleSwitch from 'comp/LocaleSwitch.vue';
+
   const emitter = inject('emitter');
-  const { $i18n: i18n } = getCurrentInstance().appContext.config.globalProperties;
-  const { tokenList, toHumanReadable, toPercent, getTokenList, toReadMantissa } = useToken();
+  const { tokenList, toHumanReadable, toPercent, getTokenList, toReadableMantissa } = useToken();
   const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
   const { accountHash, wallet } = useUser();
   const route = useRoute();
@@ -183,10 +170,7 @@
   const borrowModalVisible = ref(false);
 
   const modalToken = ref({});
-  const dropdownFlag = computed(() => {
-    const lang = i18n.locale;
-    return require(`../../assets/locales/${lang}.svg`);
-  });
+
   const CoinIcon = (tokenName) => {
     return require(`../../assets/images/coin/${tokenName.toLowerCase()}.png`);
   };
@@ -213,11 +197,6 @@
   emitter.on('refreshData', () => {
     init();
   });
-
-  const switchLanguage = (locale) => {
-    i18n.locale = locale;
-    window.localStorage.setItem('locale', i18n.locale);
-  };
 
   const tableEventHandler = (type, record) => {
     return {
@@ -250,12 +229,5 @@
   .main {
     width: 100%;
     margin-top: 1.75rem;
-  }
-
-  .flag {
-    width: 24px;
-    height: 24px;
-    margin: 5px 0;
-    cursor: pointer;
   }
 </style>

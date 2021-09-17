@@ -22,6 +22,7 @@
           <div class="btn menu-item">
             <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">APP</router-link>
           </div>
+          <locale-switch class="header-local-switch"></locale-switch>
         </div>
       </header>
       <!-- Banner -->
@@ -207,16 +208,16 @@
       <footer>
         <div class="links">
           <h3>Legal</h3>
-          <a class="link" target="_blank" href="">Privacy</a>
-          <a class="link" target="_blank" href="">Terms</a>
-          <a class="link" target="_blank" href="">Contact</a>
+          <a class="link" target="_blank" href="https://b-fly.gitbook.io/bfly-legal/">Privacy</a>
+          <a class="link" target="_blank" href="https://b-fly.gitbook.io/bfly-legal/">Terms</a>
+          <a class="link" target="_blank" href="mailto:info@wormhole.studio">Contact</a>
         </div>
         <div class="links">
           <h3>Resource</h3>
           <a class="link" target="_blank" href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-faq">
             FAQ
           </a>
-          <a class="link" target="_blank" href="www.starcoin.org">STC Homepage</a>
+          <a class="link" target="_blank" href="https://www.starcoin.org">STC Homepage</a>
         </div>
         <div class="links">
           <h3>Connect</h3>
@@ -225,7 +226,7 @@
               <img src="../assets/images/icon/telegram.png" />
               Telegram
             </a>
-            <a class="link" target="_blank" href="">
+            <a class="link" target="_blank" href="https://twitter.com/BflyFinance">
               <img src="../assets/images/icon/twitter.png" />
               Twitter
             </a>
@@ -243,6 +244,7 @@
             </a>
           </div>
         </div>
+        <locale-switch class="footer-local-switch"></locale-switch>
       </footer>
     </div>
   </div>
@@ -254,6 +256,8 @@
   import { useRouter } from 'vue-router';
   import anime from 'animejs/lib/anime.es.js';
   import useToken from 'uses/useToken';
+
+  import LocaleSwitch from 'comp/LocaleSwitch.vue';
 
   const { ROUTE_NAME } = ENUMS;
   const { getHomeAPY } = useToken();
@@ -342,6 +346,10 @@
         display: flex;
         align-items: center;
 
+        .header-local-switch {
+          display: none;
+        }
+
         .menu {
           display: flex;
           align-items: center;
@@ -372,6 +380,7 @@
         top: 1310px;
         right: 50%;
         margin-right: -780px;
+        display: none;
       }
 
       .banner {
@@ -718,8 +727,13 @@
         padding: 60px 0;
         position: relative;
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
         color: white;
+        gap: 140px;
+
+        .footer-local-switch {
+          display: block;
+        }
 
         .links {
           display: flex;
@@ -801,11 +815,15 @@
           margin: 0 auto;
           padding: 10px 20px;
 
+          .header-local-switch {
+            display: block;
+          }
+
           .menu {
             .menu-item {
               display: none;
 
-              &:last-child {
+              &:nth-last-child(2) {
                 display: flex;
                 width: auto;
                 padding: 0 20px;
@@ -869,8 +887,8 @@
         .roadmap {
           width: 90%;
           margin: 0 auto;
-          padding-left: 0;
-          padding-right: 0;
+          padding-left: 20px;
+          padding-right: 20px;
 
           .c1 {
             top: -30px;
@@ -883,7 +901,7 @@
           min-height: 725px;
           height: auto;
           flex-direction: column;
-          padding: 125px 0px;
+          padding: 125px 20px;
           width: 90%;
           margin: 0 auto;
           align-items: center;
@@ -901,7 +919,7 @@
         .right-part {
           margin-top: 50px;
           margin-left: 0;
-          padding: 0 20px;
+          padding: 0;
 
           h1 {
             img {
@@ -916,6 +934,18 @@
           flex-wrap: wrap;
           justify-content: space-between;
           padding: 60px 20px;
+          gap: 20px;
+
+          .footer-local-switch {
+            display: none;
+          }
+
+          .links {
+            .media {
+              width: 100%;
+              max-width: 330px;
+            }
+          }
         }
       }
     }

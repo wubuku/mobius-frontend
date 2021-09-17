@@ -59,7 +59,7 @@
         Borrow Balance
         <span class="right">
           {{ token.borrowBalance }}
-          <span class="arrow-box" v-if="borrowBalanceUpdate != 0">
+          <span class="arrow-box" v-if="amount != ''">
             <ArrowRightOutlined class="arrow" />
             {{ borrowBalanceUpdate }}
           </span>
@@ -122,7 +122,7 @@
 
   const emit = defineEmits(['update:visible']);
 
-  const { toHumanReadable, toReadMantissa, toPercent, getOracleValue } = useToken();
+  const { toHumanReadable, toReadableRiskMantissa, toPercent, getOracleValue } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
 
@@ -176,7 +176,10 @@
     return isBorrowMode.value &&
       parseFloat(
         token.borrowedLimitUsedUpdatedOnBorrow((isBorrowMode.value ? 1 : -1) * amount.value),
-      ) >= toReadMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
+      ) >=
+        toReadableRiskMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(
+          100,
+        )
       ? 'Over risk Asset'
       : '';
   });
