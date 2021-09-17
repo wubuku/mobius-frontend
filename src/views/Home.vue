@@ -163,12 +163,12 @@
           <img
             src="../assets/images/index/roadmap-arrow.png"
             class="roadmap-arrow"
-            @click="roadmapLeft"
+            @click="roadmapRight"
           />
           <img
             src="../assets/images/index/roadmap-arrow.png"
             class="roadmap-arrow right"
-            @click="roadmapRight"
+            @click="roadmapLeft"
           />
           <div class="r-wrapper-box">
             <div
