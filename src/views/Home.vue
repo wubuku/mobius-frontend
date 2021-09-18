@@ -8,19 +8,25 @@
         <div class="logo">BFLY.FINANCE</div>
         <div class="menu">
           <span class="menu-item">
-            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">Market</router-link>
+            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">
+              {{ $t('official.menus.market') }}
+            </router-link>
           </span>
           <span class="menu-item">
             <a href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-whitepaper" target="_blank">
-              Docs
+              {{ $t('official.menus.docs') }}
             </a>
           </span>
-          <span class="menu-item">Governance</span>
+          <span class="menu-item">{{ $t('official.menus.governance') }}</span>
           <span class="menu-item">
-            <a href="https://b-fly.gitbook.io/b-fly/protocol-security" target="_blank">Security</a>
+            <a href="https://b-fly.gitbook.io/b-fly/protocol-security" target="_blank">
+              {{ $t('official.menus.security') }}
+            </a>
           </span>
           <div class="btn menu-item">
-            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">APP</router-link>
+            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">
+              {{ $t('official.btn.app') }}
+            </router-link>
           </div>
           <locale-switch class="header-local-switch"></locale-switch>
         </div>
@@ -31,7 +37,7 @@
           <img src="../assets/images/index/B-FLYProtocol.png" alt="" />
         </div>
         <div class="desc">
-          Borrow, earn and build on the very first lending protocol on Starcoin Chain.
+          {{ $t('official.index.bannerDesc') }}
         </div>
 
         <div class="btn protocal">
@@ -39,7 +45,7 @@
             href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-whitepaper#the-b-fly-protocol"
             target="_blank"
           >
-            Protocol Docs
+            {{ $t('official.btn.protocalDocs') }}
           </a>
         </div>
       </div>
@@ -116,9 +122,7 @@
               <img src="../assets/images/index/MoneyMarkets.png" style="max-width: 599px" />
             </h1>
             <div class="market-desc">
-              A Decentralized Market to deposit and borrow assets whilst earning interest. With
-              B-Fly protocol, you can not only use fungible tokens as collateral, but also
-              Non-Fungible Tokens(NFTs).
+              {{ $t('official.index.marketDesc') }}
             </div>
             <div class="btn protocal">
               <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">Launch App</router-link>
@@ -131,25 +135,23 @@
         <div class="bottom">
           <div class="card">
             <img src="../assets/images/index/nft.png" alt="" />
-            <div class="title">NFT + DeFi</div>
+            <div class="title">{{ $t('official.index.keyFeatureCard[0].title') }}</div>
             <div class="desc">
-              A single deployed contract on B-Fly protocol can include any combination of fungible
-              tokens, non-fungible tokens or other configuration.
+              {{ $t('official.index.keyFeatureCard[0].desc') }}
             </div>
           </div>
           <div class="card">
             <img src="../assets/images/index/multi.png" alt="" />
-            <div class="title">Multi-Chain Operability</div>
+            <div class="title">{{ $t('official.index.keyFeatureCard[1].title') }}</div>
             <div class="desc">
-              With B-Fly protocol, you can borrow and lend across most blockchains with ease.
+              {{ $t('official.index.keyFeatureCard[1].desc') }}
             </div>
           </div>
           <div class="card">
             <img src="../assets/images/index/batch.png" alt="" />
-            <div class="title">Batch Transfer</div>
+            <div class="title">{{ $t('official.index.keyFeatureCard[2].title') }}</div>
             <div class="desc">
-              With B-Fly protocol, you can transfer your assets and debts together, saving up to 90%
-              gas fee.
+              {{ $t('official.index.keyFeatureCard[2].desc') }}
             </div>
           </div>
         </div>
@@ -158,7 +160,7 @@
       <div class="roadmap">
         <img src="../assets/images/index/c1.png" alt="" class="c1" />
         <img src="../assets/images/index/c3.png" alt="" class="c3" />
-        <h2>Roadmap</h2>
+        <h2>{{ $t('official.index.roadMap.title') }}</h2>
 
         <div class="r-container">
           <img
@@ -193,13 +195,11 @@
         <div class="right-part">
           <h1><img src="../assets/images/index/Security.png" style="max-width: 185px" /></h1>
           <div class="market-desc">
-            The B-Fly protocol is one of the most secure DeFi project in the crypto world. With
-            innate nature of “move” language, the protocol is more robust in preventing certain
-            attacks.
+            {{ $t('official.index.securityDesc') }}
           </div>
           <div class="btn protocal">
             <a href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-faq" target="_blank">
-              Protocol Security
+              {{ $t('official.btn.protocalSecurity') }}
             </a>
           </div>
         </div>
@@ -207,20 +207,28 @@
       <!-- Footer -->
       <footer>
         <div class="links">
-          <h3>Legal</h3>
-          <a class="link" target="_blank" href="https://b-fly.gitbook.io/bfly-legal/">Privacy</a>
-          <a class="link" target="_blank" href="https://b-fly.gitbook.io/bfly-legal/">Terms</a>
-          <a class="link" target="_blank" href="mailto:info@wormhole.studio">Contact</a>
-        </div>
-        <div class="links">
-          <h3>Resource</h3>
-          <a class="link" target="_blank" href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-faq">
-            FAQ
+          <h3>{{ $t('official.footer.legal') }}</h3>
+          <a class="link" target="_blank" href="https://b-fly.gitbook.io/bfly-legal/">
+            {{ $t('official.footer.privacy') }}
           </a>
-          <a class="link" target="_blank" href="https://www.starcoin.org">STC Homepage</a>
+          <a class="link" target="_blank" href="https://b-fly.gitbook.io/bfly-legal/">
+            {{ $t('official.footer.terms') }}
+          </a>
+          <a class="link" target="_blank" href="mailto:info@wormhole.studio">
+            {{ $t('official.footer.concact') }}
+          </a>
         </div>
         <div class="links">
-          <h3>Connect</h3>
+          <h3>{{ $t('official.footer.resource') }}</h3>
+          <a class="link" target="_blank" href="https://b-fly.gitbook.io/b-fly/b-fly-protocol-faq">
+            {{ $t('official.footer.faq') }}
+          </a>
+          <a class="link" target="_blank" href="https://www.starcoin.org">
+            {{ $t('official.footer.stc-homepage') }}
+          </a>
+        </div>
+        <div class="links">
+          <h3>{{ $t('official.footer.connect') }}</h3>
           <div class="media">
             <a class="link" target="_blank" href="https://t.me/bflyfinance">
               <img src="../assets/images/icon/telegram.png" />
