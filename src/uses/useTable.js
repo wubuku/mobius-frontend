@@ -1,8 +1,8 @@
-export default () => {
+export default (t) => {
   return {
     TokenColumnDeposit: [
       {
-        title: '资产',
+        title: t('borrow.home.table.column.asset'),
         dataIndex: 'name',
         width: '135px',
         slots: {
@@ -10,13 +10,13 @@ export default () => {
         },
       },
       {
-        title: '存款APY',
+        title: t('borrow.home.table.column.supplyAPY'),
         dataIndex: 'supplyAPY',
         key: 'supplyAPY',
         sorter: (prev, next) => prev.supplyAPY - next.supplyAPY,
       },
       {
-        title: 'Supply',
+        title: t('borrow.home.table.column.supplyBalance'),
         dataIndex: 'supply_balance',
         key: 'supply_balance',
         sorter: (prev, next) => prev.supplyBalance - next.supplyBalance,
@@ -25,7 +25,7 @@ export default () => {
         },
       },
       {
-        title: '钱包',
+        title: t('borrow.home.table.column.wallet'),
         dataIndex: 'walletResource',
         sorter: (prev, next) => prev.walletResource - next.walletResource,
         slots: {
@@ -36,7 +36,7 @@ export default () => {
 
     TokenColumnBorrow: [
       {
-        title: '资产',
+        title: t('borrow.home.table.column.asset'),
         dataIndex: 'name',
         width: '135px',
         slots: {
@@ -44,13 +44,13 @@ export default () => {
         },
       },
       {
-        title: '借款APY',
+        title: t('borrow.home.table.column.borrowAPY'),
         dataIndex: 'borrowAPY',
         key: 'borrowAPY',
         sorter: (prev, next) => prev.borrowAPY - next.borrowAPY,
       },
       {
-        title: '当前借款',
+        title: t('borrow.home.table.column.borrowBalance'),
         dataIndex: 'borrowBalance',
         key: 'borrowBalance',
         sorter: (prev, next) => prev.borrowBalance - next.borrowBalance,
@@ -59,7 +59,7 @@ export default () => {
         },
       },
       {
-        title: 'LIQUIDITY',
+        title: t('borrow.home.table.column.liquidity'),
         dataIndex: 'tokens.value',
         sorter: (prev, next) => prev.tokens.value - next.tokens.value,
         slots: {

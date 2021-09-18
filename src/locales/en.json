@@ -52,18 +52,40 @@
     }
   },
   "borrow": {
-    "menus": {
-      "home": "Home",
-      "resource": "My Assets",
-      "deposit": "Deposit/Withdraw",
-      "loan": "Borrow/Repay",
-      "history": "History",
-      "governance": "Governance",
-      "faq": "FAQ"
-    },
     "home": {
-      "tips": "暂不可借贷，请存入资产后借款；",
-      "depositTitle": "You can borrow",
+      "data": {
+        "availableRewards": "Available Rewards",
+        "supplyBalance": "Supply Balance",
+        "borrowBalance": "Borrow Balance",
+        "borrowLimit": "Borrow Limit",
+        "borrowRate": "Borrow Rate"
+      },
+      "table": {
+        "supplyMarket": "Supply Market",
+        "borrowMarket": "Borrow Market",
+        "column": {
+          "supplyAPY": "Supply APY",
+          "supplyBalance": "Supply",
+          "asset": "Asset",
+          "wallet": "Wallet",
+          "borrowAPY": "Borrow APY",
+          "borrowBalance": "Borrow",
+          "liquidity": "LIQUIDITY"
+        }
+      },
+      "modal": {
+        "supplyAPY": "Supply APY",
+        "borrowAPY": "Borrow APY",
+        "supplyBalance": "Supply Balance",
+        "borrowBalance": "Borrow Balance",
+        "borrowLimit": "Borrow Limit",
+        "borrowRate": "Borrow Limit Rate",
+        "currentlyBorrowing": "Currently Borrowing",
+        "walletBalance": "Wallet Balance",
+        "notEnoughLiquidity": "Not enough liquidity",
+        "overRiskAsset": "Over risk Asset",
+        "transactionSuccess": "Transaction Success"
+      },
       "main": {
         "nowBorrow": "Borrow amount",
         "borrowNow": "Borrow Now",
@@ -82,10 +104,14 @@
       "repay": "Repay"
     },
     "btn": {
+      "max": "Max",
+      "claim": "Claim",
       "connect": "Connect",
       "depositnow": "Deposit Now!",
+      "withDraw": "Withdraw",
       "deposit": "Deposit",
-      "borrow": "Borrow"
+      "borrow": "Borrow",
+      "repay": "Repay"
     }
   }
 }

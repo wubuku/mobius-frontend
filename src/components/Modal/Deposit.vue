@@ -21,7 +21,9 @@
         :bordered="false"
         ref="amountInput"
       ></a-input>
-      <a-button class="btn input-box-btn" @click="setMaxAmount">MAX</a-button>
+      <a-button class="btn input-box-btn" @click="setMaxAmount">
+        {{ $t('borrow.btn.max') }}
+      </a-button>
     </div>
     <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
     <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
@@ -46,7 +48,7 @@
     <div class="modal-info">
       <!-- Supply APY -->
       <div class="info-item">
-        存款APY
+        {{ $t('borrow.home.modal.supplyAPY') }}
         <span class="right">{{ token.supplyAPY }}</span>
       </div>
 
@@ -57,7 +59,7 @@
 
       <!-- Borrow Limit -->
       <div class="info-item">
-        最多可借
+        {{ $t('borrow.home.modal.borrowLimit') }}
         <span class="right">
           $ {{ token.totalBorrowingValueOnReal }}
           <span class="arrow-box" v-if="borrowLimit != 0">
@@ -69,7 +71,7 @@
 
       <!-- Borrow Limit Used -->
       <div class="info-item">
-        已用比例
+        {{ $t('borrow.home.modal.borrowRate') }}
         <span class="right highlight">
           {{ token.borrowedLimitUsed }}
           <span
@@ -89,7 +91,7 @@
 
       <!-- Currently withdraw -->
       <div class="info-item">
-        Currently Supplying
+        {{ $t('borrow.home.modal.supplyBalance') }}
         <span class="right" :class="{ highlight: isDepositMode }">
           {{ token?.supplyBalance }} {{ token.name }}
         </span>
@@ -97,7 +99,7 @@
 
       <!-- Wallet Balance -->
       <div class="info-item">
-        Wallet Balance
+        {{ $t('borrow.home.modal.walletBalance') }}
         <span class="right" :class="{ highlight: isWithdrawMode }">
           {{ token?.walletResource }} {{ token.name }}
         </span>
@@ -117,6 +119,7 @@
   import useToken from 'uses/useToken';
   import useUser from 'uses/useUser';
   import useTransaction from 'uses/useTransaction';
+  import { useI18n } from 'vue-i18n';
 
   const props = defineProps({
     token: {
@@ -131,6 +134,7 @@
     useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
+  const { t } = useI18n();
 
   const ENUMS = inject('ENUMS');
   const emitter = inject('emitter');
@@ -161,14 +165,16 @@
       !NotEnoughLiquidtyErrorText.value &&
       !OverRiskAssetConfigErrorText.value,
   );
-  const submitBtnText = computed(() => (isDepositMode.value ? 'Deposit' : 'WithDraw'));
+  const submitBtnText = computed(() =>
+    isDepositMode.value ? t('borrow.btn.deposit') : t('borrow.btn.withDraw'),
+  );
 
   const NotEnoughErrorText = computed(() => {
-    return amountGreatThanBalance.value ? 'Not enough balance' : '';
+    return amountGreatThanBalance.value ? t('borrow.home.modal.notEnoughBalance') : '';
   });
   const NotEnoughLiquidtyErrorText = computed(() => {
     return isWithdrawMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
-      ? 'Not enough liquidity'
+      ? t('borrow.home.modal.notEnoughLiquidity')
       : '';
   });
 
@@ -176,7 +182,7 @@
     return isWithdrawMode.value &&
       parseFloat(token.borrowedLimitUsedUpdated(-1 * amount.value)) >=
         toReadableMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
-      ? 'Over risk Asset'
+      ? t('borrow.home.modal.overRiskAsset')
       : '';
   });
 
@@ -230,7 +236,7 @@
           await startTransactionCheck(txn);
           onCancel();
           emitter.emit('refreshData');
-          messageModal.success('Transaction Success!');
+          messageModal.success(`${t('borrow.home.modal.transactionSuccess')}!`);
         } catch (err) {
           if (err.message) {
             messageModal.error(err.message);
@@ -246,7 +252,7 @@
           await startTransactionCheck(txn);
           onCancel();
           emitter.emit('refreshData');
-          messageModal.success('Transaction Success!');
+          messageModal.success(`${t('borrow.home.modal.transactionSuccess')}!`);
         } catch (err) {
           if (err.message) {
             messageModal.error(err.message);
@@ -263,7 +269,7 @@
         await startTransactionCheck(txn);
         onCancel();
         emitter.emit('refreshData');
-        messageModal.success('Transaction Success!');
+        messageModal.success(`${t('borrow.home.modal.transactionSuccess')}!`);
       } catch (err) {
         if (err.message) {
           messageModal.error(err.message);

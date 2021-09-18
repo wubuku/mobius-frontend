@@ -5,6 +5,7 @@ import {
   Menu,
   message,
   Table,
+  TableColumn,
   Tag,
   Button,
   Progress,
@@ -26,6 +27,7 @@ export const antInit = (app) => {
   app
     .use(Menu)
     .use(Table)
+    .use(TableColumn)
     .use(Tag)
     .use(Button)
     .use(Progress)

@@ -21,7 +21,9 @@
         :bordered="false"
         ref="amountInput"
       ></a-input>
-      <a-button class="btn input-box-btn" @click="setMaxAmount">MAX</a-button>
+      <a-button class="btn input-box-btn" @click="setMaxAmount">
+        {{ $t('borrow.btn.max') }}
+      </a-button>
     </div>
     <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
     <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
@@ -46,7 +48,7 @@
     <div class="modal-info">
       <!--  -->
       <div class="info-item">
-        借款APY
+        {{ $t('borrow.home.modal.borrowAPY') }}
         <span class="right">{{ token.borrowAPY }}</span>
       </div>
       <!-- <div class="info-item">
@@ -56,7 +58,7 @@
 
       <!--  -->
       <div class="info-item">
-        Borrow Balance
+        {{ $t('borrow.home.modal.borrowBalance') }}
         <span class="right">
           {{ token.borrowBalance }}
           <span class="arrow-box" v-if="amount != ''">
@@ -67,7 +69,7 @@
       </div>
       <!--  -->
       <div class="info-item">
-        已用比例
+        {{ $t('borrow.home.modal.borrowRate') }}
         <span class="right highlight">
           {{ token.borrowedLimitUsed }}
           <span
@@ -86,7 +88,7 @@
 
       <!-- Currently borrow -->
       <div class="info-item">
-        Currently Borrowing
+        {{ $t('borrow.home.modal.currentlyBorrowing') }}
         <span class="right" :class="{ highlight: isBorrowMode }">
           {{ token?.borrowBalance }} {{ token.name }}
         </span>
@@ -94,7 +96,7 @@
 
       <!-- Wallet Balance -->
       <div class="info-item">
-        Wallet Balance
+        {{ $t('borrow.home.modal.walletBalance') }}
         <span class="right" :class="{ highlight: isRepayMode }">
           {{ token?.walletResource }} {{ token.name }}
         </span>
@@ -112,6 +114,7 @@
   import useToken from '../../uses/useToken';
   import useUser from '../../uses/useUser';
   import useTransaction from '../../uses/useTransaction';
+  import { useI18n } from 'vue-i18n';
 
   const props = defineProps({
     token: {
@@ -125,6 +128,7 @@
   const { toHumanReadable, toReadableRiskMantissa, toPercent, getOracleValue } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
+  const { t } = useI18n();
 
   const ENUMS = inject('ENUMS');
   const emitter = inject('emitter');
@@ -160,7 +164,9 @@
       !NotEnoughLiquidtyErrorText.value &&
       !OverRiskAssetConfigErrorText.value,
   );
-  const submitBtnText = computed(() => (isBorrowMode.value ? 'Borrow' : 'Repay'));
+  const submitBtnText = computed(() =>
+    isBorrowMode.value ? t('borrow.btn.borrow') : t('borrow.btn.repay'),
+  );
   const NotEnoughErrorText = computed(() => {
     if (amountGreatThanBalance.value) return 'Not enough balance';
     return '';
@@ -168,7 +174,7 @@
 
   const NotEnoughLiquidtyErrorText = computed(() => {
     return isBorrowMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
-      ? 'Not enough liquidity'
+      ? t('borrow.home.modal.notEnoughLiquidity')
       : '';
   });
 
@@ -180,7 +186,7 @@
         toReadableRiskMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(
           100,
         )
-      ? 'Over risk Asset'
+      ? t('borrow.home.modal.overRiskAsset')
       : '';
   });
 
@@ -239,7 +245,7 @@
         await startTransactionCheck(txn);
         onCancel();
         emitter.emit('refreshData');
-        messageModal.success('Transaction Success!');
+        messageModal.success(`${t('borrow.home.modal.transactionSuccess')}!`);
       } catch (err) {
         if (err.message) {
           messageModal.error(err.message);
@@ -255,7 +261,7 @@
         await startTransactionCheck(txn);
         onCancel();
         emitter.emit('refreshData');
-        messageModal.success('Transaction Success!');
+        messageModal.success(`${t('borrow.home.modal.transactionSuccess')}!`);
       } catch (err) {
         if (err.message) {
           messageModal.error(err.message);

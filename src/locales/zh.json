@@ -52,18 +52,41 @@
     }
   },
   "borrow": {
-    "menus": {
-      "home": "借贷主页",
-      "resource": "我的资产",
-      "deposit": "存款/取款",
-      "loan": "借贷/还贷",
-      "history": "历史记录",
-      "governance": "治理",
-      "faq": "常见问题"
-    },
     "home": {
-      "tips": "暂不可借贷，请存入资产后借款；",
-      "depositTitle": "当前可借",
+      "data": {
+        "availableRewards": "收益",
+        "supplyBalance": "供应价值",
+        "borrowBalance": "已借价值",
+        "borrowLimit": "可用信用价值",
+        "borrowRate": "借贷使用比列"
+      },
+      "table": {
+        "supplyMarket": "供应市场",
+        "borrowMarket": "借贷市场",
+        "column": {
+          "supplyAPY": "存款 APY",
+          "supplyBalance": "存款余额",
+          "asset": "资产",
+          "wallet": "钱包",
+          "borrowAPY": "借款APY",
+          "borrowBalance": "借款额度",
+          "liquidity": "流动性"
+        }
+      },
+      "modal": {
+        "supplyAPY": "存款 APY",
+        "borrowAPY": "借款APY",
+        "supplyBalance": "存款余额",
+        "borrowBalance": "借款额度",
+        "borrowLimit": "最多可借",
+        "borrowRate": "已借比例",
+        "currentlyBorrowing": "当前已借",
+        "walletBalance": "钱包余额",
+        "notEnoughBalance": "Not enough balance",
+        "notEnoughLiquidity": "Not enough liquidity",
+        "overRiskAsset": "Over risk Asset",
+        "transactionSuccess": "Transaction Success"
+      },
       "main": {
         "nowBorrow": "现在可借",
         "borrowNow": "马上借贷",
@@ -79,10 +102,14 @@
       "repay": "还款"
     },
     "btn": {
+      "max": "全部",
+      "claim": "点击领取",
       "connect": "链接钱包",
       "depositnow": "马上存款!",
+      "withDraw": "取款",
       "deposit": "存款",
-      "borrow": "借款"
+      "borrow": "借款",
+      "repay": "还款"
     }
   }
 }

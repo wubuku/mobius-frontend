@@ -18,24 +18,26 @@
       <div class="main">
         <div class="dashboard-box">
           <div class="my-info-box large">
-            <div class="label benifit">XXXXXX</div>
+            <div class="label benifit">{{ $t('borrow.home.data.availableRewards') }}</div>
             <div class="num large up blod">$12.32</div>
-            <a-button disabled class="btn benifit-btn disabled">点击领取</a-button>
+            <a-button disabled class="btn benifit-btn disabled">
+              {{ $t('borrow.btn.claim') }}
+            </a-button>
           </div>
           <div class="line">
             <div class="my-info-box">
-              <div class="label">供应价值</div>
+              <div class="label">{{ $t('borrow.home.data.supplyBalance') }}</div>
               <div class="num large my blod">${{ tokenList[0]?.totalBorrowingValueOnTheroy }}</div>
             </div>
             <div class="my-info-box">
-              <div class="label">已借价值</div>
+              <div class="label">{{ $t('borrow.home.data.borrowBalance') }}</div>
               <div class="num large my blod">${{ tokenList[0]?.totalBorrowedValueOnReal }}</div>
             </div>
             <div class="my-info-box flex credit-balance">
               <div class="label">
-                <span class="text">可用信用价值</span>
+                <span class="text">{{ $t('borrow.home.data.borrowLimit') }}</span>
                 <span class="progress">
-                  <span class="title">借贷使用比例</span>
+                  <span class="title">{{ $t('borrow.home.data.borrowRate') }}</span>
                   <a-progress :percent="parseFloat(tokenList[0]?.borrowedLimitUsed)" />
                 </span>
               </div>
@@ -46,13 +48,12 @@
 
         <div class="markets">
           <div class="list">
-            <h2>供应市场</h2>
+            <h2>{{ $t('borrow.home.table.supplyMarket') }}</h2>
             <!-- <pre style="color: white">
               {{ tokenList[0] }}
             </pre> -->
             <a-table
               :dataSource="tokenList"
-              :columns="TokenColumnDeposit"
               :pagination="false"
               :rowKey="(record) => record.dataIndex"
               :locale="{ emptyText: '' }"
@@ -60,63 +61,108 @@
               :customRow="(record) => tableEventHandler('deposit', record)"
             >
               <!-- 资产 -->
-              <template #name="{ record }">
-                <div class="coin">
-                  <img :src="CoinIcon(record.name)" class="coin-icon" />
-                  {{ record.name }}
-                </div>
-              </template>
-
+              <a-table-column
+                key="name"
+                :title="$t('borrow.home.table.column.asset')"
+                data-index="name"
+                width="135px"
+              >
+                <template #default="{ record }">
+                  <div class="coin">
+                    <img :src="CoinIcon(record.name)" class="coin-icon" />
+                    {{ record.name }}
+                  </div>
+                </template>
+              </a-table-column>
               <!-- Supply -->
-              <template #supply_balance="{ record }">
-                {{ record.supplyBalance }}
-                {{ record.name }}
-              </template>
-
-              <!-- wallet -->
-              <template #wallet="{ record }">
-                <div class="num my">
-                  {{ record.walletResource }}
+              <a-table-column
+                key="supplyAPY"
+                :title="$t('borrow.home.table.column.supplyAPY')"
+                data-index="supplyAPY"
+              ></a-table-column>
+              <a-table-column
+                key="supply_balance"
+                :title="$t('borrow.home.table.column.supplyBalance')"
+                data-index="supply_balance"
+              >
+                <template #default="{ record }">
+                  {{ record.supplyBalance }}
                   {{ record.name }}
-                </div>
-              </template>
+                </template>
+              </a-table-column>
+              <!-- wallet -->
+              <a-table-column
+                key="walletResource"
+                :title="$t('borrow.home.table.column.wallet')"
+                data-index="walletResource"
+              >
+                <template #default="{ record }">
+                  <div class="num my">
+                    {{ record.walletResource }}
+                    {{ record.name }}
+                  </div>
+                </template>
+              </a-table-column>
             </a-table>
           </div>
           <div class="list">
             <!-- <pre style="color: white">
               {{ tokenList }}
             </pre> -->
-            <h2>借贷市场</h2>
+            <h2>{{ $t('borrow.home.table.borrowMarket') }}</h2>
 
             <a-table
               :dataSource="tokenList"
-              :columns="TokenColumnBorrow"
               :pagination="false"
               :rowKey="(record) => record.dataIndex"
               :loading="tableLoading"
               :customRow="(record) => tableEventHandler('borrow', record)"
             >
               <!-- 资产 -->
-              <template #name="{ record }">
-                <div class="coin">
-                  <img :src="CoinIcon(record.name)" class="coin-icon" />
-                  {{ record.name }}
-                </div>
-              </template>
-              <!-- 借款利率 -->
-              <template #borrow_rate="{ record }">
-                {{ toPercent(toReadableMantissa(record.borrow_rate.mantissa)) }}
-              </template>
+              <a-table-column
+                key="name"
+                :title="$t('borrow.home.table.column.asset')"
+                data-index="name"
+                width="135px"
+              >
+                <template #default="{ record }">
+                  <div class="coin">
+                    <img :src="CoinIcon(record.name)" class="coin-icon" />
+                    {{ record.name }}
+                  </div>
+                </template>
+              </a-table-column>
+
+              <!-- Supply -->
+              <a-table-column
+                key="supplyAPY"
+                :title="$t('borrow.home.table.column.supplyAPY')"
+                data-index="supplyAPY"
+              ></a-table-column>
+
               <!-- 当前借款 -->
-              <template #borrowBalance="{ record }">
-                {{ record.borrowBalance }}
-                {{ record.name }}
-              </template>
+              <a-table-column
+                key="borrowBalance"
+                :title="$t('borrow.home.table.column.borrowBalance')"
+                data-index="borrowBalance"
+              >
+                <template #default="{ record }">
+                  {{ record.borrowBalance }}
+                  {{ record.name }}
+                </template>
+              </a-table-column>
+
               <!-- 流通性 -->
-              <template #liquidity="{ record }">
-                {{ record.liquidity }}
-                {{ record.name }}
-              </template>
+              <a-table-column
+                key="liquidity"
+                :title="$t('borrow.home.table.column.liquidity')"
+                data-index="liquidity"
+              >
+                <template #default="{ record }">
+                  {{ record.liquidity }}
+                  {{ record.name }}
+                </template>
+              </a-table-column>
             </a-table>
           </div>
         </div>
@@ -152,7 +198,6 @@
   import BorrowModal from 'comp/Modal/Borrow';
   import { numberWithUnit } from 'utils';
   import useToken from 'uses/useToken';
-  import useTable from 'uses/useTable';
   import useTransaction from 'uses/useTransaction';
   import useUser from 'uses/useUser';
   import { useRoute } from 'vue-router';
@@ -161,7 +206,6 @@
 
   const emitter = inject('emitter');
   const { tokenList, toHumanReadable, toPercent, getTokenList, toReadableMantissa } = useToken();
-  const { TokenColumnDeposit, TokenColumnBorrow } = useTable();
   const { accountHash, wallet } = useUser();
   const route = useRoute();
 

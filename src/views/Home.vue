@@ -343,7 +343,7 @@
 
       header {
         width: 100%;
-        height: 120px;
+        height: 50px;
         padding: 25px 60px;
         font-size: 22px;
         color: white;
@@ -718,7 +718,7 @@
       .security {
         width: 100%;
         background: #050324;
-        padding: 125px 120px 190px 120px;
+        padding: 125px 80px 190px 170px;
         display: flex;
         align-items: flex-start;
 
