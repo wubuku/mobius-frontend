@@ -26,7 +26,7 @@
               {{ $t('official.btn.app') }}
             </router-link>
           </div>
-          <locale-switch class="header-local-switch"></locale-switch>
+          <!-- <locale-switch class="header-local-switch"></locale-switch> -->
         </div>
       </header>
       <!-- Banner -->
