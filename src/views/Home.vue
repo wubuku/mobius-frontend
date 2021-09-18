@@ -331,7 +331,7 @@
     align-items: center;
     padding: 60px 0 0;
     background: linear-gradient(179deg, #00053c 0%, #010101 100%);
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: PingFang SC;
 
     a {
       color: white;
@@ -340,14 +340,14 @@
     .container {
       width: 100%;
       max-width: 1440px;
-      background: url(../assets/images/index/index-top-bg.png) center 220px / contain no-repeat;
+      background: url(../assets/images/index/index-top-bg.png) right 220px no-repeat;
 
       header {
         width: 100%;
         height: 120px;
-        background: rgba(#000000, 0.4);
-        box-shadow: 0px 0px 18px 3px rgba(255, 255, 255, 0.03);
-        border-radius: 16px;
+        // background: rgba(#000000, 0.4);
+        // box-shadow: 0px 0px 18px 3px rgba(255, 255, 255, 0.03);
+        // border-radius: 16px;
         padding: 25px 60px;
         font-size: 22px;
         color: white;
@@ -362,19 +362,22 @@
           display: flex;
           align-items: center;
           margin-left: auto;
+          font-weight: 300;
 
           .btn {
-            width: 163px;
-            height: 53px;
+            width: 123px;
+            height: 40px;
             background: #0242a4;
             border-radius: 7px;
+            font-weight: 400;
           }
 
           .menu-item {
             margin: 0 30px;
             cursor: pointer;
             user-select: none;
-            font-weight: bolder;
+
+            font-size: 16px;
 
             &:last-child {
               margin-right: 0;
@@ -393,7 +396,7 @@
 
       .banner {
         width: 100%;
-        padding: 260px 60px 130px;
+        padding: 210px 80px;
         color: #fdfdfd;
 
         .title {
@@ -404,15 +407,17 @@
           margin-bottom: 40px;
 
           img {
-            max-width: 529px;
+            max-width: 498px;
           }
         }
 
         .desc {
+          max-width: 610px;
           font-size: 24px;
-          font-weight: 400;
-          line-height: 56px;
-          width: 610px;
+          font-family: PingFangSC-Light, PingFang SC;
+          font-weight: 300;
+          color: #fdfdfd;
+          line-height: 40px;
           margin-bottom: 50px;
         }
       }
@@ -800,12 +805,14 @@
 
   .btn {
     &.protocal {
-      width: 225px;
-      height: 69px;
+      width: 150px;
+      height: 50px;
       background: linear-gradient(90deg, #0577d1 0%, #0242a4 100%);
       border-radius: 8px;
+      font-size: 16px;
+      font-weight: 400;
       color: #ffffff;
-      font-size: 24px;
+      line-height: 22px;
     }
   }
 
