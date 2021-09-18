@@ -414,7 +414,6 @@
         .desc {
           max-width: 610px;
           font-size: 24px;
-          font-family: PingFangSC-Light, PingFang SC;
           font-weight: 300;
           color: #fdfdfd;
           line-height: 40px;
