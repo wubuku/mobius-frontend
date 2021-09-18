@@ -119,7 +119,10 @@
           </div>
           <div class="right-part">
             <h1>
-              <img src="../assets/images/index/MoneyMarkets.png" style="max-width: 599px" />
+              <img
+                src="../assets/images/index/MoneyMarkets.png"
+                style="max-width: 599px; width: 100%"
+              />
             </h1>
             <div class="market-desc">
               {{ $t('official.index.marketDesc') }}
@@ -720,7 +723,7 @@
 
       .security {
         width: 100%;
-        height: 725px;
+        min-height: 725px;
         background: #050324;
         padding: 125px 120px;
         display: flex;
@@ -815,7 +818,7 @@
     }
   }
 
-  @media screen and (max-width: 1439px) {
+  @media screen and (max-width: 749px) {
     .home {
       padding-top: 10px;
 
