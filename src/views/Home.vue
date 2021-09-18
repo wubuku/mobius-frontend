@@ -1,8 +1,6 @@
 <template>
   <div class="home">
     <div class="container">
-      <img src="../assets/images/index/c2.png" class="c2" />
-
       <!-- Header -->
       <header>
         <div class="logo">BFLY.FINANCE</div>
@@ -52,6 +50,20 @@
       <!-- Market -->
       <div class="money-market">
         <div class="top">
+          <div class="right-part">
+            <h1>
+              <img
+                src="../assets/images/index/MoneyMarkets.png"
+                style="max-width: 599px; width: 100%"
+              />
+            </h1>
+            <div class="market-desc">
+              {{ $t('official.index.marketDesc') }}
+            </div>
+            <div class="btn protocal">
+              <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">Launch App</router-link>
+            </div>
+          </div>
           <div class="coin-list">
             <!-- STC -->
             <div
@@ -117,20 +129,6 @@
               <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">View More</router-link>
             </div>
           </div>
-          <div class="right-part">
-            <h1>
-              <img
-                src="../assets/images/index/MoneyMarkets.png"
-                style="max-width: 599px; width: 100%"
-              />
-            </h1>
-            <div class="market-desc">
-              {{ $t('official.index.marketDesc') }}
-            </div>
-            <div class="btn protocal">
-              <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">Launch App</router-link>
-            </div>
-          </div>
         </div>
         <h2 class="feature-title">
           <img src="../assets/images/index/KeyFeatures.png" style="max-width: 296px" />
@@ -161,8 +159,6 @@
       </div>
       <!-- Roadmap -->
       <div class="roadmap">
-        <img src="../assets/images/index/c1.png" alt="" class="c1" />
-        <img src="../assets/images/index/c3.png" alt="" class="c3" />
         <h2>{{ $t('official.index.roadMap.title') }}</h2>
 
         <div class="r-container">
@@ -342,15 +338,12 @@
 
     .container {
       width: 100%;
-      max-width: 1440px;
+      max-width: 1360px;
       background: url(../assets/images/index/index-top-bg.png) right 220px no-repeat;
 
       header {
         width: 100%;
         height: 120px;
-        // background: rgba(#000000, 0.4);
-        // box-shadow: 0px 0px 18px 3px rgba(255, 255, 255, 0.03);
-        // border-radius: 16px;
         padding: 25px 60px;
         font-size: 22px;
         color: white;
@@ -387,14 +380,6 @@
             }
           }
         }
-      }
-
-      .c2 {
-        position: absolute;
-        top: 1310px;
-        right: 50%;
-        margin-right: -780px;
-        display: none;
       }
 
       .banner {
@@ -442,8 +427,13 @@
           display: flex;
         }
 
+        .right-part {
+          margin-left: 0;
+          margin-right: 70px;
+        }
+
         .top {
-          margin-bottom: 90px;
+          margin-bottom: 170px;
 
           .coin-list {
             display: flex;
@@ -451,18 +441,24 @@
             align-items: center;
 
             .coin-list-item {
-              width: 550px;
-              height: 100px;
+              width: 450px;
+              height: 80px;
               background: #252837;
               box-shadow: 0px 0px 18px 3px rgba(0, 0, 0, 0.05);
               border-radius: 16px;
-              padding: 25px;
+              padding: 20px;
               color: #999999;
               display: flex;
-              font-size: 16px;
-              margin-bottom: 50px;
+              font-size: 14px;
+              margin-bottom: 40px;
               align-items: center;
               cursor: pointer;
+              margin-left: 70px;
+
+              &:nth-child(2n) {
+                margin-left: initial;
+                margin-right: 70px;
+              }
 
               .token-icon {
                 width: 50px;
@@ -474,9 +470,9 @@
               .name {
                 h2 {
                   color: white;
-                  font-size: 26px;
+                  font-size: 20px;
                   font-weight: 600;
-                  line-height: 37px;
+                  line-height: 28px;
                   margin: 0;
                 }
               }
@@ -488,10 +484,10 @@
                 align-items: flex-end;
 
                 .value {
-                  font-size: 24px;
+                  font-size: 20px;
                   font-weight: 600;
                   color: #59aa83;
-                  line-height: 33px;
+                  line-height: 28px;
                 }
               }
             }
@@ -499,10 +495,14 @@
             .view-more {
               width: 127px;
               height: 43px;
-              border: 1px solid #ffffff;
-              font-size: 16px;
+              border: 1px solid #999999;
+              font-size: 18px;
               font-weight: 400;
-              color: #ffffff;
+              border-radius: 4px;
+
+              a {
+                color: #999999;
+              }
             }
           }
         }
@@ -520,32 +520,40 @@
           justify-content: space-between;
 
           .card {
-            max-width: 380px;
+            max-width: 340px;
             width: 31%;
-            height: 360px;
+            height: 340px;
             background: linear-gradient(136deg, #2d3143 0%, #1c1e2a 100%);
             box-shadow: 0px 4px 8px 6px rgba(0, 0, 0, 0.15);
             border-radius: 8px;
-            padding: 35px 20px;
-            font-size: 18px;
-            font-weight: 400;
+            padding: 30px 35px;
+            font-size: 16px;
+            font-weight: 300;
             color: #d5d5d5;
             line-height: 25px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+
+            img {
+              width: 100px;
+              height: 100px;
+              margin-bottom: 25px;
+            }
 
             .title {
               font-size: 24px;
               font-weight: 600;
               color: #d5d5d5;
               line-height: 33px;
-              margin-bottom: 20px;
+              margin-bottom: 14px;
             }
 
             .desc {
+              width: 290px;
               word-break: break-word;
               opacity: 0.8;
+              text-align: center;
             }
           }
         }
@@ -558,22 +566,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 75px 80px;
+        padding: 95px 40px;
         position: relative;
-
-        .c1 {
-          position: absolute;
-          top: -20px;
-          left: 165px;
-          z-index: 1;
-        }
-
-        .c3 {
-          position: absolute;
-          bottom: -73px;
-          right: 235px;
-          z-index: 1;
-        }
 
         h2 {
           height: 67px;
@@ -627,7 +621,7 @@
             height: 100%;
             display: flex;
             align-items: center;
-            padding: 0 100px;
+            // padding: 0 100px;
 
             .r-item {
               width: 290px;
@@ -688,8 +682,8 @@
                 }
 
                 .r-content {
-                  font-size: 18px;
-                  font-weight: 400;
+                  font-size: 14px;
+                  font-weight: 300;
                   color: #ffffff;
                   line-height: 25px;
                 }
@@ -723,18 +717,21 @@
 
       .security {
         width: 100%;
-        min-height: 725px;
         background: #050324;
-        padding: 125px 120px;
+        padding: 125px 120px 190px 120px;
         display: flex;
         align-items: flex-start;
 
         .security-banner {
-          width: 595px;
+          width: 50%;
+          max-width: 370px;
         }
 
         .right-part {
           margin-left: 70px;
+          font-size: 20px;
+          font-weight: 300;
+          line-height: 42px;
         }
       }
 
@@ -794,8 +791,8 @@
         }
 
         .market-desc {
-          font-size: 24px;
-          font-weight: 400;
+          font-size: 20px;
+          font-weight: 300;
           color: #ffffff;
           line-height: 40px;
           opacity: 0.8;
@@ -818,153 +815,5 @@
     }
   }
 
-  @media screen and (max-width: 749px) {
-    .home {
-      padding-top: 10px;
-
-      .container {
-        .c2 {
-          display: none;
-        }
-
-        header {
-          width: 90%;
-          margin: 0 auto;
-          padding: 10px 20px;
-
-          .header-local-switch {
-            display: block;
-          }
-
-          .menu {
-            .menu-item {
-              display: none;
-
-              &:nth-last-child(2) {
-                display: flex;
-                width: auto;
-                padding: 0 20px;
-              }
-            }
-          }
-        }
-
-        .banner {
-          width: 90%;
-          margin: 0 auto;
-          padding: 50px 0 130px;
-
-          .title {
-            img {
-              width: 100%;
-            }
-          }
-
-          .desc {
-            width: 100%;
-          }
-        }
-
-        .money-market {
-          min-height: 1390px;
-          height: auto;
-          margin: 0 auto;
-          padding: 20px;
-          width: 90%;
-
-          .top {
-            flex-direction: column;
-
-            .coin-list {
-              width: 100%;
-
-              .coin-list-item {
-                width: 100%;
-                margin-bottom: 10px;
-              }
-
-              .view-more {
-                margin-top: 20px;
-              }
-            }
-          }
-          .bottom {
-            flex-direction: column;
-
-            .card {
-              width: 100%;
-              max-width: none;
-              height: auto;
-              min-height: 360px;
-              margin-bottom: 20px;
-            }
-          }
-        }
-
-        .roadmap {
-          width: 90%;
-          margin: 0 auto;
-          padding-left: 20px;
-          padding-right: 20px;
-
-          .c1 {
-            top: -30px;
-            left: 215px;
-            width: 65px;
-          }
-        }
-
-        .security {
-          min-height: 725px;
-          height: auto;
-          flex-direction: column;
-          padding: 125px 20px;
-          width: 90%;
-          margin: 0 auto;
-          align-items: center;
-
-          .security-banner {
-            width: 100%;
-            max-width: 595px;
-          }
-
-          .right-part {
-            margin-left: 0;
-          }
-        }
-
-        .right-part {
-          margin-top: 50px;
-          margin-left: 0;
-          padding: 0;
-
-          h1 {
-            img {
-              width: 100%;
-            }
-          }
-        }
-
-        footer {
-          width: 90%;
-          margin: 0 auto;
-          flex-wrap: wrap;
-          justify-content: space-between;
-          padding: 60px 20px;
-          gap: 20px;
-
-          .footer-local-switch {
-            display: none;
-          }
-
-          .links {
-            .media {
-              width: 100%;
-              max-width: 330px;
-            }
-          }
-        }
-      }
-    }
-  }
+  @import url(../assets/style/home-750.less);
 </style>
