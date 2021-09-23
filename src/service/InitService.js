@@ -111,7 +111,17 @@ export const GetStateListResource = async (accountHash) => {
       { decode: true },
     ]);
 
-    const { body = {}, id = '' } = MyResource[KEY_Assets]?.json.items.vec[0][0] || {};
+    // 选择assetId最小的头寸
+    let assetVec = { id: Infinity };
+    if (Array.isArray(MyResource[KEY_Assets]?.json.items.vec[0])) {
+      MyResource[KEY_Assets]?.json.items.vec[0].forEach((asset) => {
+        if (assetVec.id > asset.id) {
+          assetVec = { ...asset };
+        }
+      });
+    }
+
+    const { body = {}, id = '' } = assetVec.id === Infinity ? {} : assetVec;
     const { collateral = [], debt = [] } = body?.assets || {};
 
     // Get All tokens
