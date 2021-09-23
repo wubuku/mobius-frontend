@@ -136,8 +136,8 @@
               <!-- Supply -->
               <a-table-column
                 key="supplyAPY"
-                :title="$t('borrow.home.table.column.supplyAPY')"
-                data-index="supplyAPY"
+                :title="$t('borrow.home.table.column.borrowAPY')"
+                data-index="borrowAPY"
               ></a-table-column>
 
               <!-- 当前借款 -->

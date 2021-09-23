@@ -130,8 +130,14 @@
 
   const emit = defineEmits(['update:visible']);
 
-  const { toReadableMantissa, additionBorrowLimitBalance, nano, COIN_DB_DECIMALS, toDP } =
-    useToken();
+  const {
+    toReadableMantissa,
+    toReadableRiskMantissa,
+    additionBorrowLimitBalance,
+    nano,
+    COIN_DB_DECIMALS,
+    toDP,
+  } = useToken();
   const { startTransactionCheck } = useTransaction();
   const { assetId } = useUser();
   const { t } = useI18n();
@@ -180,8 +186,13 @@
 
   const OverRiskAssetConfigErrorText = computed(() => {
     return isWithdrawMode.value &&
-      parseFloat(token.borrowedLimitUsedUpdated(-1 * amount.value)) >=
-        toReadableMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(100)
+      new BigNumber(
+        parseFloat(token.borrowedLimitUsedUpdated(-1 * amount.value)),
+      ).isGreaterThanOrEqualTo(
+        toReadableRiskMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(
+          100,
+        ),
+      )
       ? t('borrow.home.modal.overRiskAsset')
       : '';
   });

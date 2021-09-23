@@ -550,7 +550,7 @@
             }
 
             .desc {
-              width: 290px;
+              max-width: 290px;
               word-break: break-word;
               opacity: 0.8;
               text-align: center;
@@ -718,7 +718,7 @@
       .security {
         width: 100%;
         background: #050324;
-        padding: 125px 80px 190px 170px;
+        padding: 125px 80px 190px;
         display: flex;
         align-items: flex-start;
 
