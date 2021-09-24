@@ -18,13 +18,7 @@ export default () => {
   const setPersonalAssets = (assets) => store.dispatch('data/$updateAssetsData', assets);
   const setWalletResource = (resources) => store.dispatch('data/$updateWalletResource', resources);
 
-  // 获取当前用户的个人资源
-  const myResource = ({ account = '', address = '' }) => {
-    if (!account) return;
-  };
-
   return {
-    myResource,
     currentResource,
     accountHash,
     // Page Data

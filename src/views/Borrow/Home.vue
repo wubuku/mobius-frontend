@@ -27,11 +27,11 @@
           <div class="line">
             <div class="my-info-box">
               <div class="label">{{ $t('borrow.home.data.supplyBalance') }}</div>
-              <div class="num large my blod">${{ tokenList[0]?.totalBorrowingValueOnTheroy }}</div>
+              <div class="num large my blod">${{ tokenList[0]?.totalCanBorrowUSDOnTheroy }}</div>
             </div>
             <div class="my-info-box">
               <div class="label">{{ $t('borrow.home.data.borrowBalance') }}</div>
-              <div class="num large my blod">${{ tokenList[0]?.totalBorrowedValueOnReal }}</div>
+              <div class="num large my blod">${{ tokenList[0]?.totalCanBorrowedOnReal }}</div>
             </div>
             <div class="my-info-box flex credit-balance">
               <div class="label">
@@ -213,6 +213,9 @@
   const depositModalVisible = ref(false);
   const borrowModalVisible = ref(false);
 
+  const dataRefreshTime = ref(0);
+  const refreshInterval = 60 * 1000;
+
   const modalToken = ref({});
 
   const CoinIcon = (tokenName) => {
@@ -230,9 +233,10 @@
   const init = async () => {
     try {
       await getTokenList();
-
       openQueryToken();
       tableLoading.value = false;
+      // Update data fresh time
+      dataRefreshTime.value = Date.now();
     } catch (e) {
       console.log('init error', e);
     }
@@ -240,6 +244,12 @@
 
   emitter.on('refreshData', () => {
     init();
+  });
+
+  emitter.on('refreshDataOnDuration', () => {
+    if (Date.now() - dataRefreshTime.value > refreshInterval) {
+      init();
+    }
   });
 
   const tableEventHandler = (type, record) => {

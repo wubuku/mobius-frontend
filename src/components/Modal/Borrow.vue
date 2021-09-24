@@ -28,6 +28,7 @@
     <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
     <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
     <p class="error" v-if="OverRiskAssetConfigErrorText">{{ OverRiskAssetConfigErrorText }}</p>
+    <p class="error" v-if="HasNoAsset">{{ $t('borrow.home.modal.hasNotAsset') }}</p>
     <div class="modal-tab">
       <div
         class="modal-tab-item"
@@ -46,21 +47,17 @@
     </div>
 
     <div class="modal-info">
-      <!--  -->
+      <!-- BorrowAPY  -->
       <div class="info-item">
         {{ $t('borrow.home.modal.borrowAPY') }}
         <span class="right">{{ token.borrowAPY }}</span>
       </div>
-      <!-- <div class="info-item">
-        Distribution APY
-        <span class="right">1.24%</span>
-      </div> -->
 
-      <!--  -->
+      <!-- Borrow Balance -->
       <div class="info-item">
         {{ $t('borrow.home.modal.borrowBalance') }}
         <span class="right">
-          {{ token.borrowBalance }}
+          {{ token.borrowBalance.toNumber() }}
           <span class="arrow-box" v-if="amount != ''">
             <ArrowRightOutlined class="arrow" />
             {{ borrowBalanceUpdate }}
@@ -141,6 +138,9 @@
   const btnLoading = ref(false);
   const amountInput = ref(null);
 
+  // Try update data when modal opened
+  emitter.emit('refreshDataOnDuration');
+
   const isBorrowMode = computed(() => mode.value === ENUMS.TAB_NAME.BORROW.value);
   const isRepayMode = computed(() => mode.value === ENUMS.TAB_NAME.REPAY.value);
 
@@ -171,28 +171,34 @@
     if (amountGreatThanBalance.value) return 'Not enough balance';
     return '';
   });
-
   const NotEnoughLiquidtyErrorText = computed(() => {
     return isBorrowMode.value && new BigNumber(amount.value).isGreaterThan(token.liquidity)
       ? t('borrow.home.modal.notEnoughLiquidity')
       : '';
   });
 
+  const HasNoAsset = computed(() => !assetId.value);
+
   const OverRiskAssetConfigErrorText = computed(() => {
     return isBorrowMode.value &&
-      parseFloat(
-        token.borrowedLimitUsedUpdatedOnBorrow((isBorrowMode.value ? 1 : -1) * amount.value),
-      ) >=
+      new BigNumber(
+        parseFloat(
+          token.borrowedLimitUsedUpdatedOnBorrow((isBorrowMode.value ? 1 : -1) * amount.value),
+        ),
+      ).isGreaterThanOrEqualTo(
         toReadableRiskMantissa(token.riskAssetConfig.liquidation_threshold.mantissa).multipliedBy(
           100,
-        )
+        ),
+      )
       ? t('borrow.home.modal.overRiskAsset')
       : '';
   });
 
   const borrowBalanceUpdate = computed(() =>
     amount.value
-      ? new BigNumber(token.borrowBalance).plus((isBorrowMode.value ? 1 : -1) * amount.value)
+      ? new BigNumber(token.borrowBalance)
+          .plus((isBorrowMode.value ? 1 : -1) * amount.value)
+          .toNumber()
       : 0,
   );
 
@@ -217,11 +223,11 @@
 
   const setMaxAmount = () => {
     if (isBorrowMode.value) {
-      amount.value = token?.maxBorrowBalance().valueOf();
+      amount.value = token?.maxBorrowBalance().toNumber();
     }
 
     if (isRepayMode.value) {
-      amount.value = token.maxRepayBalance.valueOf();
+      amount.value = token.maxRepayBalance.toNumber();
     }
   };
 

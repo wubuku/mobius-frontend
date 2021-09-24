@@ -19,15 +19,17 @@
         v-model:value="amount"
         @input="() => (amount = numberInput(amount))"
         :bordered="false"
+        :disabled="NoSupplyBalance"
         ref="amountInput"
       ></a-input>
-      <a-button class="btn input-box-btn" @click="setMaxAmount">
+      <a-button class="btn input-box-btn" @click="setMaxAmount" v-if="!NoSupplyBalance">
         {{ $t('borrow.btn.max') }}
       </a-button>
     </div>
     <p class="error" v-if="NotEnoughErrorText">{{ NotEnoughErrorText }}</p>
     <p class="error" v-if="NotEnoughLiquidtyErrorText">{{ NotEnoughLiquidtyErrorText }}</p>
     <p class="error" v-if="OverRiskAssetConfigErrorText">{{ OverRiskAssetConfigErrorText }}</p>
+    <p class="error" v-if="NoSupplyBalance">{{ $t('borrow.home.modal.noSupplyBalance') }}</p>
     <div class="modal-tab">
       <div
         class="modal-tab-item"
@@ -61,7 +63,7 @@
       <div class="info-item">
         {{ $t('borrow.home.modal.borrowLimit') }}
         <span class="right">
-          $ {{ token.totalBorrowingValueOnReal }}
+          ${{ token.totalCanBorrowUSDOnReal.toNumber() }}
           <span class="arrow-box" v-if="borrowLimit != 0">
             <ArrowRightOutlined class="arrow" />
             ${{ borrowLimit }}
@@ -110,7 +112,7 @@
 
 <script setup>
   import BigNumber from 'bignumber.js';
-  import { computed, defineProps, defineEmits, inject, reactive, ref, watch } from 'vue';
+  import { computed, defineProps, defineEmits, inject, reactive, ref, watch, useAttrs } from 'vue';
   import { ArrowRightOutlined } from '@ant-design/icons-vue';
   import { DepositContract, WithdrawContract, InitAssetContract } from 'service/BorrowService';
 
@@ -129,6 +131,7 @@
   });
 
   const emit = defineEmits(['update:visible']);
+  const attrs = useAttrs();
 
   const {
     toReadableMantissa,
@@ -153,6 +156,9 @@
   const borrowLimit = ref('');
   const btnLoading = ref(false);
   const amountInput = ref(null);
+
+  // Try update data when modal opened
+  emitter.emit('refreshDataOnDuration');
 
   const isDepositMode = computed(() => mode.value === ENUMS.TAB_NAME.DEPOSIT.value);
   const isWithdrawMode = computed(() => mode.value === ENUMS.TAB_NAME.WITHDRAW.value);
@@ -183,6 +189,9 @@
       ? t('borrow.home.modal.notEnoughLiquidity')
       : '';
   });
+  const NoSupplyBalance = computed(() => {
+    return isWithdrawMode.value && new BigNumber(token.supplyBalance).isEqualTo(0);
+  });
 
   const OverRiskAssetConfigErrorText = computed(() => {
     return isWithdrawMode.value &&
@@ -212,7 +221,8 @@
             risk_assets_pthreshold: token?.riskEquivalentsConfig?.liquidation_threshold?.mantissa,
           })
             .multipliedBy(isDepositMode.value ? 1 : -1)
-            .plus(token.totalBorrowingValueOnReal),
+            .plus(token.totalCanBorrowUSDOnReal)
+            .toNumber(),
         )
       : 0;
   });

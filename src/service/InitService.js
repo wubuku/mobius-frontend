@@ -1,5 +1,5 @@
 import { JsonProvider } from '@wormhole-stc/txn-wrapper';
-import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount } from 'config';
+import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount, ENUMS } from 'config';
 import { toTokenString } from 'utils/';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
@@ -49,7 +49,9 @@ const Get_Precision = async (token) =>
 const Get_Oracle = async () => {
   return axios
     .get(
-      'http://afbfd94cad1f34843aef457c1094dfd8-2035541950.ap-northeast-1.elb.amazonaws.com/barnard/v1/priceFeeds',
+      `https://price-api.starcoin.org/${
+        ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value
+      }/v1/priceFeeds`,
     )
     .then((res) => {
       const ret = {};

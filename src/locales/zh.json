@@ -82,10 +82,12 @@
         "borrowRate": "已借比例",
         "currentlyBorrowing": "当前已借",
         "walletBalance": "钱包余额",
-        "notEnoughBalance": "Not enough balance",
-        "notEnoughLiquidity": "Not enough liquidity",
-        "overRiskAsset": "Over risk Asset",
-        "transactionSuccess": "Transaction Success"
+        "notEnoughBalance": "余额不足",
+        "notEnoughLiquidity": "流动性不足",
+        "hasNotAsset": "您需要先提供一个抵押品",
+        "noSupplyBalance": "尚无抵押",
+        "overRiskAsset": "超过清算风险",
+        "transactionSuccess": "交易成功"
       },
       "main": {
         "nowBorrow": "现在可借",

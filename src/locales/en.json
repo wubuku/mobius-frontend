@@ -82,7 +82,10 @@
         "borrowRate": "Borrow Limit Rate",
         "currentlyBorrowing": "Currently Borrowing",
         "walletBalance": "Wallet Balance",
+        "notEnoughBalance": "Not Enough Balance",
         "notEnoughLiquidity": "Not enough liquidity",
+        "hasNotAsset": "You first need to provide a collateral with supply",
+        "noSupplyBalance": "No Supply Balance",
         "overRiskAsset": "Over risk Asset",
         "transactionSuccess": "Transaction Success"
       },

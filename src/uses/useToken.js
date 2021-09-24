@@ -22,7 +22,7 @@ export default () => {
 
   // 换成百分比
   const toPercent = (value, fixed = 3) => {
-    return new BigNumber(value).multipliedBy(100).toFixed(fixed) + '%';
+    return new BigNumber(value).multipliedBy(100).toNumber().toFixed(fixed) + '%';
   };
 
   // 币保留小数位数
@@ -73,7 +73,7 @@ export default () => {
   };
 
   // 排除当前币之外所有币的总抵押价值
-  const getDepositValueExcept = (address) => {
+  const getDepositUSDExcept = (address) => {
     return toDP(
       tokenList.value
         .filter((token) => token.address !== address)
@@ -92,7 +92,7 @@ export default () => {
   };
 
   // 理论可借额度
-  const getBorrowingValueOnTheroy = (tokenList) => {
+  const getCanBorrowUSDOnTheroy = (tokenList) => {
     return [...tokenList].reduce((prev, current) => {
       return new BigNumber(prev).plus(
         // 币的数量
@@ -109,16 +109,25 @@ export default () => {
   };
 
   // 真实可借额度
-  const getBorrowingValueOnReal = (tokenList) => {
-    return new BigNumber(getBorrowingValueOnTheroy(tokenList)).multipliedBy(
+  const getCanBorrowUSDOnReal = (tokenList) => {
+    return new BigNumber(getCanBorrowUSDOnTheroy(tokenList)).multipliedBy(
       // 风险系数
       toReadableRiskMantissa(tokenList[0]?.riskAssetConfig.liquidation_threshold.mantissa) || 1,
     );
   };
 
+  const getSafeBorrowingValueOnReal = (tokenList) => {
+    return new BigNumber(getCanBorrowUSDOnTheroy(tokenList)).multipliedBy(
+      // 风险系数
+      toReadableRiskMantissa(tokenList[0]?.riskAssetConfig.liquidation_threshold.mantissa).minus(
+        reserverUnit,
+      ),
+    );
+  };
+
   // 实际真实已借价值 on usdt
   // 每个币的价值 * 数量 = 已借价值
-  const getTotalBorrowedValueOnReal = (tokenList) => {
+  const getTotalBorrowedUSDOnReal = (tokenList) => {
     return toDP(
       tokenList.reduce((prev, current) => {
         return new BigNumber(prev).plus(
@@ -184,9 +193,9 @@ export default () => {
     try {
       // TokenList
       const { tokenList, assetId } = await GetStateListResource(store.state.accountHash);
-      const totalBorrowingValueOnReal = getBorrowingValueOnReal(tokenList);
-      const totalBorrowingValueOnTheroy = getBorrowingValueOnTheroy(tokenList);
-      const totalBorrowedValueOnReal = getTotalBorrowedValueOnReal(tokenList);
+      const totalCanBorrowUSDOnReal = getCanBorrowUSDOnReal(tokenList);
+      const totalCanBorrowUSDOnTheroy = getCanBorrowUSDOnTheroy(tokenList);
+      const totalCanBorrowedOnReal = getTotalBorrowedUSDOnReal(tokenList);
 
       const tokenDetails = tokenList.map((item) => {
         const borrowBalance = getBorrowBalance(item);
@@ -201,24 +210,24 @@ export default () => {
           // 以下数据均为 共享数据, 可以考虑将其独立出一个单独的数据结构,但是其实这样挺好用的
 
           // 真实可借
-          totalBorrowingValueOnReal: toDP(totalBorrowingValueOnReal, USD_DB_DECIMALS),
+          totalCanBorrowUSDOnReal: toDP(totalCanBorrowUSDOnReal, USD_DB_DECIMALS),
           // 理论
-          totalBorrowingValueOnTheroy: toDP(totalBorrowingValueOnTheroy, USD_DB_DECIMALS),
+          totalCanBorrowUSDOnTheroy: toDP(totalCanBorrowUSDOnTheroy, USD_DB_DECIMALS),
           // 实际真实已借价值
-          totalBorrowedValueOnReal: toDP(totalBorrowedValueOnReal, USD_DB_DECIMALS),
+          totalCanBorrowedOnReal: toDP(totalCanBorrowedOnReal, USD_DB_DECIMALS),
           // 剩余可借
           restBorrowingValueOnReal: toDP(
-            new BigNumber(totalBorrowingValueOnTheroy).minus(totalBorrowedValueOnReal),
+            new BigNumber(totalCanBorrowUSDOnTheroy).minus(totalCanBorrowedOnReal),
             USD_DB_DECIMALS,
           ),
           // 获取其他币的价值
-          getDepositValueExcept,
+          getDepositUSDExcept,
 
           borrowedLimitUsed: (() => {
             return toPercent(
-              totalBorrowingValueOnTheroy.valueOf() == 0
+              totalCanBorrowUSDOnTheroy.valueOf() == 0
                 ? 0
-                : new BigNumber(totalBorrowedValueOnReal).dividedBy(totalBorrowingValueOnTheroy),
+                : new BigNumber(totalCanBorrowedOnReal).dividedBy(totalCanBorrowUSDOnTheroy),
             );
           })(),
           // 以上数据均为 共享数据, 可以考虑将其独立出一个单独的数据结构,但是其实这样挺好用的
@@ -236,9 +245,9 @@ export default () => {
 
             return toPercent(
               // 总借贷价值
-              new BigNumber(totalBorrowedValueOnReal).dividedBy(
+              new BigNumber(totalCanBorrowedOnReal).dividedBy(
                 // 理解可借 + 新增的抵押价值
-                getBorrowingValueOnTheroy(tokenList).plus(
+                getCanBorrowUSDOnTheroy(tokenList).plus(
                   new BigNumber(equivalentAmount).multipliedBy(item.oracle),
                 ),
               ),
@@ -249,13 +258,13 @@ export default () => {
           borrowedLimitUsedUpdatedOnBorrow: (amount) => {
             if (!amount) return 0;
 
-            const bvot = getBorrowingValueOnTheroy(tokenList);
+            const bvot = getCanBorrowUSDOnTheroy(tokenList);
 
             return toPercent(
               bvot.valueOf() == 0
                 ? 0
                 : // 原有的总借贷的价值
-                  new BigNumber(totalBorrowedValueOnReal)
+                  new BigNumber(totalCanBorrowedOnReal)
                     // 加上变化的价值
                     .plus(new BigNumber(amount).multipliedBy(item.oracle))
                     // 理论可借
@@ -265,11 +274,11 @@ export default () => {
 
           // 最大可取数量
           maxWithdrawBalance: () => {
-            const asLeastUSD = totalBorrowedValueOnReal.dividedBy(
+            const asLeastUSD = totalCanBorrowedOnReal.dividedBy(
               toReadableRiskMantissa(item.riskAssetConfig.liquidation_threshold.mantissa),
             );
             // 其他币是否有足够的价值
-            const hasEnoughValue = getDepositValueExcept(item.address).isGreaterThan(asLeastUSD);
+            const hasEnoughValue = getDepositUSDExcept(item.address).isGreaterThan(asLeastUSD);
 
             if (hasEnoughValue) {
               // 返回当前币的全部
@@ -277,20 +286,23 @@ export default () => {
             } else {
               // 返回可取的最大值
               // TODO: 这里的返回值要测试
-              return toDP(
-                totalBorrowingValueOnTheroy
-                  // 获得最少的币数
-                  .minus(asLeastUSD)
-                  // 除以清算系数 (放大)
-                  .dividedBy(
-                    toReadableRiskMantissa(
-                      item.riskAssetConfig.liquidation_threshold.mantissa,
-                    ).plus(reserverUnit),
-                  )
-                  // 除以当前币的价格
-                  .dividedBy(item.oracle),
-                COIN_INPUT_DECIMALS,
-              );
+              // 如果取不了 就返回0
+              return asLeastUSD.isGreaterThan(totalCanBorrowUSDOnTheroy)
+                ? 0
+                : toDP(
+                    totalCanBorrowUSDOnTheroy
+                      // 获得最少的币数
+                      .minus(totalCanBorrowedOnReal)
+                      // 除以清算系数 (放大)
+                      .dividedBy(
+                        toReadableRiskMantissa(
+                          item.riskAssetConfig.liquidation_threshold.mantissa,
+                        ).plus(reserverUnit),
+                      )
+                      // 除以当前币的价格
+                      .dividedBy(item.oracle),
+                    COIN_INPUT_DECIMALS,
+                  );
             }
           },
 
@@ -303,12 +315,9 @@ export default () => {
             // 剩余多少可借
             // 真实总可借
             // 真实可借是已经包含了mantissa, 所以下面要比真实可借要小一点点
-            let remainBalance = totalBorrowingValueOnReal
+            let remainBalance = getSafeBorrowingValueOnReal(tokenList)
               // 减去 已借的
-              .minus(totalBorrowedValueOnReal)
-              // 为了防止超过mantissa的情况
-              .minus(1)
-
+              .minus(totalCanBorrowedOnReal)
               // 除以价格 得到币的数量
               .dividedBy(item.oracle);
 
