@@ -49,7 +49,7 @@ const Get_Precision = async (token) =>
 const Get_Oracle = async () => {
   return axios
     .get(
-      'http://ac5e9dd967389445e809defadcba5242-1908387560.ap-northeast-1.elb.amazonaws.com/barnard/v1/priceFeeds',
+      'http://afbfd94cad1f34843aef457c1094dfd8-2035541950.ap-northeast-1.elb.amazonaws.com/barnard/v1/priceFeeds',
     )
     .then((res) => {
       const ret = {};
