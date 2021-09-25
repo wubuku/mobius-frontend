@@ -31,7 +31,7 @@
             </div>
             <div class="my-info-box">
               <div class="label">{{ $t('borrow.home.data.borrowBalance') }}</div>
-              <div class="num large my blod">${{ tokenList[0]?.totalCanBorrowedOnReal }}</div>
+              <div class="num large my blod">${{ tokenList[0]?.totalBorrowedUSDOnReal }}</div>
             </div>
             <div class="my-info-box flex credit-balance">
               <div class="label">
