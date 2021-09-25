@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js';
 
 const requestChain = (method, params) =>
   axios
-    .post('https://barnard-seed.starcoin.org/', {
+    .post(`https://${ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value}-seed.starcoin.org/`, {
       id: 1,
       jsonrpc: '2.0',
       method,
