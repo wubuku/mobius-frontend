@@ -174,7 +174,7 @@
     isBorrowMode.value ? t('borrow.btn.borrow') : t('borrow.btn.repay'),
   );
   const NotEnoughErrorText = computed(() => {
-    if (amountGreatThanBalance.value) return 'Not enough balance';
+    if (amountGreatThanBalance.value) return t('borrow.home.modal.notEnoughBalance');
     return '';
   });
   const NotEnoughLiquidtyErrorText = computed(() => {

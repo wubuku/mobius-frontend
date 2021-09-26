@@ -17,13 +17,13 @@
 
       <div class="main">
         <div class="dashboard-box">
-          <div class="my-info-box large">
+          <!-- <div class="my-info-box large">
             <div class="label benifit">{{ $t('borrow.home.data.availableRewards') }}</div>
             <div class="num large up blod">$12.32</div>
             <a-button disabled class="btn benifit-btn disabled">
               {{ $t('borrow.btn.claim') }}
             </a-button>
-          </div>
+          </div> -->
           <div class="line">
             <div class="my-info-box">
               <div class="label">{{ $t('borrow.home.data.supplyBalance') }}</div>
