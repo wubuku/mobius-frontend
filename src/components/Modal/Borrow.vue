@@ -21,7 +21,7 @@
         :bordered="false"
         ref="amountInput"
       ></a-input>
-      <a-button class="btn input-box-btn" @click="setMaxAmount">
+      <a-button class="btn input-box-btn" @click="setMaxAmount" v-if="!HasNoAsset">
         {{ $t('borrow.btn.max') }}
       </a-button>
     </div>
@@ -79,7 +79,13 @@
         </span>
       </div>
       <!--  -->
-      <a-button class="btn submit-btn" :disabled="!canSubmit" @click="submit" :loading="btnLoading">
+      <a-button
+        class="btn submit-btn"
+        :disabled="!canSubmit"
+        @click="submit"
+        :loading="btnLoading"
+        v-if="!HasNoAsset"
+      >
         {{ submitBtnText }}
       </a-button>
 
