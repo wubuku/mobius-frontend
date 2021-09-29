@@ -1,4 +1,4 @@
-import { JsonProvider } from '@wormhole-stc/txn-wrapper';
+import { JsonProvider } from 'utils/TxnWrapper';
 import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount, ENUMS } from 'config';
 import { toTokenString } from 'utils/';
 import axios from 'axios';
@@ -70,24 +70,19 @@ const Get_Oracle = async () => {
     });
 };
 
+/**
+ * 获取快速的APY值
+ */
 export const GetHomeAPY = async () => {
-  const { resources } = await requestChain('state.list_resource', [
-    SOURCE_ADDRESS,
-    { decode: true },
+  const [apys = []] = await requestChain('contract.call_v2', [
+    {
+      function_id: `${SOURCE_ADDRESS}::Treasury::current_rate_list`,
+      type_args: [`${SOURCE_ADDRESS}::Management::StandardPosition`],
+      args: [],
+    },
   ]);
 
-  return (resources[KEY_TokenList]?.json?.payload?.support_token_codes || []).map((codes) => {
-    const address = toTokenString(codes);
-    const name = address.split('::')[2];
-
-    // Get All StandardPosition
-    const standardPosition = resources[KEY_StandardPosition(address)]?.json || {};
-
-    return {
-      name,
-      supply_rate: standardPosition.supply_rate.mantissa,
-    };
-  });
+  return apys;
 };
 
 /**

@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { GetStateListResource, GetHomeAPY } from 'service/InitService';
+import { toTokenString } from 'utils/';
 
 export default () => {
   const store = useStore();
@@ -176,10 +177,25 @@ export default () => {
 
   const getHomeAPY = async () => {
     const apys = await GetHomeAPY();
+
     const ret = {};
+
     apys.forEach((apy) => {
-      ret[apy.name] = toPercent(toReadableMantissa(apy.supply_rate), 2);
+      const { token_code, borrow_rate, supply_rate } = apy;
+      const address = toTokenString(token_code);
+      const name = address.split('::')[2];
+
+      if (!name) return;
+
+      const rateMap = {
+        supply_rate: toPercent(toReadableMantissa(supply_rate.mantissa), 2),
+        borrow_rate: toPercent(toReadableMantissa(borrow_rate.mantissa), 2),
+      };
+
+      ret[address] = { ...rateMap };
+      ret[name] = { ...rateMap };
     });
+
     return ret;
   };
 
@@ -193,6 +209,7 @@ export default () => {
     try {
       // TokenList
       const { tokenList, assetId } = await GetStateListResource(store.state.accountHash);
+      const apys = await getHomeAPY();
       const totalCanBorrowUSDOnReal = getCanBorrowUSDOnReal(tokenList);
       const totalCanBorrowUSDOnTheroy = getCanBorrowUSDOnTheroy(tokenList);
       const totalBorrowedUSDOnReal = getTotalBorrowedUSDOnReal(tokenList);
@@ -334,10 +351,10 @@ export default () => {
           // =======================  Borrow ===================
 
           // Table Data
-          supplyAPY: toPercent(toReadableMantissa(item.supply_rate.mantissa)),
+          supplyAPY: apys[item.name].supply_rate,
           supplyBalance,
 
-          borrowAPY: toPercent(toReadableMantissa(item.borrow_rate.mantissa)),
+          borrowAPY: apys[item.name].borrow_rate,
           borrowBalance,
 
           // pack use asset to token

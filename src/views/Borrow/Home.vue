@@ -135,7 +135,7 @@
 
               <!-- Supply -->
               <a-table-column
-                key="supplyAPY"
+                key="borrowAPY"
                 :title="$t('borrow.home.table.column.borrowAPY')"
                 data-index="borrowAPY"
               ></a-table-column>

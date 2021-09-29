@@ -1,4 +1,4 @@
-import { JsonProvider } from '@wormhole-stc/txn-wrapper';
+import { JsonProvider } from 'utils/TxnWrapper';
 import BigNumber from 'bignumber.js';
 import Enum from 'enums-js';
 
@@ -13,7 +13,7 @@ export const ArrayToEnumParam = (array) => {
 };
 
 // Dapp Contract Address
-export const SOURCE_ADDRESS = '0xC4aBC72D4054ffdA2189fc99f69bAf76'.toLocaleLowerCase();
+export const SOURCE_ADDRESS = '0x987Aa19F00dB14FE9B5C9271F3A7Ee0A'.toLocaleLowerCase();
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 // export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';

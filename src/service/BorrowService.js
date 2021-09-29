@@ -1,4 +1,4 @@
-import TxnWrapper, { JsonProvider } from '@wormhole-stc/txn-wrapper';
+import TxnWrapper, { JsonProvider } from 'utils/TxnWrapper';
 import { SOURCE_ADDRESS } from 'config';
 
 /**

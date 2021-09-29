@@ -76,7 +76,7 @@
                 <span>STC</span>
               </div>
               <div class="apy">
-                <span class="value">{{ apys['STC'] }}</span>
+                <span class="value">{{ apys['STC']?.supply_rate }}</span>
                 <span>APY</span>
               </div>
             </div>
@@ -91,7 +91,7 @@
                 <span>ETH</span>
               </div>
               <div class="apy">
-                <span class="value">{{ apys['METH'] }}</span>
+                <span class="value">{{ apys['METH']?.supply_rate }}</span>
                 <span>APY</span>
               </div>
             </div>
@@ -106,7 +106,7 @@
                 <span>BTC</span>
               </div>
               <div class="apy">
-                <span class="value">{{ apys['MBTC'] }}</span>
+                <span class="value">{{ apys['MBTC']?.supply_rate }}</span>
                 <span>APY</span>
               </div>
             </div>
@@ -121,7 +121,7 @@
                 <span>USDT</span>
               </div>
               <div class="apy">
-                <span class="value">{{ apys['MUSDT'] }}</span>
+                <span class="value">{{ apys['MUSDT']?.supply_rate }}</span>
                 <span>APY</span>
               </div>
             </div>
