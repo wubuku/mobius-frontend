@@ -51,4 +51,16 @@ export const toTokenString = ({ addr = '', module_name = '', name = '' }) => {
   return `${addr}::${hexToStr(module_name)}::${hexToStr(name)}`;
 };
 
+import axios from 'axios';
+import { ENUMS } from 'config';
+export const requestChain = (method, params) =>
+  axios
+    .post(`https://${ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value}-seed.starcoin.org/`, {
+      id: 1,
+      jsonrpc: '2.0',
+      method,
+      params,
+    })
+    .then((res) => res.data.result);
+
 export * from './Txn';

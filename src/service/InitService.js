@@ -1,20 +1,8 @@
 import { JsonProvider } from 'utils/TxnWrapper';
 import { SOURCE_ADDRESS, TEST_NETWORK, ToChainAmount, ToHumanAmount, ENUMS } from 'config';
-import { toTokenString } from 'utils/';
+import { toTokenString, requestChain } from 'utils/';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-
-// Global Data
-
-const requestChain = (method, params) =>
-  axios
-    .post(`https://${ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value}-seed.starcoin.org/`, {
-      id: 1,
-      jsonrpc: '2.0',
-      method,
-      params,
-    })
-    .then((res) => res.data.result);
 
 /**
  * Get Transaction Status

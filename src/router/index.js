@@ -15,6 +15,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "app-inner" */ 'views/Borrow/Home.vue'),
   },
   {
+    path: '/dashboard',
+    name: ROUTE_NAME.DASHBOARD.value,
+    component: () => import(/* webpackChunkName: "dashboard" */ 'views/Dashboard.vue'),
+  },
+  {
     path: '/:catchAll(.*)',
     redirect: { name: 'Home' },
   },
