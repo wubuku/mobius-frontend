@@ -27,6 +27,7 @@
       <div style="color: white">
         <h1 style="color: white">Total Info</h1>
         <p>userVault: {{ userVault }}</p>
+        <p>vaultConfig: {{ vaultConfig }}</p>
         <p>ableToGenerate: {{ ableToGenerate }}</p>
         <p>collateralRatio: {{ collateralRatio }}</p>
         <p>ccr: {{ ccr }}</p>
@@ -431,7 +432,15 @@
   });
   const walletBalance = ref(0);
   const ableToGenerate = ref(0);
-  const vaultConfig = ref({});
+  const vaultConfig = ref({
+    ccr: 0,
+    liquidation_penalty: 0,
+    liquidation_threshold: 0,
+    max_deposit_per_vault: 0,
+    max_fai_supply: 0,
+    min_mint_amount: 0,
+    stability_fee_ratio: 0,
+  });
   const tvl = ref(0);
   const price = ref(0);
   const mode = ref(FAI_TAB_NAME.SUPPLY.value);
@@ -475,7 +484,11 @@
   );
 
   // 最大supply限制
-  const isOverMaxSupplyLimit = computed(() => new BigNumber(supplyFormLockedSTC.value) > 1000);
+  const isOverMaxSupplyLimit = computed(
+    () =>
+      new BigNumber(supplyFormLockedSTC.value) >
+      toHumanReadable(vaultConfig.value.max_deposit_per_vault),
+  );
 
   const collateralRatio = computed(() => {
     const mintFAIAmount = new BigNumber(userVault.borrowed_fai);
@@ -578,13 +591,13 @@
     if (currentAccountHasVault.value) {
       maxBorrowLimitOfFai.value = toHumanReadable(await getMaxBorrowLimitOfFai(accountHash.value));
       /**
-       *
-          vault.id,
-          vault.debt_mai_amount,
-          vault.stability_fee_to_pay,
-          vault.stc_locked_amount,
-          Timestamp::now_seconds()
-      */
+         *
+            vault.id,
+            vault.debt_mai_amount,
+            vault.stability_fee_to_pay,
+            vault.stc_locked_amount,
+            Timestamp::now_seconds()
+        */
       [
         userVault.vault_id = '',
         userVault.borrowed_fai = 0,
