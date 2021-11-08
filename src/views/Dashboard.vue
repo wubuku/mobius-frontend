@@ -176,7 +176,7 @@
         <div class="form-box">
           <div class="form-title">
             {{
-              [FAI_TAB_NAME.SUPPLY.value, FAI_TAB_NAME.WITHDRAW.value].includes(mode.toUpperCase())
+              [FAI_TAB_NAME.SUPPLY.value, FAI_TAB_NAME.WITHDRAW.value].includes(mode)
                 ? 'STC'
                 : 'FAI'
             }}
@@ -251,10 +251,8 @@
             </div>
             <div class="info-item">
               {{ $t('account.form.Available FAI limit') }}
-              <!-- TODO: update calc -->
               <span class="right">
                 {{ ableToGenerate }}
-
                 <span
                   class="arrow-box"
                   v-if="!new BigNumber(ableToGenerateComputed).isEqualTo(ableToGenerate)"
