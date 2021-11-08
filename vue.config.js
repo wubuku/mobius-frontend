@@ -8,7 +8,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  productionSourceMap: false,
+  productionSourceMap: isProduction,
   publicPath: '/',
   devServer: {
     port: 8200,
