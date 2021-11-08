@@ -629,7 +629,7 @@
           userVault.stability_fee_to_pay = 0,
           userVault.stc_locked_amount = 0,
           userVault.timestamp,
-        ] = await getUserVault(accountHash.value);
+        ] = (await getUserVault(accountHash.value)) || [];
 
         userVault.borrowed_fai = toHumanReadable(userVault.borrowed_fai);
         userVault.stc_locked_amount = toHumanReadable(userVault.stc_locked_amount);
