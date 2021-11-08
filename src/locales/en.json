@@ -31,7 +31,8 @@
       "STC withdrawing": "STC withdrawing",
       "FAI repaying": "FAI repaying",
       "Repay FAI balance": "Repay FAI balance",
-      "Minimum Collateral Ratio": "Minimum Collateral Ratio"
+      "Minimum Collateral Ratio": "Minimum Collateral Ratio",
+      "Available to withdraw": "Available to withdraw"
     },
     "Enable Vault Btn": "Enable Vault",
     "btn": {

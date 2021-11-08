@@ -51,7 +51,10 @@
             <span class="account-info-item-title-text">
               {{ $t('account.Protocol Balance') }}
             </span>
-            <span class="account-info-item-title-value">{{ userVault.borrowed_fai }} STC</span>
+            <!-- <span class="account-info-item-title-value">{{ userVault.borrowed_fai }} STC</span> -->
+            <span class="account-info-item-title-value">
+              {{ new BigNumber(maxWithdrawSTCBalance).dp(4) }} STC
+            </span>
           </div>
         </div>
       </div>
@@ -113,8 +116,7 @@
               <div class="panel-body-item">
                 <span class="panel-body-item-title-text">{{ $t('account.Minting Fee') }}</span>
                 <span class="panel-body-item-title-value">
-                  {{ userVault.stability_fee_to_pay }}
-                  <!-- {{ vaultConfig.stability_fee_to_pay_ratio / 100 }} % -->
+                  {{ toHumanReadable(userVault.stability_fee_to_pay) }}
                 </span>
               </div>
             </div>
@@ -298,10 +300,6 @@
               </span>
             </div>
             <div class="info-item">
-              {{ $t('account.form.Minting Fee') }}
-              <span class="right">{{ userVault.stability_fee_to_pay }}%</span>
-            </div>
-            <div class="info-item">
               {{ $t('account.form.Collateral Ratio') }}
               <span class="right">{{ collateralRatio }}%</span>
             </div>
@@ -324,8 +322,16 @@
           <!-- Withdraw Form -->
           <div class="modal-info" v-if="mode === FAI_TAB_NAME.WITHDRAW.value">
             <div class="info-item">
-              {{ $t('account.form.STC withdrawing') }}
-              <span class="right">{{ new BigNumber(maxWithdrawSTCBalance).dp(4) }} STC</span>
+              {{ $t('account.form.Available to withdraw') }}
+              <span class="right">
+                {{ new BigNumber(maxWithdrawSTCBalance).dp(4) }}
+                <span class="arrow-box" v-if="amount">
+                  <ArrowRightOutlined class="arrow" />
+                  <!-- maxWithdrawSTCBalanceComputed -->
+                  {{ maxWithdrawSTCBalanceComputed }}
+                </span>
+                STC
+              </span>
             </div>
 
             <a-button
@@ -339,7 +345,12 @@
 
             <div class="info-item">
               {{ $t('account.Protocol Balance') }}
-              <span class="right">{{ userVault.borrowed_fai }} STC</span>
+              <!-- <span class="right">{{ userVault.borrowed_fai }} STC</span> -->
+              <span class="right">
+                {{ new BigNumber(maxWithdrawSTCBalance).dp(4) }}
+
+                STC
+              </span>
             </div>
           </div>
 
@@ -486,8 +497,9 @@
   // 最大supply限制
   const isOverMaxSupplyLimit = computed(
     () =>
+      isSupply.value &&
       new BigNumber(supplyFormLockedSTC.value) >
-      toHumanReadable(vaultConfig.value.max_deposit_per_vault),
+        toHumanReadable(vaultConfig.value.max_deposit_per_vault),
   );
 
   const collateralRatio = computed(() => {
@@ -530,6 +542,13 @@
   // mint的时候计算剩下多少FAI可以被mint
   const ableToGenerateComputedOnMint = computed(() => {
     return new BigNumber(ableToGenerate.value).minus(amount.value || 0).toNumber();
+  });
+
+  const maxWithdrawSTCBalanceComputed = computed(() => {
+    return new BigNumber(maxWithdrawSTCBalance.value)
+      .minus(amount.value || 0)
+      .dp(4)
+      .toNumber();
   });
 
   // 输入数额范围
@@ -579,6 +598,7 @@
       userVault.borrowed_fai,
       ccr.value / 100,
       price.value,
+      toHumanReadable(userVault.stability_fee_to_pay),
     ),
   );
 
@@ -644,7 +664,6 @@
         price.value,
         new BigNumber(ccr.value).dividedBy(100).toNumber(),
       ),
-
       userVault.borrowed_fai,
     );
   };
@@ -700,7 +719,11 @@
           msg = t('account.message.supplySuccess');
           break;
         case FAI_TAB_NAME.MINT.value:
-          txn = await mintFai(toChainReadable(amount.value));
+          txn = await mintFai(
+            toChainReadable(
+              new BigNumber(amount.value).isEqualTo(ableToGenerate.value) ? 0 : amount.value,
+            ),
+          );
           msg = t('account.message.mintSuccess');
           break;
         case FAI_TAB_NAME.WITHDRAW.value:

@@ -14,11 +14,18 @@ export const maxWithdrawableSTC = (
   mintedFAIAmount,
   miniumalStakeRatio,
   priceOfSTC,
+  hunmanReadableStabilityFee,
 ) => {
-  // 存入的STC - 实际铸造FAI*最低抵押率/STC的价格
+  // 存入的STC - (实际铸造FAI+ toHunmanReadable(稳定费))*最低抵押率/STC的价格
   console.log('123123', stakeSTCAmount, mintedFAIAmount, miniumalStakeRatio, priceOfSTC);
   return new BigNumber(stakeSTCAmount)
-    .minus(new BigNumber(mintedFAIAmount).multipliedBy(miniumalStakeRatio).dividedBy(priceOfSTC))
+    .minus(
+      new BigNumber(mintedFAIAmount)
+        .plus(hunmanReadableStabilityFee)
+        .multipliedBy(miniumalStakeRatio)
+        .dividedBy(priceOfSTC),
+    )
+
     .toNumber();
 };
 
