@@ -608,11 +608,14 @@
 
   // 初始化账户信息
   const initAccount = async () => {
-    currentAccountHasVault.value = await checkUserVaultIsExsit(accountHash.value);
+    try {
+      currentAccountHasVault.value = await checkUserVaultIsExsit(accountHash.value);
 
-    if (currentAccountHasVault.value) {
-      maxBorrowLimitOfFai.value = toHumanReadable(await getMaxBorrowLimitOfFai(accountHash.value));
-      /**
+      if (currentAccountHasVault.value) {
+        maxBorrowLimitOfFai.value = toHumanReadable(
+          await getMaxBorrowLimitOfFai(accountHash.value),
+        );
+        /**
          *
             vault.id,
             vault.debt_mai_amount,
@@ -620,18 +623,21 @@
             vault.stc_locked_amount,
             Timestamp::now_seconds()
         */
-      [
-        userVault.vault_id = '',
-        userVault.borrowed_fai = 0,
-        userVault.stability_fee_to_pay = 0,
-        userVault.stc_locked_amount = 0,
-        userVault.timestamp,
-      ] = await getUserVault(accountHash.value);
+        [
+          userVault.vault_id = '',
+          userVault.borrowed_fai = 0,
+          userVault.stability_fee_to_pay = 0,
+          userVault.stc_locked_amount = 0,
+          userVault.timestamp,
+        ] = await getUserVault(accountHash.value);
 
-      userVault.borrowed_fai = toHumanReadable(userVault.borrowed_fai);
-      userVault.stc_locked_amount = toHumanReadable(userVault.stc_locked_amount);
+        userVault.borrowed_fai = toHumanReadable(userVault.borrowed_fai);
+        userVault.stc_locked_amount = toHumanReadable(userVault.stc_locked_amount);
 
-      walletBalance.value = toHumanReadable(await getBalance(accountHash.value));
+        walletBalance.value = toHumanReadable(await getBalance(accountHash.value));
+      }
+    } catch (e) {
+      console.log(e, 'init account failed');
     }
   };
 
