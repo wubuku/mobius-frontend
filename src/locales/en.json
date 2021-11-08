@@ -44,7 +44,8 @@
       "withdrawSuccess": "Withdraw Success!",
       "mintSuccess": "Mint Success",
       "repaySuccess": "Repay Success!"
-    }
+    },
+    "Exceed max supply limit": "Exceed max supply limit "
   },
   "official": {
     "menus": {

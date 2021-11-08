@@ -16,7 +16,7 @@ export const ArrayToEnumParam = (array) => {
 export const SOURCE_ADDRESS = '0x987Aa19F00dB14FE9B5C9271F3A7Ee0A'.toLocaleLowerCase();
 
 // Bflay Contract address
-export const BFLY_CONTRACT_ADDRESS = '0x2821b01559c6ede03183196D66cD2091'.toLocaleLowerCase();
+export const BFLY_CONTRACT_ADDRESS = '0xFE125d419811297dfAB03c61EfEC0bC9'.toLocaleLowerCase();
 
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 // export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';

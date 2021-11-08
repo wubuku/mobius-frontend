@@ -229,7 +229,9 @@
           </div>
 
           <p class="error" v-if="!amounRangeValid">Not Enough Balance</p>
-          <p class="error" v-if="isOverMaxSupplyLimit">Over Max Supply Limit</p>
+          <p class="error" v-if="isOverMaxSupplyLimit">
+            {{ $t('account.Exceed max supply limit') }}
+          </p>
 
           <!-- Supply Form -->
           <div class="modal-info" v-if="mode === FAI_TAB_NAME.SUPPLY.value">
