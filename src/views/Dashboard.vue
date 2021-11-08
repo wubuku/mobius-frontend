@@ -771,9 +771,9 @@
 </script>
 
 <style lang="less" scoped>
-  @import '../assets/style/app';
-  @import '../components/modal/modal';
-  @import '../assets//style/deposit';
+  @import '../assets/style/app.less';
+  @import '../components/modal/modal.less';
+  @import '../assets//style/deposit.less';
 
   .dashboard {
     display: flex;
