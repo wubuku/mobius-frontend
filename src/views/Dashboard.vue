@@ -72,13 +72,13 @@
                 </span>
                 <span class="panel-body-item-title-value">
                   {{ userVault.borrowed_fai }}
-                </span>
-                <span
-                  class="btn submit-btn"
-                  @click="mode = FAI_TAB_NAME.REPAY.value"
-                  :loading="!btnLoading"
-                >
-                  Repay FAI
+                  <span
+                    class="btn submit-btn"
+                    @click="mode = FAI_TAB_NAME.REPAY.value"
+                    :loading="!btnLoading"
+                  >
+                    Repay FAI
+                  </span>
                 </span>
               </div>
               <div class="panel-body-item">
@@ -87,13 +87,13 @@
                 </span>
                 <span class="panel-body-item-title-value">
                   {{ ableToGenerate }}
-                </span>
-                <span
-                  class="btn submit-btn"
-                  @click="mode = FAI_TAB_NAME.MINT.value"
-                  :loading="!btnLoading"
-                >
-                  Mint FAI
+                  <span
+                    class="btn submit-btn"
+                    @click="mode = FAI_TAB_NAME.MINT.value"
+                    :loading="!btnLoading"
+                  >
+                    Mint FAI
+                  </span>
                 </span>
               </div>
             </div>
@@ -103,7 +103,7 @@
           <div class="panel">
             <p class="panel-title">
               {{ $t('account.Collateral Ratio') }}
-              <span>( {{ collateralRatio }} % )</span>
+              <span>({{ collateralRatio }} %)</span>
             </p>
 
             <div class="panel-body">
@@ -130,26 +130,27 @@
                 <span class="panel-body-item-title-text">{{ $t('account.STC Locked') }}</span>
                 <span class="panel-body-item-title-value">
                   {{ userVault.stc_locked_amount }}
-                </span>
-                <span
-                  class="btn submit-btn"
-                  @click="mode = FAI_TAB_NAME.SUPPLY.value"
-                  :loading="!btnLoading"
-                >
-                  Supply
+
+                  <span
+                    class="btn submit-btn"
+                    @click="mode = FAI_TAB_NAME.SUPPLY.value"
+                    :loading="!btnLoading"
+                  >
+                    Supply
+                  </span>
                 </span>
               </div>
               <div class="panel-body-item">
                 <span class="panel-body-item-title-text">{{ $t('account.Able to withdraw') }}</span>
                 <span class="panel-body-item-title-value">
                   {{ new BigNumber(maxWithdrawSTCBalance).dp(4) }}
-                </span>
-                <span
-                  class="btn submit-btn"
-                  @click="mode = FAI_TAB_NAME.WITHDRAW.value"
-                  :loading="!btnLoading"
-                >
-                  Withdraw
+                  <span
+                    class="btn submit-btn"
+                    @click="mode = FAI_TAB_NAME.WITHDRAW.value"
+                    :loading="!btnLoading"
+                  >
+                    Withdraw
+                  </span>
                 </span>
               </div>
             </div>
@@ -164,7 +165,7 @@
               </div>
               <div class="panel-body-item">
                 <span class="panel-body-item-title-text">
-                  {{ $t('account.Current Price(STC/USD)') }}
+                  {{ $t('account.Current Price (STC/USD)') }}
                 </span>
                 <span class="panel-body-item-title-value">$ {{ price }}</span>
               </div>
@@ -860,6 +861,7 @@
 
         .panel {
           width: 48%;
+          min-height: 235px;
           padding: 20px 15px;
           border-radius: 10px;
           border: 1px solid #ccccccc3;
@@ -870,6 +872,7 @@
             font-size: 20px;
             margin-bottom: 30px;
             color: #cccccc;
+            opacity: 0.5;
           }
 
           .panel-body-item {
@@ -878,7 +881,12 @@
 
             .panel-body-item-title-value {
               margin-left: auto;
-              padding: 0 10px;
+              padding: 0 0 0 10px;
+              display: flex;
+
+              .btn {
+                margin-left: 10px;
+              }
             }
           }
 
@@ -981,6 +989,44 @@
         margin: 20px;
         font-size: 24px;
         font-weight: bolder;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1210px) {
+    .dashboard {
+      .body {
+        flex-wrap: wrap;
+
+        .panel-box {
+          width: 100%;
+          margin-bottom: 10px;
+
+          .panel {
+            width: 49.5%;
+            margin-right: 1%;
+            &:nth-child(even) {
+              margin-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 710px) {
+    .dashboard {
+      .body {
+        .panel-box {
+          min-width: 425px;
+          height: auto;
+          margin-bottom: 0;
+          .panel {
+            width: 100%;
+            margin-right: 0;
+            min-height: initial;
+          }
+        }
       }
     }
   }
