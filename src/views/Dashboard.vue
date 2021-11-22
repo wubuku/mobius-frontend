@@ -3,7 +3,7 @@
     <div class="main">
       <!-- Header -->
       <header>
-        <div>Dashboard</div>
+        <div style="font-size: 70px">Dashboard</div>
         <div class="op">
           <connect-btn></connect-btn>
           <locale-switch></locale-switch>
