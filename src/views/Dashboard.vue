@@ -24,7 +24,7 @@
         </a-button>
       </div>
 
-      <div style="color: white">
+      <!-- <div style="color: white">
         <h1 style="color: white">Total Info</h1>
         <p>userVault: {{ userVault }}</p>
         <p>vaultConfig: {{ vaultConfig }}</p>
@@ -36,7 +36,7 @@
         <p>price: {{ price }}</p>
         <p>supplyFormLockedSTC: {{ supplyFormLockedSTC }}</p>
         <p>currentAccountHasVault: {{ currentAccountHasVault }}</p>
-      </div>
+      </div> -->
 
       <!-- Basic Account Info -->
       <div class="account-info">
