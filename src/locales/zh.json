@@ -1,4 +1,47 @@
 {
+  "account": {
+    "Wallet Balance": "钱包余额",
+    "Protocol Balance": "合约余额",
+    "Outstanding FAI debt": "铸造FAI的信息",
+    "Current FAI Value": "已铸造FAI数量",
+    "Available To Generate": "剩余可铸造",
+    "Collateral Ratio": "当前抵押率",
+    "Minimum Collateral Ratio": "最小抵押率",
+    "Minting Fee": "铸币费",
+    "Minting Fee Rate": "铸币费率",
+    "STC Locked": "当前存入STC",
+    "Able to withdraw": "剩余可取STC",
+    "STC Information": "STC金库信息",
+    "TVL_STC": "STC总锁仓量",
+    "Current Price (STC/USD)": "当前STC价格 (STC/USD)",
+    "tab": {
+      "Mint": "铸造",
+      "Withdraw": "取出",
+      "Repay": "偿还",
+      "Supply": "存入"
+    },
+    "form": {
+      "STC Supplying": "已存入的STC数量",
+      "Collateral Locking": "当前存入STC的数量",
+      "Available FAI limit": "可铸造最大FAI数量",
+      "Available FAI": "当前可铸造FAI数量",
+      "Minting Fee": "铸币费",
+      "Collateral Ratio": "当前抵押率",
+      "FAI Balance": "当前FAI余额",
+      "STC withdrawing": "可取回STC数量",
+      "FAI repaying": "可偿还FAI数量",
+      "Repay FAI balance": "最大可还FAI数量",
+      "Minimum Collateral Ratio": "最小抵押率"
+    },
+    "btn": {
+      "Enable Vault": "创建"
+    },
+    "message": {
+      "Create Vault Success": "激活成功!",
+      "supplySuccess": "存入成功!",
+      "repaySuccess": "偿还成功!"
+    }
+  },
   "official": {
     "menus": {
       "index": "首页",
@@ -25,7 +68,9 @@
           "desc": "使用B-Fly协议，你能够在同一个交易中转让资产和贷款，同时节省最多90%的燃料费。"
         }
       ],
-      "roadMap": { "title": "路线图" },
+      "roadMap": {
+        "title": "路线图"
+      },
       "securityDesc": "B-Fly协议是加密世界中最安全的借贷协议之一。 由于“move”语言的内在特性，B-Fly协议能够更好的防止某些攻击，避免了安全风险。"
     },
     "btn": {

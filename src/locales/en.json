@@ -1,4 +1,52 @@
 {
+  "account": {
+    "Wallet Balance": "Wallet Balance",
+    "Protocol Balance": "Protocol Balance",
+    "Outstanding FAI debt": "Outstanding FAI debt",
+    "Current FAI Value": "Current FAI Value",
+    "Available To Generate": "Available To Generate",
+    "Collateral Ratio": "Collateral Ratio",
+    "Minimum Collateral Ratio": "Minimum Collateral Ratio",
+    "Minting Fee": "Minting Fee",
+    "Minting Fee Rate": "Minting Fee Rate",
+    "STC Locked": "STC Locked",
+    "Able to withdraw": "Able to withdraw",
+    "STC Information": "STC Information",
+    "TVL_STC": "Total Value Locked",
+    "Current Price (STC/USD)": "Current Price (STC/USD)",
+    "tab": {
+      "Supply": "Supply",
+      "Mint": "Mint",
+      "Withdraw": "Withdraw",
+      "Repay": "Repay"
+    },
+    "form": {
+      "STC Supplying": "STC Supplying",
+      "Collateral Locking": "Collateral Locking",
+      "Available FAI limit": "Available FAI limit",
+      "Available FAI": "Available FAI",
+      "Minting Fee": "Minting Fee",
+      "Collateral Ratio": "Collateral Ratio",
+      "FAI Balance": "FAI Balance",
+      "STC withdrawing": "STC withdrawing",
+      "FAI repaying": "FAI repaying",
+      "Repay FAI balance": "Repay FAI balance",
+      "Minimum Collateral Ratio": "Minimum Collateral Ratio",
+      "Available to withdraw": "Available to withdraw"
+    },
+    "Enable Vault Btn": "Enable Vault",
+    "btn": {
+      "Enable Vault": "Enable Vault"
+    },
+    "message": {
+      "Create Vault Success": "Create Vault Success!",
+      "supplySuccess": "Supply Success!",
+      "withdrawSuccess": "Withdraw Success!",
+      "mintSuccess": "Mint Success",
+      "repaySuccess": "Repay Success!"
+    },
+    "Exceed max supply limit": "Exceed max supply limit "
+  },
   "official": {
     "menus": {
       "index": "Index",
@@ -25,13 +73,15 @@
           "desc": "With B-Fly protocol, you can transfer your assets and debts together, saving up to 90% gas fee."
         }
       ],
-      "roadMap": { "title": "Roadmap" },
+      "roadMap": {
+        "title": "Roadmap"
+      },
       "securityDesc": "The B-Fly protocol is one of the most secure DeFi project in the crypto world. With innate nature of “move” language, the protocol is more robust in preventing certain attacks."
     },
     "btn": {
       "app": "App",
       "protocalDocs": "Protocol Docs",
-      "protocalSecurity": "Protocal Security"
+      "protocalSecurity": "Protocol Security"
     },
     "footer": {
       "legal": "Legal",

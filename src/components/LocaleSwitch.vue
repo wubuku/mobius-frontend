@@ -35,6 +35,7 @@
   .dropdown-placeholder {
     width: 24px;
     height: 34px;
+    font-size: 14px;
   }
 
   .flag {

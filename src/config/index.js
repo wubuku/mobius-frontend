@@ -15,8 +15,12 @@ export const ArrayToEnumParam = (array) => {
 // Dapp Contract Address
 //export const SOURCE_ADDRESS = '0x987Aa19F00dB14FE9B5C9271F3A7Ee0A'.toLocaleLowerCase();
 export const SOURCE_ADDRESS = '0x6473873683c935e575cfd84B22CB4206'.toLocaleLowerCase();
+// Bflay Contract address
+export const BFLY_CONTRACT_ADDRESS = '0xFE125d419811297dfAB03c61EfEC0bC9'.toLocaleLowerCase();
+
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 // export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';
+//export const TEST_NETWORK = '';
 export const TEST_NETWORK = 'http://localhost:9850';
 
 export const BROWSER_URL_OF_TRANSACTION = (txn = '') =>
@@ -32,6 +36,7 @@ export const ToHumanAmount = (amount, precision) => new BigNumber(amount).divide
 export const ENUMS = {
   // Tab Name Enum
   TAB_NAME: new Enum(...ArrayToEnumParam(['deposit', 'withdraw', 'borrow', 'repay'])),
+  FAI_TAB_NAME: new Enum(...ArrayToEnumParam(['supply', 'withdraw', 'mint', 'repay'])),
   CHAIN_NAME: new Enum(
     ...ArrayToEnumParam([
       [1, 'main'],
@@ -47,6 +52,7 @@ export const ENUMS = {
       'BorrowDeposit',
       'BorrowLoan',
       'BorrowHistory',
+      'Dashboard',
     ]),
   ),
   LS_NAME: new Enum(...ArrayToEnumParam(['deposit_query', 'borrow_query'])),

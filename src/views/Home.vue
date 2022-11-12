@@ -6,7 +6,7 @@
         <div class="logo">BFLY.FINANCE</div>
         <div class="menu">
           <span class="menu-item">
-            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">
+            <router-link :to="{ name: ROUTE_NAME.DASHBOARD.value }">
               {{ $t('official.menus.market') }}
             </router-link>
           </span>
@@ -22,7 +22,7 @@
             </a>
           </span>
           <div class="btn menu-item">
-            <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">
+            <router-link :to="{ name: ROUTE_NAME.DASHBOARD.value }">
               {{ $t('official.btn.app') }}
             </router-link>
           </div>
@@ -61,15 +61,12 @@
               {{ $t('official.index.marketDesc') }}
             </div>
             <div class="btn protocal">
-              <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">Launch App</router-link>
+              <router-link :to="{ name: ROUTE_NAME.DASHBOARD.value }">Launch App</router-link>
             </div>
           </div>
           <div class="coin-list">
             <!-- STC -->
-            <div
-              class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'STC' } })"
-            >
+            <div class="coin-list-item" @click="router.push({ name: ROUTE_NAME.DASHBOARD.value })">
               <img src="../assets/images/coin/stc.png" class="token-icon" />
               <div class="name">
                 <h2>Starcoin</h2>
@@ -81,10 +78,7 @@
               </div>
             </div>
             <!-- ETH -->
-            <div
-              class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'METH' } })"
-            >
+            <div class="coin-list-item" @click="router.push({ name: ROUTE_NAME.DASHBOARD.value })">
               <img src="../assets/images/coin/meth.png" class="token-icon" />
               <div class="name">
                 <h2>Ether</h2>
@@ -96,10 +90,7 @@
               </div>
             </div>
             <!-- BTC-->
-            <div
-              class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'MBTC' } })"
-            >
+            <div class="coin-list-item" @click="router.push({ name: ROUTE_NAME.DASHBOARD.value })">
               <img src="../assets/images/coin/mbtc.png" class="token-icon" />
               <div class="name">
                 <h2>Bitcoin</h2>
@@ -111,10 +102,7 @@
               </div>
             </div>
             <!-- USDT -->
-            <div
-              class="coin-list-item"
-              @click="router.push({ name: ROUTE_NAME.BORROWHOME.value, query: { token: 'MUSDT' } })"
-            >
+            <div class="coin-list-item" @click="router.push({ name: ROUTE_NAME.DASHBOARD.value })">
               <img src="../assets/images/coin/musdt.png" class="token-icon" />
               <div class="name">
                 <h2>Tether</h2>
@@ -126,7 +114,7 @@
               </div>
             </div>
             <div class="btn view-more">
-              <router-link :to="{ name: ROUTE_NAME.BORROWHOME.value }">View More</router-link>
+              <router-link :to="{ name: ROUTE_NAME.DASHBOARD.value }">View More</router-link>
             </div>
           </div>
         </div>
