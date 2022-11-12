@@ -19,7 +19,7 @@ const KEY_StandardPosition = (token) =>
   `${SOURCE_ADDRESS}::Treasury::Position<${SOURCE_ADDRESS}::Management::StandardPosition, ${token}>`;
 
 // Assets
-const KEY_Assets = `${SOURCE_ADDRESS}::AssetsGallery::AssetsGalleryStore<0x00000000000000000000000000000001::NFT::NFT<${SOURCE_ADDRESS}::Assets::AMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Assets::ABody<${SOURCE_ADDRESS}::Treasury::Assets<${SOURCE_ADDRESS}::Management::StandardPosition>>>>`;
+const KEY_Assets = `${SOURCE_ADDRESS}::AssetsGallery::AssetsGalleryStore<0x00000000000000000000000000000001::NFT::NFT<${SOURCE_ADDRESS}::Assets::AMeta<${SOURCE_ADDRESS}::Management::StandardPosition>, ${SOURCE_ADDRESS}::Assets::ABody<${SOURCE_ADDRESS}::Treasury::TreasuryAssets<${SOURCE_ADDRESS}::Management::StandardPosition>>>>`;
 
 // Personal Balance
 const KEY_Balance = (token) => `0x00000000000000000000000000000001::Account::Balance<${token}>`;
