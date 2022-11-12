@@ -8,7 +8,10 @@ import BigNumber from 'bignumber.js';
 
 const requestChain = (method, params) =>
   axios
-    .post(`https://${ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value}-seed.starcoin.org/`, {
+    .post(
+      //`https://${ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value}-seed.starcoin.org/`,
+      'http://localhost:9850',
+      {
       id: 1,
       jsonrpc: '2.0',
       method,
@@ -49,9 +52,10 @@ const Get_Precision = async (token) =>
 const Get_Oracle = async () => {
   return axios
     .get(
-      `https://price-api.starcoin.org/${
-        ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value
-      }/v1/priceFeeds`,
+      // `https://price-api.starcoin.org/${
+      //   ENUMS.CHAIN_NAME[window.starcoin.networkVersion].value
+      // }/v1/priceFeeds`,
+      'https://price-api.starcoin.org/main/v1/priceFeeds', //todo ...
     )
     .then((res) => {
       const ret = {};

@@ -13,11 +13,11 @@ export const ArrayToEnumParam = (array) => {
 };
 
 // Dapp Contract Address
-export const SOURCE_ADDRESS = '0x987Aa19F00dB14FE9B5C9271F3A7Ee0A'.toLocaleLowerCase();
-
+//export const SOURCE_ADDRESS = '0x987Aa19F00dB14FE9B5C9271F3A7Ee0A'.toLocaleLowerCase();
+export const SOURCE_ADDRESS = '0x6473873683c935e575cfd84B22CB4206'.toLocaleLowerCase();
 // export const TEST_NETWORK = process.env.VUE_APP_TEST_CHAIN || '';
 // export const TEST_NETWORK = 'https://barnard-seed.starcoin.org';
-export const TEST_NETWORK = '';
+export const TEST_NETWORK = 'http://localhost:9850';
 
 export const BROWSER_URL_OF_TRANSACTION = (txn = '') =>
   txn
@@ -37,6 +37,7 @@ export const ENUMS = {
       [1, 'main'],
       [251, 'barnard'],
       [253, 'halley'],
+      [254, 'dev'],
     ]),
   ),
   ROUTE_NAME: new Enum(
